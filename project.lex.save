@@ -1,0 +1,14 @@
+%{
+	#include <stdio.h>
+	#include <string.h>
+	#include <stdlib.h>
+	'include "y.tab.h"
+%}
+
+%%
+https://github.com/leorrose/compi-project.git
+
+
+%%
+
+
