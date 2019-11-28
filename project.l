@@ -46,5 +46,4 @@
 //identifer	{yylval = yytext; return ID;}
 //&identifer	{yylval}
 //*identifer	{}
-
 %%

@@ -12,6 +12,7 @@ int yywrap();
 
 %%
 program:
+	program | 
 	;
 %%
 
