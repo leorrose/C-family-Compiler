@@ -6,13 +6,24 @@ void yyerror();
 int yywrap();
 %}
 
-%token BOOL CHAR INT REAL STRING INTP CHARP REALP IF ELSE WHILE FOR VAR FUNCTION RETURN NULLP VOID DO  
-%token AND DIV ASGN EQ GREATER GE LOWER LE MINUS NOT NE OR PLUS MUL
-
+%token VALTYPE IF ELSE WHILE FOR VAR FUNCTION RETURN NULLP VOID DO  
+%token OP
+%token BOOLVAL CHARVAL INTVAL REALVAL STRINGVAL ID
+%union
+{
+	char *string;
+	int intVal;
+	char charVal;
+}
 
 %%
 program:
-	program | 
+	cmd 
+	|program cmd
+	;
+cmd:	declaration
+	;
+declaration: VAR VALTYPE ID {printf("declaration");}
 	;
 %%
 

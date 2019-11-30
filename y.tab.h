@@ -45,77 +45,61 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    BOOL = 258,
-    CHAR = 259,
-    INT = 260,
-    REAL = 261,
-    STRING = 262,
-    INTP = 263,
-    CHARP = 264,
-    REALP = 265,
-    IF = 266,
-    ELSE = 267,
-    WHILE = 268,
-    FOR = 269,
-    VAR = 270,
-    FUNCTION = 271,
-    RETURN = 272,
-    NULLP = 273,
-    VOID = 274,
-    DO = 275,
-    AND = 276,
-    DIV = 277,
-    ASGN = 278,
-    EQ = 279,
-    GREATER = 280,
-    GE = 281,
-    LOWER = 282,
-    LE = 283,
-    MINUS = 284,
-    NOT = 285,
-    NE = 286,
-    OR = 287,
-    PLUS = 288,
-    MUL = 289
+    VALTYPE = 258,
+    IF = 259,
+    ELSE = 260,
+    WHILE = 261,
+    FOR = 262,
+    VAR = 263,
+    FUNCTION = 264,
+    RETURN = 265,
+    NULLP = 266,
+    VOID = 267,
+    DO = 268,
+    OP = 269,
+    BOOLVAL = 270,
+    CHARVAL = 271,
+    INTVAL = 272,
+    REALVAL = 273,
+    STRINGVAL = 274,
+    ID = 275
   };
 #endif
 /* Tokens.  */
-#define BOOL 258
-#define CHAR 259
-#define INT 260
-#define REAL 261
-#define STRING 262
-#define INTP 263
-#define CHARP 264
-#define REALP 265
-#define IF 266
-#define ELSE 267
-#define WHILE 268
-#define FOR 269
-#define VAR 270
-#define FUNCTION 271
-#define RETURN 272
-#define NULLP 273
-#define VOID 274
-#define DO 275
-#define AND 276
-#define DIV 277
-#define ASGN 278
-#define EQ 279
-#define GREATER 280
-#define GE 281
-#define LOWER 282
-#define LE 283
-#define MINUS 284
-#define NOT 285
-#define NE 286
-#define OR 287
-#define PLUS 288
-#define MUL 289
+#define VALTYPE 258
+#define IF 259
+#define ELSE 260
+#define WHILE 261
+#define FOR 262
+#define VAR 263
+#define FUNCTION 264
+#define RETURN 265
+#define NULLP 266
+#define VOID 267
+#define DO 268
+#define OP 269
+#define BOOLVAL 270
+#define CHARVAL 271
+#define INTVAL 272
+#define REALVAL 273
+#define STRINGVAL 274
+#define ID 275
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 13 "project.y" /* yacc.c:1909  */
+
+	char *string;
+	int intVal;
+	char charVal;
+
+#line 100 "y.tab.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

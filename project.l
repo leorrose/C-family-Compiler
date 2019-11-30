@@ -4,21 +4,34 @@
 	#include <stdio.h> 
 	#include "y.tab.h"
 %}
+
 %%
-"bool"|"char"|"int"|"real"|"string"|"int"[\*]|"char"[\*]|"real"[\*]	{/*yylval = yytext; return VALTYPE;*/ printf("%s", yytext);}
-"if"	{/* return IF; */ printf("IF\n");}
-"else"	{/*return ELSE;*/ printf("ELSE;*/ \n");}
-"while"	{/*return WHILE;*/ printf("WHILE;*/ \n");}
-"for"	{/*return FOR;*/ printf("FOR\n");}
-"var"	{/*return VAR;*/ printf("VAR\n");}
-"function"	{/*return FUNCTION;*/ printf("FUNCTION\n");}
-"return"	{/*return RETURN;*/ printf("RETURN\n");}
-"null"	{/*return NULLP;*/ printf("NULLP\n");}
-"void"	{/*return VOID;*/ printf("VOID\n");}
-"do"	{/*return DO;*/ printf("DO\n");}
-"&&"|"/"|"="|"=="|">"|">="|"<"|"<="|"-"|"!"|"!="|"||"|[\+]|[\*]|"&"	{/*yylval = yytext; return OP;*/ printf("%s", yytext);}
-"true"	{/*yylval=true; return BOOLVAL*/ printf("true");}
-"false"	{/*yylval=false; return BOOLVAL*/ printf("false");}
-'.' {/*yylval =yytext[0]; return CHARVAL*/  printf("%c", yytext[0]);}
-[1-9][0-9]* | [0] |	{/*yylval = atoi(yytext); return INTVAL*/ printf("%d", atoi(yytext))};
+	/* Types */
+"bool"|"char"|"int"|"real"|"string"|"int"[\*]|"char"[\*]|"real"[\*]	{yylval.string = strdup(yytext); return VALTYPE;}
+	
+	/* condition */
+"if"	{return IF;}
+"else"	{return ELSE;}
+"while"	{return WHILE;}
+"do"    {return DO;}
+
+	/* loops */
+"for"	{return FOR;}
+
+	/* assignment */
+"var"	{return VAR;}
+
+	/*function and procedures */
+"function"	{return FUNCTION;}
+"return"	{return RETURN;}
+"null"	{return NULLP;}
+"void"	{return VOID;}
+
+	/* operators */
+"&&"|"/"|"="|"=="|">"|">="|"<"|"<="|"-"|"!"|"!="|"||"|[\+]|[\*]|"&"	{yylval.string = strdup(yytext); return OP;}
+"true"	{yylval.intVal=1; return BOOLVAL;}
+"false"	{yylval.intVal=0; return BOOLVAL;}
+'.' {yylval.charVal =yytext[1]; return CHARVAL;}
+[a-zA-z][a-zA-z"_"0-9]*	{yylval.string=strdup(yytext); return ID;}
+
 %%
