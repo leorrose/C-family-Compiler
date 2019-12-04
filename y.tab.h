@@ -56,13 +56,28 @@ extern int yydebug;
     NULLP = 266,
     VOID = 267,
     DO = 268,
-    OP = 269,
-    BOOLVAL = 270,
-    CHARVAL = 271,
-    INTVAL = 272,
-    REALVAL = 273,
-    STRINGVAL = 274,
-    ID = 275
+    PLUS = 269,
+    MINUS = 270,
+    DIV = 271,
+    MUL = 272,
+    ASS = 273,
+    AND = 274,
+    EQ = 275,
+    G = 276,
+    GE = 277,
+    L = 278,
+    LE = 279,
+    NOT = 280,
+    NOTEQ = 281,
+    OR = 282,
+    ADDRESS = 283,
+    BOOLVAL = 284,
+    CHARVAL = 285,
+    DECIMALINTVAL = 286,
+    HEXINTVAL = 287,
+    REALVAL = 288,
+    STRINGVAL = 289,
+    ID = 290
   };
 #endif
 /* Tokens.  */
@@ -77,26 +92,42 @@ extern int yydebug;
 #define NULLP 266
 #define VOID 267
 #define DO 268
-#define OP 269
-#define BOOLVAL 270
-#define CHARVAL 271
-#define INTVAL 272
-#define REALVAL 273
-#define STRINGVAL 274
-#define ID 275
+#define PLUS 269
+#define MINUS 270
+#define DIV 271
+#define MUL 272
+#define ASS 273
+#define AND 274
+#define EQ 275
+#define G 276
+#define GE 277
+#define L 278
+#define LE 279
+#define NOT 280
+#define NOTEQ 281
+#define OR 282
+#define ADDRESS 283
+#define BOOLVAL 284
+#define CHARVAL 285
+#define DECIMALINTVAL 286
+#define HEXINTVAL 287
+#define REALVAL 288
+#define STRINGVAL 289
+#define ID 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 13 "project.y" /* yacc.c:1909  */
+#line 24 "project.y" /* yacc.c:1909  */
 
 	char *string;
 	int intVal;
 	char charVal;
+	struct node *node;
 
-#line 100 "y.tab.h" /* yacc.c:1909  */
+#line 131 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

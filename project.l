@@ -29,10 +29,10 @@
 
 	/* Arithmetic Operators */
 \+ {return PLUS;}
-\- {return MINUS}
-\/ {return DIV}
-\* {return MUL}
-"=" {return ASS}
+\- {return MINUS;}
+\/ {return DIV;}
+\* {return MUL;}
+"=" {return ASS;}
 
 	/* Relational Operators */
 "&&"	{yylval.string = strdup(yytext); return AND;}
@@ -53,12 +53,13 @@
 0|[1-9][0-9]*	{ yylval.string = strdup(yytext); return DECIMALINTVAL; };
 0[xX][A-F0-9]+	{ yylval.string = strdup(yytext); return HEXINTVAL; };
 [0-9]*[\.]?[0-9]+|[0-9]*[\.]?[0-9]+[eE][-+]?[0-9]+	{ yylval.string = strdup(yytext); return REALVAL; };
-\"[^\"]*\"	{ yylval.string = strdup(yytext); return STRING_VAL; };
+\"[^\"]*\"	{ yylval.string = strdup(yytext); return STRINGVAL; };
 [a-zA-z][a-zA-z0-9_]*	{yylval.string=strdup(yytext); return ID;}
-	
-	/* Comments */
-/\*[.]+\*/ ;
+
+
+"\n" {yylineno++;}
+[ \t\r] {};
 
 	/* Anything that doesnt match */
-"."	{return yytext[0];}
+.	{return yytext[0];}
 %%

@@ -64,13 +64,26 @@
 /* Copy the first part of user declarations.  */
 #line 1 "project.y" /* yacc.c:339  */
 
+#define YYDEBUG 1
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "lex.yy.c"
-void yyerror();
+int yyerror();
 int yywrap();
+typedef struct node
+{
+	char *token;
+	int numOfSubNodes;
+	struct node **subNodes;
+}node;
 
-#line 74 "y.tab.c" /* yacc.c:339  */
+node *mknode (char *token,int count,...);
+node *combineNodes(char *token,node *one,node *two);
+void printTree(node *tree, int tab);
+
+#line 87 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -116,13 +129,28 @@ extern int yydebug;
     NULLP = 266,
     VOID = 267,
     DO = 268,
-    OP = 269,
-    BOOLVAL = 270,
-    CHARVAL = 271,
-    INTVAL = 272,
-    REALVAL = 273,
-    STRINGVAL = 274,
-    ID = 275
+    PLUS = 269,
+    MINUS = 270,
+    DIV = 271,
+    MUL = 272,
+    ASS = 273,
+    AND = 274,
+    EQ = 275,
+    G = 276,
+    GE = 277,
+    L = 278,
+    LE = 279,
+    NOT = 280,
+    NOTEQ = 281,
+    OR = 282,
+    ADDRESS = 283,
+    BOOLVAL = 284,
+    CHARVAL = 285,
+    DECIMALINTVAL = 286,
+    HEXINTVAL = 287,
+    REALVAL = 288,
+    STRINGVAL = 289,
+    ID = 290
   };
 #endif
 /* Tokens.  */
@@ -137,26 +165,42 @@ extern int yydebug;
 #define NULLP 266
 #define VOID 267
 #define DO 268
-#define OP 269
-#define BOOLVAL 270
-#define CHARVAL 271
-#define INTVAL 272
-#define REALVAL 273
-#define STRINGVAL 274
-#define ID 275
+#define PLUS 269
+#define MINUS 270
+#define DIV 271
+#define MUL 272
+#define ASS 273
+#define AND 274
+#define EQ 275
+#define G 276
+#define GE 277
+#define L 278
+#define LE 279
+#define NOT 280
+#define NOTEQ 281
+#define OR 282
+#define ADDRESS 283
+#define BOOLVAL 284
+#define CHARVAL 285
+#define DECIMALINTVAL 286
+#define HEXINTVAL 287
+#define REALVAL 288
+#define STRINGVAL 289
+#define ID 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 13 "project.y" /* yacc.c:355  */
+#line 24 "project.y" /* yacc.c:355  */
 
 	char *string;
 	int intVal;
 	char charVal;
+	struct node *node;
 
-#line 160 "y.tab.c" /* yacc.c:355  */
+#line 204 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -173,7 +217,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 177 "y.tab.c" /* yacc.c:358  */
+#line 221 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -413,23 +457,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  6
+#define YYFINAL  7
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   8
+#define YYLAST   7
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  21
+#define YYNTOKENS  38
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  5
+#define YYNRULES  8
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  9
+#define YYNSTATES  14
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   275
+#define YYMAXUTOK   290
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -442,8 +486,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    37,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    36,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -465,14 +509,16 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    21,    21,    22,    24,    26
+       0,    45,    45,    47,    48,    50,    53,    56,    57
 };
 #endif
 
@@ -482,9 +528,11 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "VALTYPE", "IF", "ELSE", "WHILE", "FOR",
-  "VAR", "FUNCTION", "RETURN", "NULLP", "VOID", "DO", "OP", "BOOLVAL",
-  "CHARVAL", "INTVAL", "REALVAL", "STRINGVAL", "ID", "$accept", "program",
-  "cmd", "declaration", YY_NULLPTR
+  "VAR", "FUNCTION", "RETURN", "NULLP", "VOID", "DO", "PLUS", "MINUS",
+  "DIV", "MUL", "ASS", "AND", "EQ", "G", "GE", "L", "LE", "NOT", "NOTEQ",
+  "OR", "ADDRESS", "BOOLVAL", "CHARVAL", "DECIMALINTVAL", "HEXINTVAL",
+  "REALVAL", "STRINGVAL", "ID", "';'", "','", "$accept", "initial",
+  "program", "cmd", "declaration", "names", YY_NULLPTR
 };
 #endif
 
@@ -495,14 +543,15 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     285,   286,   287,   288,   289,   290,    59,    44
 };
 # endif
 
-#define YYPACT_NINF -18
+#define YYPACT_NINF -34
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-18)))
+  (!!((Yystate) == (-34)))
 
 #define YYTABLE_NINF -1
 
@@ -513,7 +562,8 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -7,    -1,     0,   -18,   -18,   -17,   -18,   -18,   -18
+      -8,    -2,     2,    -8,   -34,   -34,   -32,   -34,   -34,   -33,
+     -31,   -32,   -34,   -34
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -521,19 +571,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     2,     4,     0,     1,     3,     5
+       0,     0,     0,     2,     3,     5,     0,     1,     4,     8,
+       0,     0,     6,     7
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -18,   -18,     2,   -18
+     -34,   -34,   -34,     3,   -34,    -4
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4
+      -1,     2,     3,     4,     5,    10
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -541,31 +592,32 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-       6,     1,     5,     8,     7,     0,     0,     0,     1
+       1,     6,     7,     9,    11,    12,     8,    13
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       0,     8,     3,    20,     2,    -1,    -1,    -1,     8
+       8,     3,     0,    35,    37,    36,     3,    11
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     8,    22,    23,    24,     3,     0,    23,    20
+       0,     8,    39,    40,    41,    42,     3,     0,    41,    35,
+      43,    37,    36,    43
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    21,    22,    22,    23,    24
+       0,    38,    39,    40,    40,    41,    42,    43,    43
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     2,     1,     3
+       0,     2,     1,     1,     2,     1,     4,     3,     1
 };
 
 
@@ -1241,14 +1293,50 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 5:
-#line 26 "project.y" /* yacc.c:1646  */
-    {printf("declaration");}
-#line 1248 "y.tab.c" /* yacc.c:1646  */
+        case 2:
+#line 45 "project.y" /* yacc.c:1646  */
+    {printf("ok");printTree((yyvsp[0].node),0);}
+#line 1300 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 3:
+#line 47 "project.y" /* yacc.c:1646  */
+    {(yyval.node) = mknode("CODE",1, (yyvsp[0].node));}
+#line 1306 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 48 "project.y" /* yacc.c:1646  */
+    {(yyval.node) = combineNodes("CODE",(yyvsp[-1].node), (yyvsp[0].node));}
+#line 1312 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 50 "project.y" /* yacc.c:1646  */
+    {(yyval.node) = (yyvsp[0].node);}
+#line 1318 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 6:
+#line 53 "project.y" /* yacc.c:1646  */
+    {(yyval.node) = combineNodes("VAR", mknode("VAR",1,(yyvsp[-2].string)), (yyvsp[-1].node));}
+#line 1324 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 56 "project.y" /* yacc.c:1646  */
+    {(yyval.node) = combineNodes("VAR",mknode((yyvsp[-2].string),0),(yyvsp[0].node));}
+#line 1330 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 57 "project.y" /* yacc.c:1646  */
+    {(yyval.node) = mknode((yyvsp[0].string),0);}
+#line 1336 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1252 "y.tab.c" /* yacc.c:1646  */
+#line 1340 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1476,15 +1564,76 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 28 "project.y" /* yacc.c:1906  */
+#line 60 "project.y" /* yacc.c:1906  */
+
+
+
+
 
 
 void main(){
+	yydebug = 1;
         yyparse();
 }
-void yyerror(){
-        printf("error");
+int yyerror(char *err){
+        fprintf(stderr, "Error: %s at line %d\n",err, yylineno);
+	fprintf(stderr, "does not accept '%s'\n",yytext);
+	return 0;
 }
 int yywrap(){
-	return 0;
+	return 1;
+}
+node *mknode (char *token, int count, ...){
+	va_list nodes;
+	int j;
+	
+	node *newnode=(node*)malloc(sizeof(node));
+	newnode->token = strdup(token);
+	printf("%s", newnode->token);
+	newnode->numOfSubNodes = count;
+	if(count > 0){
+		newnode->subNodes = (node**)malloc(sizeof(node*) * count);
+	
+		va_start(nodes, count);
+		for(j=0; j<count;j++){
+			newnode->subNodes[j] = va_arg(nodes, node *);
+			printf("%s" , newnode->subNodes[j]->token);
+		}
+		va_end(nodes);
+	}
+	else{
+		newnode->subNodes = NULL;
+	}		
+	return newnode; 
+}
+
+
+node *combineNodes(char *token,node *one,node *two){
+	int i,j;
+
+	node *newnode=(node*)malloc(sizeof(node));
+	newnode->token = strdup(token);		
+	newnode->numOfSubNodes = one->numOfSubNodes + two->numOfSubNodes;
+	newnode->subNodes = (node**)malloc(sizeof(node*) * newnode->numOfSubNodes);
+
+	for(j=0; j < one->numOfSubNodes; j++){
+		newnode->subNodes[j] =  one-> subNodes[j];	
+	}
+	for(i=0,j; i<two->numOfSubNodes; i++, j++){
+		newnode->subNodes[j] =  two-> subNodes[i];
+	}
+	
+	return newnode;
+}
+
+void printTree(node *tree, int tab){
+	if (tree == NULL)
+		return;
+	printf("!");
+	printf("%s",tree->token);
+	
+	int i = 0 ;
+	for(i; i< tree->numOfSubNodes; i++){
+		printTree(tree->subNodes[i], tab+1);
+	}
 }
