@@ -33,8 +33,18 @@
 \/ {return DIV}
 \* {return MUL}
 "=" {return ASS}
+
 	/* Relational Operators */
-"&&"|"=="|">"|">="|"<"|"<="|"!"|"!="|"||"||"&"	{yylval.string = strdup(yytext); return OP;}
+"&&"	{yylval.string = strdup(yytext); return AND;}
+"=="	{yylval.string = strdup(yytext); return EQ;}
+">"	{yylval.string = strdup(yytext); return G;}
+">="	{yylval.string = strdup(yytext); return GE;}
+"<"	{yylval.string = strdup(yytext); return L;}
+"<="	{yylval.string = strdup(yytext); return LE;}
+"!"	{yylval.string = strdup(yytext); return NOT;}
+"!="	{yylval.string = strdup(yytext); return NOTEQ;}
+"||"	{yylval.string = strdup(yytext); return OR;}
+"&"	{yylval.string = strdup(yytext); return ADDRESS;}
 	
 	/* Values */
 "true"	{yylval.intVal=1; return BOOLVAL;}
