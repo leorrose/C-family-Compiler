@@ -36,6 +36,7 @@ void printTabs(int a);
 %token BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ID
 
 %type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec
+%type <node> declaration names
 %type <string> VALTYPE ID 
 %start	initial
 
@@ -48,18 +49,19 @@ program:
 	cmd	{$$ = mknode("CODE",1, $1);} 
 	|program cmd    {$$ = combineNodes("CODE",$1, mknode("CODE",1,$2));}
 	;
+/*----------------------------------------functions---------------------------------------------------*/
 cmd:	function
 	|procedure
 	;
 function:
-	FUNCTION VALTYPE ID '(' parameter_list ')' '{' Fbody'}'	{char *string =(char*)malloc((6+strlen($2)) * sizeof(char)); strcat(string,"TYPE "); $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode(strcat(string,$2),0),$8);}
+	FUNCTION VALTYPE ID '(' parameter_list ')' '{' Fbody '}'	{char *string =(char*)malloc((6+strlen($2)) * sizeof(char)); strcat(string,"TYPE "); $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode(strcat(string,$2),0),$8);}
 	;
 procedure:
-	FUNCTION VOID ID '(' parameter_list ')' '{' Pbody'}'	{$$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE VOID",0),$8);}
+	FUNCTION VOID ID '(' parameter_list ')' '{' Pbody '}'	{$$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE VOID",0),$8);}
 	;
 parameter_list:
-	Fdec ';' Fdec ';'	{$$ = combineNodes("ARGS",$1,$3);}
-	|Fdec ';'	{$$ = mknode("ARGS",1,$1);}	
+	Fdec ';' Fdec	{$$ = combineNodes("ARGS",$1,$3);}
+	|Fdec	{$$ = $1;}	
 	|epsilon {$$ = mknode("ARGS",1,mknode("NONE",0));}
 	;
 Fdec:	VALTYPE	param {$2->token = strdup($1); $$ = mknode("ARGS",1, $2);}
@@ -68,10 +70,32 @@ param:
 	ID ',' param	{ $$ = combineNodes("ARGS", mknode($1,0), $3);}
 	|ID	{$$ = mknode("ARGS",1,mknode($1,0));}
 	;
-Pbody:	epsilon {$$ = mknode("PBODY",0);}
+Pbody:	declaration Pbody	{$$ = combineNodes("BODY",mknode("BODY",1,$1),$2);}
+	|declaration	{$$ = mknode("BODY",1,$1);}
+	|function Pbody	{$$ = combineNodes("BODY",mknode("BODY",1,$1),$2);}
+	|function	{$$ = mknode("BODY",1,$1);}
+	|procedure Pbody {$$ = combineNodes("BODY",mknode("BODY",1,$1),$2);}
+	|procedure {$$ = mknode("BODY",1,$1);}
+	|epsilon {$$ = mknode("BODY",1,mknode("NONE",0));}
 	;
-Fbody:	epsilon {$$ = mknode("FBODY",0);}
-	;	
+Fbody:	declaration Fbody       {$$ = combineNodes("BODY",$1,$2);}
+        |declaration    {$$ = mknode("BODY",1,$1);}
+        |function Fbody {$$ = combineNodes("BODY",$1,$2);}
+        |function       {$$ = mknode("BODY",1,$1);}
+        |procedure Fbody {$$ = combineNodes("BODY",$1,$2);}
+        |procedure {$$ = mknode("BODY",1,$1);}
+	|epsilon {$$ = mknode("BODY",1,mknode("NONE",0));}
+	;
+
+/*---------------------------------------body-----------------------------------------------------------*/	
+
+declaration:
+        VAR VALTYPE names ';'   {$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
+        ;
+names:
+        ID ',' names    {$$ = combineNodes("VAR",mknode($1,0),$3);}
+        |ID     {$$ = mknode($1,0);}
+        ;
 epsilon: ;
 %%
 
