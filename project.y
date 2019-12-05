@@ -35,7 +35,7 @@ void printTabs(int a);
 %token AND EQ G GE L LE NOT NOTEQ OR ADDRESS
 %token BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ID
 
-%type <node> program cmd declaration names
+%type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec
 %type <string> VALTYPE ID 
 %start	initial
 
@@ -43,21 +43,36 @@ void printTabs(int a);
 
 %%
 initial:
-	program {printf("ok");printTree($1,0);}
+	program {printTree($1,0);}
 program:
 	cmd	{$$ = mknode("CODE",1, $1);} 
-	|program cmd    {$$ = combineNodes("CODE",$1, $2);}
+	|program cmd    {$$ = combineNodes("CODE",$1, mknode("CODE",1,$2));}
 	;
-cmd:	declaration	{$$ = $1;}
+cmd:	function
+	|procedure
 	;
-declaration:
-	VAR VALTYPE names ';'	{$$ = combineNodes("VAR", mknode("VAR",1,$2), $3);}
+function:
+	FUNCTION VALTYPE ID '(' parameter_list ')' '{' Fbody'}'	{char *string =(char*)malloc((6+strlen($2)) * sizeof(char)); strcat(string,"TYPE "); $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode(strcat(string,$2),0),$8);}
 	;
-names:
-	ID ',' names	{$$ = combineNodes("VAR",mknode($1,0),$3);}
-	|ID	{$$ = mknode($1,0);}
+procedure:
+	FUNCTION VOID ID '(' parameter_list ')' '{' Pbody'}'	{$$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE VOID",0),$8);}
 	;
-
+parameter_list:
+	Fdec ';' Fdec ';'	{$$ = combineNodes("ARGS",$1,$3);}
+	|Fdec ';'	{$$ = mknode("ARGS",1,$1);}	
+	|epsilon {$$ = mknode("ARGS",1,mknode("NONE",0));}
+	;
+Fdec:	VALTYPE	param {$2->token = strdup($1); $$ = mknode("ARGS",1, $2);}
+	;
+param:
+	ID ',' param	{ $$ = combineNodes("ARGS", mknode($1,0), $3);}
+	|ID	{$$ = mknode("ARGS",1,mknode($1,0));}
+	;
+Pbody:	epsilon {$$ = mknode("PBODY",0);}
+	;
+Fbody:	epsilon {$$ = mknode("FBODY",0);}
+	;	
+epsilon: ;
 %%
 
 
@@ -81,7 +96,7 @@ node *mknode(char *token, int count, ...) {
 	int j;
 
 	node *newnode = (node*)malloc(sizeof(node));
-	newnode->token = _strdup(token);
+	newnode->token = strdup(token);
 	newnode->numOfSubNodes = count;
 	if (count > 0) {
 		newnode->subNodes = (node**)malloc(sizeof(node*) * count);
@@ -103,7 +118,7 @@ node *combineNodes(char *token, node *one, node *two) {
 	int i=0, j=0;
 
 	node *newnode = (node*)malloc(sizeof(node));
-	newnode->token = _strdup(token);
+	newnode->token = strdup(token);
 	newnode->numOfSubNodes = one->numOfSubNodes + two->numOfSubNodes;
 	newnode->subNodes = (node**)malloc(sizeof(node*) * newnode->numOfSubNodes);
 
@@ -115,7 +130,7 @@ node *combineNodes(char *token, node *one, node *two) {
 	else {
 		for (j, i = 0; i < one->numOfSubNodes; j++, i++) {
 			newnode->subNodes[j] = one->subNodes[i];
-			free(one);
+//			free(one);
 		}
 	}
 
@@ -127,7 +142,7 @@ node *combineNodes(char *token, node *one, node *two) {
 	else {
 		for (i = 0, j; i < two->numOfSubNodes; i++, j++) {
 			newnode->subNodes[j] = two->subNodes[i];
-			free(two);
+//			free(two);
 		}
 	}
 	return newnode;
@@ -150,7 +165,7 @@ void printTree(node *tree, int tab) {
 		printTabs(tab);
 		printf(")\n");
 	}
-	free(tree);
+//	free(tree);
 }
 
 void printTabs(int a){ 
