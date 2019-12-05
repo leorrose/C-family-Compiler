@@ -17,6 +17,7 @@ typedef struct node
 node *mknode (char *token,int count,...);
 node *combineNodes(char *token,node *one,node *two);
 void printTree(node *tree, int tab);
+void printTabs(int a);
 %}
 
 
@@ -75,57 +76,86 @@ int yyerror(char *err){
 int yywrap(){
 	return 1;
 }
-node *mknode (char *token, int count, ...){
+node *mknode(char *token, int count, ...) {
 	va_list nodes;
 	int j;
-	
-	node *newnode=(node*)malloc(sizeof(node));
-	newnode->token = strdup(token);
-	printf("%s", newnode->token);
+
+	node *newnode = (node*)malloc(sizeof(node));
+	newnode->token = _strdup(token);
 	newnode->numOfSubNodes = count;
-	if(count > 0){
+	if (count > 0) {
 		newnode->subNodes = (node**)malloc(sizeof(node*) * count);
-	
+
 		va_start(nodes, count);
-		for(j=0; j<count;j++){
+		for (j = 0; j < count; j++) {
 			newnode->subNodes[j] = va_arg(nodes, node *);
-			printf("%s" , newnode->subNodes[j]->token);
 		}
 		va_end(nodes);
 	}
-	else{
+	else {
 		newnode->subNodes = NULL;
-	}		
-	return newnode; 
-}
-
-
-node *combineNodes(char *token,node *one,node *two){
-	int i,j;
-
-	node *newnode=(node*)malloc(sizeof(node));
-	newnode->token = strdup(token);		
-	newnode->numOfSubNodes = one->numOfSubNodes + two->numOfSubNodes;
-	newnode->subNodes = (node**)malloc(sizeof(node*) * newnode->numOfSubNodes);
-
-	for(j=0; j < one->numOfSubNodes; j++){
-		newnode->subNodes[j] =  one-> subNodes[j];	
 	}
-	for(i=0,j; i<two->numOfSubNodes; i++, j++){
-		newnode->subNodes[j] =  two-> subNodes[i];
-	}
-	
 	return newnode;
 }
 
-void printTree(node *tree, int tab){
+
+node *combineNodes(char *token, node *one, node *two) {
+	int i=0, j=0;
+
+	node *newnode = (node*)malloc(sizeof(node));
+	newnode->token = _strdup(token);
+	newnode->numOfSubNodes = one->numOfSubNodes + two->numOfSubNodes;
+	newnode->subNodes = (node**)malloc(sizeof(node*) * newnode->numOfSubNodes);
+
+	if (one->numOfSubNodes == 0) {
+		newnode->numOfSubNodes += 1;
+		newnode->subNodes[j] = one;
+		j++;
+	}
+	else {
+		for (j, i = 0; i < one->numOfSubNodes; j++, i++) {
+			newnode->subNodes[j] = one->subNodes[i];
+			free(one);
+		}
+	}
+
+	if (two->numOfSubNodes == 0) {
+		newnode->numOfSubNodes += 1;
+		newnode->subNodes[j] = two;
+		j++;
+	}
+	else {
+		for (i = 0, j; i < two->numOfSubNodes; i++, j++) {
+			newnode->subNodes[j] = two->subNodes[i];
+			free(two);
+		}
+	}
+	return newnode;
+}
+
+void printTree(node *tree, int tab) {
 	if (tree == NULL)
 		return;
-	printf("!");
-	printf("%s",tree->token);
-	
-	int i = 0 ;
-	for(i; i< tree->numOfSubNodes; i++){
-		printTree(tree->subNodes[i], tab+1);
+	printTabs(tab);
+	if (tree->numOfSubNodes != 0) {
+		printf("(");
+	}
+	printf("%s \n", tree->token);
+
+	int i = 0;
+	for (i; i < tree->numOfSubNodes; i++) {
+		printTree(tree->subNodes[i], tab + 1);
+	}
+	if (tree->numOfSubNodes != 0) {
+		printTabs(tab);
+		printf(")\n");
+	}
+	free(tree);
+}
+
+void printTabs(int a){ 
+	int j = 0;
+	for (j; j < a; j++) {
+		printf("\t");
 	}
 }
