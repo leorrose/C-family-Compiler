@@ -386,10 +386,10 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[110] =
     {   0,
-        0,    0,   40,   38,   37,   36,   24,   38,   27,   38,
+        0,    0,   40,   39,   37,   36,   24,   39,   27,   39,
        16,   13,   14,   38,   15,   31,   31,   22,   17,   20,
        35,   35,   35,   35,   35,   35,   35,   35,   35,   35,
-       35,   35,   35,   38,   25,    0,   34,   18,    0,   33,
+       35,   35,   35,   39,   25,    0,   34,   18,    0,   33,
         0,   33,    0,    0,   31,   23,   19,   21,   35,   35,
        35,    6,   35,   35,   35,   35,    3,   35,   35,   35,
        35,   35,   35,   35,   35,   26,   30,    0,   33,   32,
@@ -434,7 +434,7 @@ static yyconst YY_CHAR yy_ec[256] =
 
 static yyconst YY_CHAR yy_meta[41] =
     {   0,
-        1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    2,    1,    1,    1,
         1,    1,    3,    3,    1,    1,    1,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    1
@@ -845,17 +845,17 @@ YY_RULE_SETUP
 #line 15 "project.l"
 {return ELSE;}
 	YY_BREAK
+/* Loops */
 case 5:
 YY_RULE_SETUP
-#line 16 "project.l"
+#line 18 "project.l"
 {return WHILE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 17 "project.l"
+#line 19 "project.l"
 {return DO;}
 	YY_BREAK
-/* Loops */
 case 7:
 YY_RULE_SETUP
 #line 20 "project.l"
@@ -892,27 +892,27 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 32 "project.l"
-{return PLUS;}
+{yylval.string = strdup(yytext); return PLUS;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 33 "project.l"
-{return MINUS;}
+{yylval.string = strdup(yytext); return MINUS;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 34 "project.l"
-{return DIV;}
+{yylval.string = strdup(yytext); return DIV;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 35 "project.l"
-{return MUL;}
+{yylval.string = strdup(yytext); return MUL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 36 "project.l"
-{return ASS;}
+{yylval.string = strdup(yytext); return ASS;}
 	YY_BREAK
 /* Relational Operators */
 case 18:
@@ -977,6 +977,7 @@ YY_RULE_SETUP
 {yylval.string = strdup(yytext); return BOOLVAL;}
 	YY_BREAK
 case 30:
+/* rule 30 can match eol */
 YY_RULE_SETUP
 #line 53 "project.l"
 {yylval.string = strdup(yytext); return CHARVAL;}
@@ -1029,7 +1030,7 @@ YY_RULE_SETUP
 #line 66 "project.l"
 ECHO;
 	YY_BREAK
-#line 1033 "lex.yy.c"
+#line 1034 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

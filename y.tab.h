@@ -78,7 +78,8 @@ extern int yydebug;
     HEXINTVAL = 288,
     REALVAL = 289,
     STRINGVAL = 290,
-    ID = 291
+    ID = 291,
+    UNARY = 292
   };
 #endif
 /* Tokens.  */
@@ -116,6 +117,7 @@ extern int yydebug;
 #define REALVAL 289
 #define STRINGVAL 290
 #define ID 291
+#define UNARY 292
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -127,7 +129,7 @@ union YYSTYPE
 	char *string;
 	struct node *node;
 
-#line 131 "y.tab.h" /* yacc.c:1909  */
+#line 133 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

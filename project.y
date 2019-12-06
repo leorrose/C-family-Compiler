@@ -31,18 +31,29 @@ void printTabs(int a);
 }
 
 
-%token VALTYPE STRING IF ELSE WHILE FOR VAR FUNCTION RETURN NULLP VOID DO
-%token PLUS MINUS DIV MUL ASS
-%token AND EQ G GE L LE NOT NOTEQ OR ADDRESS
-%token BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ID
+%token <string> VALTYPE STRING IF ELSE WHILE FOR VAR FUNCTION RETURN NULLP VOID DO
+%token <string> PLUS MINUS DIV MUL ASS
+%token <string> AND EQ G GE L LE NOT NOTEQ OR ADDRESS
+%token <string> BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ID
+
 
 %type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec all_func_body
-%type <node> declaration dect_param 
-%type <node> primitive_val simple_assign
-%type <string> VALTYPE ID NULLP BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ASS 
+%type <node> declaration delaration_parameters 
+%type <node> primitive_val assign primitive_assign index_assign string_assign 
+%type <node> expression
+%type <string> unary_op
+
 %start	initial
 
 
+%left ASS
+%left AND
+%left OR
+%left EQ NOTEQ
+%left G GE L LE
+%left PLUS MINUS
+%left MUL DIV
+%right ADDRESS UNARY
 
 %%
 /*---------------------------------------start program-----------------------------------------------*/
@@ -85,45 +96,84 @@ Pbody:
 	;
 all_func_body:
 	declaration all_func_body       {$$ = combineNodes("BODY",mknode("BODY",1,$1),$2);}
-        |declaration    {$$ = mknode("BODY",1,$1);}
-        |function all_func_body {$$ = combineNodes("BODY",$1,$2);}
-        |function       {$$ = mknode("BODY",1,$1);}
-        |procedure all_func_body {$$ = combineNodes("BODY",$1,$2);}
-        |procedure {$$ = mknode("BODY",1,$1);}
-	|epsilon {$$ = mknode("BODY",1,mknode("NONE",0));}
+        |declaration			{$$ = mknode("BODY",1,$1);}
+        |function all_func_body		{$$ = combineNodes("BODY",$1,$2);}
+        |function			{$$ = mknode("BODY",1,$1);}
+        |procedure all_func_body	{$$ = combineNodes("BODY",$1,$2);}
+        |procedure			{$$ = mknode("BODY",1,$1);}
+	|assign all_func_body		{$$ = combineNodes("BODY",mknode("BODY",1,$1),$2);}
+	|assign				{$$ = mknode("BODY",1,$1);}
+	|epsilon			{$$ = mknode("BODY",1,mknode("NONE",0));}
 	;
 /*--------------------------------------------Values-------------------------------------------------------------------*/
 
 primitive_val:
 	BOOLVAL		{$$ = mknode($1,0);}
-	|CHARVAL		{$$ = mknode($1,0);}
+	|CHARVAL	{$$ = mknode($1,0);}
 	|DECIMALINTVAL	{$$ = mknode($1,0);}
 	|HEXINTVAL	{$$ = mknode($1,0);}
-	|REALVAL		{$$ = mknode($1,0);}
-	|STRINGVAL	{$$ = mknode($1,0);}
+	|REALVAL	{$$ = mknode($1,0);}
 	|NULLP		{$$ = mknode($1,0);}
-
+	;
 
 /*---------------------------------------Variable Declarations-----------------------------------------------------------*/	
 
 declaration:
-	VAR VALTYPE dect_param ';'	{$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
+	VAR VALTYPE delaration_parameters ';'		{$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
 	;
 
-dect_param:
-	ID ',' dect_param		{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($1,0)), mknode("VAR",1,$3));}
-	|simple_assign ',' dect_param	{ $$ = combineNodes("VAR", mknode("VAR",1,$1),$3);}
-	|ID 				{ $$ = mknode($1,0); }
-	|simple_assign 			{ $$ = mknode("ASS",1,$1); }
+delaration_parameters:
+	ID ',' delaration_parameters			{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($1,0)), $3);}
+	|primitive_assign ',' delaration_parameters	{ $$ = combineNodes("VAR", mknode("ASS",1,$1) ,$3);}
+	|ID						{ $$ = mknode($1,0); }
+	|primitive_assign				{ $$ = mknode("ASS",1,$1); }
+	;
+
+/*-------------------------------------------Statments--------------------------------------------------------------------*/
+assign:
+	primitive_assign ';'			{$$ = $1;}
+	|index_assign ';'			{$$ = $1;}
+	|string_assign ';'			{$$ = $1;}
+	;
+
+primitive_assign:
+        ID ASS expression			{$$ = mknode($2,2, mknode($1,0), $3);}
+        ;
+index_assign:
+	ID '[' expression ']' ASS expression	{ $$ = mknode($5,3,mknode($1,0),$3,$6);}
+	;	
+string_assign:
+	ID ASS STRINGVAL			{$$ = mknode($2,2,mknode($1,0),mknode($3,0));}
+	;
+
+/*-----------------------------------------expresion--------------------------------------------------------------------*/
+
+expression:
+	expression PLUS expression		{ $$ = mknode($2,2,$1,$3);}	
+	|expression MINUS expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression DIV expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression MUL expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression AND expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression OR expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression EQ expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression NOTEQ expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression G expression		{ $$ = mknode($2,2,$1,$3);}	
+	|expression GE expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression L expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression LE expression		{ $$ = mknode($2,2,$1,$3);}
+	|expression NOT expression		{ $$ = mknode($2,2,$1,$3);}
+	|unary_op expression %prec UNARY	{ $$ = mknode($1,1,$2);}
+	|primitive_val				{ $$ = $1;}
+	|ID					{ $$ = mknode($1,0);}
+	;
+unary_op:
+	PLUS	{$$ = $1;}
+	|MINUS	{$$ = $1;}
+	|NOT	{$$ = $1;}
 	;
 epsilon: ;
-	
-/*-------------------------------------------Statments--------------------------------------------------------------------*/
 
-simple_assign: 
-	ID ASS primitive_val	{$$ = mknode("=",2, mknode($1,0), $3);}
-	|ID ASS NULLP	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
-	;
+
 %%
 
 
