@@ -36,7 +36,7 @@ void printTabs(int a);
 %token BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ID
 
 %type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec
-%type <node> declaration names
+%type <node> declaration
 %type <string> VALTYPE ID 
 %start	initial
 
@@ -87,16 +87,30 @@ Fbody:	declaration Fbody       {$$ = combineNodes("BODY",$1,$2);}
 	|epsilon {$$ = mknode("BODY",1,mknode("NONE",0));}
 	;
 
-/*---------------------------------------body-----------------------------------------------------------*/	
+/*---------------------------------------Variable Dexlarations-----------------------------------------------------------*/	
 
 declaration:
-        VAR VALTYPE names ';'   {$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
-        ;
-names:
-        ID ',' names    {$$ = combineNodes("VAR",mknode($1,0),$3);}
-        |ID     {$$ = mknode($1,0);}
-        ;
+        VAR VALTYPE dect_param ';'   {$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}        
+	|	
+	;
+dect_param:
+	param {$$ = $1}
+	|param dect_param {
+	|simple_assign {$$ = $1}
+	|simple_assign dect_param
 epsilon: ;
+
+/*-------------------------------------------Statments--------------------------------------------------------------------*/
+
+simple_assign: 
+	ID '=' BOOLVA	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+	|ID '=' CHARVAL	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}	
+	|ID '=' DECIMALINTVAL	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+	|ID '=' HEXINTVAL	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+	|ID '=' REALVAL	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+	|ID '=' STRINGVAL	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+	|ID '=' NULLP	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+
 %%
 
 
