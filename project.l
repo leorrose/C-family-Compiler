@@ -7,7 +7,8 @@
 
 %%
 	/* Types */
-"bool"|"char"|"int"|"real"|"string"|"int"[\*]|"char"[\*]|"real"[\*]	{yylval.string = strdup(yytext); return VALTYPE;}
+"bool" | "real"	| "int"	| "char" |   | "int"[\*] | "char"[\*] | "real"[\*]	{yylval.string = strdup(yytext); return VALTYPE;}
+"string"									{yylval.string = strdup(yytext); return STRING;}
 	
 	/* Condition */
 "if"	{return IF;}
@@ -47,9 +48,9 @@
 "&"	{yylval.string = strdup(yytext); return ADDRESS;}
 	
 	/* Values */
-"true"	{yylval.intVal=1; return BOOLVAL;}
-"false"	{yylval.intVal=0; return BOOLVAL;}
-'.'	{yylval.charVal =yytext[1]; return CHARVAL;}
+"true"	{yylval.string = strdup(yytext); return BOOLVAL;}
+"false"	{yylval.string = strdup(yytext); return BOOLVAL;}
+'.'	{yylval.string = yytext[1]; return CHARVAL;}
 0|[1-9][0-9]*	{ yylval.string = strdup(yytext); return DECIMALINTVAL; };
 0[xX][A-F0-9]+	{ yylval.string = strdup(yytext); return HEXINTVAL; };
 [0-9]*[\.]?[0-9]+|[0-9]*[\.]?[0-9]+[eE][-+]?[0-9]+	{ yylval.string = strdup(yytext); return REALVAL; };
