@@ -46,85 +46,85 @@ extern int yydebug;
   enum yytokentype
   {
     VALTYPE = 258,
-    IF = 259,
-    ELSE = 260,
-    WHILE = 261,
-    FOR = 262,
-    VAR = 263,
-    FUNCTION = 264,
-    RETURN = 265,
-    NULLP = 266,
-    VOID = 267,
-    DO = 268,
-    PLUS = 269,
-    MINUS = 270,
-    DIV = 271,
-    MUL = 272,
-    ASS = 273,
-    AND = 274,
-    EQ = 275,
-    G = 276,
-    GE = 277,
-    L = 278,
-    LE = 279,
-    NOT = 280,
-    NOTEQ = 281,
-    OR = 282,
-    ADDRESS = 283,
-    BOOLVAL = 284,
-    CHARVAL = 285,
-    DECIMALINTVAL = 286,
-    HEXINTVAL = 287,
-    REALVAL = 288,
-    STRINGVAL = 289,
-    ID = 290
+    STRING = 259,
+    IF = 260,
+    ELSE = 261,
+    WHILE = 262,
+    FOR = 263,
+    VAR = 264,
+    FUNCTION = 265,
+    RETURN = 266,
+    NULLP = 267,
+    VOID = 268,
+    DO = 269,
+    PLUS = 270,
+    MINUS = 271,
+    DIV = 272,
+    MUL = 273,
+    ASS = 274,
+    AND = 275,
+    EQ = 276,
+    G = 277,
+    GE = 278,
+    L = 279,
+    LE = 280,
+    NOT = 281,
+    NOTEQ = 282,
+    OR = 283,
+    ADDRESS = 284,
+    BOOLVAL = 285,
+    CHARVAL = 286,
+    DECIMALINTVAL = 287,
+    HEXINTVAL = 288,
+    REALVAL = 289,
+    STRINGVAL = 290,
+    ID = 291
   };
 #endif
 /* Tokens.  */
 #define VALTYPE 258
-#define IF 259
-#define ELSE 260
-#define WHILE 261
-#define FOR 262
-#define VAR 263
-#define FUNCTION 264
-#define RETURN 265
-#define NULLP 266
-#define VOID 267
-#define DO 268
-#define PLUS 269
-#define MINUS 270
-#define DIV 271
-#define MUL 272
-#define ASS 273
-#define AND 274
-#define EQ 275
-#define G 276
-#define GE 277
-#define L 278
-#define LE 279
-#define NOT 280
-#define NOTEQ 281
-#define OR 282
-#define ADDRESS 283
-#define BOOLVAL 284
-#define CHARVAL 285
-#define DECIMALINTVAL 286
-#define HEXINTVAL 287
-#define REALVAL 288
-#define STRINGVAL 289
-#define ID 290
+#define STRING 259
+#define IF 260
+#define ELSE 261
+#define WHILE 262
+#define FOR 263
+#define VAR 264
+#define FUNCTION 265
+#define RETURN 266
+#define NULLP 267
+#define VOID 268
+#define DO 269
+#define PLUS 270
+#define MINUS 271
+#define DIV 272
+#define MUL 273
+#define ASS 274
+#define AND 275
+#define EQ 276
+#define G 277
+#define GE 278
+#define L 279
+#define LE 280
+#define NOT 281
+#define NOTEQ 282
+#define OR 283
+#define ADDRESS 284
+#define BOOLVAL 285
+#define CHARVAL 286
+#define DECIMALINTVAL 287
+#define HEXINTVAL 288
+#define REALVAL 289
+#define STRINGVAL 290
+#define ID 291
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 25 "project.y" /* yacc.c:1909  */
+#line 28 "project.y" /* yacc.c:1909  */
 
 	char *string;
-	int intVal;
-	char charVal;
 	struct node *node;
 
 #line 131 "y.tab.h" /* yacc.c:1909  */

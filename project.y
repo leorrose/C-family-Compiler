@@ -36,9 +36,10 @@ void printTabs(int a);
 %token AND EQ G GE L LE NOT NOTEQ OR ADDRESS
 %token BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ID
 
-%type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec
-%type <node> declaration
-%type <string> VALTYPE ID 
+%type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec all_func_body
+%type <node> declaration dect_param 
+%type <node> primitive_val simple_assign
+%type <string> VALTYPE ID NULLP BOOLVAL CHARVAL DECIMALINTVAL HEXINTVAL REALVAL STRINGVAL ASS 
 %start	initial
 
 
@@ -83,7 +84,7 @@ Pbody:
 	all_func_body
 	;
 all_func_body:
-	declaration all_func_body       {$$ = combineNodes("BODY",$1,$2);}
+	declaration all_func_body       {$$ = combineNodes("BODY",mknode("BODY",1,$1),$2);}
         |declaration    {$$ = mknode("BODY",1,$1);}
         |function all_func_body {$$ = combineNodes("BODY",$1,$2);}
         |function       {$$ = mknode("BODY",1,$1);}
@@ -91,35 +92,38 @@ all_func_body:
         |procedure {$$ = mknode("BODY",1,$1);}
 	|epsilon {$$ = mknode("BODY",1,mknode("NONE",0));}
 	;
-	
+/*--------------------------------------------Values-------------------------------------------------------------------*/
+
+primitive_val:
+	BOOLVAL		{$$ = mknode($1,0);}
+	|CHARVAL		{$$ = mknode($1,0);}
+	|DECIMALINTVAL	{$$ = mknode($1,0);}
+	|HEXINTVAL	{$$ = mknode($1,0);}
+	|REALVAL		{$$ = mknode($1,0);}
+	|STRINGVAL	{$$ = mknode($1,0);}
+	|NULLP		{$$ = mknode($1,0);}
+
+
 /*---------------------------------------Variable Declarations-----------------------------------------------------------*/	
 
 declaration:
-        VAR VALTYPE dect_param ';'   {$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}        	
+	VAR VALTYPE dect_param ';'	{$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
 	;
 
 dect_param:
-	ID ',' dect_param		{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($1,0)), mknode("VAR",1,$3));
-	|simple_assign ',' dect_param	{ $$ = combineNodes("VAR", mknode("VAR",1,$2), mknode("VAR",1,$3));
+	ID ',' dect_param		{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($1,0)), mknode("VAR",1,$3));}
+	|simple_assign ',' dect_param	{ $$ = combineNodes("VAR", mknode("VAR",1,$1),$3);}
 	|ID 				{ $$ = mknode($1,0); }
-	|simple_assign 			{ $$ = $1; }
+	|simple_assign 			{ $$ = mknode("ASS",1,$1); }
+	;
 epsilon: ;
-
-/*--------------------------------------VALUE TYPES-----------------------------------------------------------------------------*/
-primitive_val: 
-	BOOLVAL		{ $$ = mknode($1,0); }
-	CHARVAL		{ $$ = mknode($1,0); }
-	DECIMALINTVAL 	{ $$ = mknode($1,0); }
-	HEXINTVAL 	{ $$ = mknode($1,0); }
-	REALVAL 	{ $$ = mknode($1,0); }
-	STRINGVAL
-	NULLP					
+	
 /*-------------------------------------------Statments--------------------------------------------------------------------*/
 
 simple_assign: 
-	ID '=' primitive_val:	{$$ = mknode("=",2, mknode($1,0), $3);}
-	|ID '=' NULLP	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
-
+	ID ASS primitive_val	{$$ = mknode("=",2, mknode($1,0), $3);}
+	|ID ASS NULLP	{$$ = mknode("=",2, mknode($1,0), mknode($3,0));}
+	;
 %%
 
 
