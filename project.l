@@ -46,21 +46,23 @@
 "!="							{yylval.string = strdup(yytext); return NOTEQ;}
 "||"							{yylval.string = strdup(yytext); return OR;}
 "&"							{yylval.string = strdup(yytext); return ADDRESS;}
+
 	
 	/* Values */
 "true"							{yylval.string = strdup(yytext); return BOOLVAL;}
 "false"							{yylval.string = strdup(yytext); return BOOLVAL;}
-\'[^\']\'						{yylval.string = strdup(yytext); return CHARVAL;}
 0|[1-9][0-9]*						{ yylval.string = strdup(yytext); return DECIMALINTVAL; };
 0[xX][A-F0-9]+						{ yylval.string = strdup(yytext); return HEXINTVAL; };
 [0-9]*[\.]?[0-9]+|[0-9]*[\.]?[0-9]+[eE][-+]?[0-9]+	{ yylval.string = strdup(yytext); return REALVAL; };
 \"[^\"]*\"						{ yylval.string = strdup(yytext); return STRINGVAL; };
-[a-zA-z][a-zA-z0-9_]*					{yylval.string=strdup(yytext); return ID;}
+[a-zA-Z][a-zA-Z0-9_]*					{yylval.string=strdup(yytext); return ID;}
+'[^\']'							{yylval.string = strdup(yytext); return CHARVAL;}
+
 
 
 "\n"							{yylineno++;}
-[ \t\r]							{};
+[ \t\r]							{;}
 
 	/* Anything that doesnt match */
-[.]							{return yytext[0];}
+.							{return yytext[0];}
 %%

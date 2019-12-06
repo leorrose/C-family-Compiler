@@ -38,7 +38,7 @@ void printTabs(int a);
 
 
 %type <node> program cmd function procedure parameter_list param Pbody Fbody Fdec all_func_body
-%type <node> declaration delaration_parameters 
+%type <node> declaration primitive_declaration declaration_parameters string_declaration string_parameters 
 %type <node> primitive_val assign primitive_assign index_assign string_assign 
 %type <node> expression
 %type <string> unary_op
@@ -119,14 +119,29 @@ primitive_val:
 /*---------------------------------------Variable Declarations-----------------------------------------------------------*/	
 
 declaration:
-	VAR VALTYPE delaration_parameters ';'		{$$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
+	primitive_declaration				{ $$ = $1; }
+	|string_declaration				{ $$ = $1; }	
 	;
 
-delaration_parameters:
-	ID ',' delaration_parameters			{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($1,0)), $3);}
-	|primitive_assign ',' delaration_parameters	{ $$ = combineNodes("VAR", mknode("ASS",1,$1) ,$3);}
+primitive_declaration:
+	VAR VALTYPE declaration_parameters ';'		{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($2,0)), $3);}
+	;
+
+declaration_parameters:
+	ID ',' declaration_parameters			{ $$ = combineNodes("VAR", mknode("VAR",1,mknode($1,0)), $3);}
+	|primitive_assign ',' declaration_parameters	{ $$ = combineNodes("VAR", mknode("ASS",1,$1) ,$3);}
 	|ID						{ $$ = mknode($1,0); }
 	|primitive_assign				{ $$ = mknode("ASS",1,$1); }
+	;
+
+string_declaration:
+	string_parameters ',' string_declaration			{ $$ = combineNodes("STRING", mknode("STRING",1,mknode($1,0)), $3);}
+	|string_parameters						{ $$ = $1;}
+        ;
+
+string_parameters:
+	ID '[' expression ']'						{ $$ = mknode($1,1,mknode($3,0)); }
+	|ID '[' expression ']' ASS STRINGVAL				{ $$ = mknode($5,3,mknode($1,0),$3,mknode($6,0)); }
 	;
 
 /*-------------------------------------------Statments--------------------------------------------------------------------*/
