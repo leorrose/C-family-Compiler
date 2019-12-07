@@ -62,7 +62,7 @@
 
 "\n"							{yylineno++;}
 [ \t\r]							{;}
-
+/\*.*\*/						{;}
 	/* Anything that doesnt match */
 .							{return yytext[0];}
 %%
