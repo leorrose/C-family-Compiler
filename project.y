@@ -30,7 +30,6 @@ void printTabs(int a);
 	struct node *node;
 }
 
-
 %token <string> VALTYPE STRING IF ELSE WHILE FOR VAR FUNCTION RETURN NULLP VOID DO
 %token <string> PLUS MINUS DIV MUL ASS
 %token <string> AND EQ G GE L LE NOT NOTEQ OR ADDRESS
@@ -48,7 +47,10 @@ void printTabs(int a);
 
 %start	initial
 
+%nonassoc LOWER_THEN_ELSE
+%nonassoc ELSE
 
+%right UNARY
 %left ASS
 %left AND
 %left OR
@@ -56,7 +58,7 @@ void printTabs(int a);
 %left G GE L LE
 %left PLUS MINUS
 %left MUL DIV
-%right ADDRESS UNARY
+%right ADDRESS 
 
 %%
 /*---------------------------------------start program-----------------------------------------------*/
@@ -85,7 +87,7 @@ procedure:
 	;
 
 parameter_list:
-	type_list ';' type_list						{ $$ = combineNodes("ARGS",$1,$3); }
+	type_list ';' parameter_list					{ $$ = combineNodes("ARGS",$1,$3); }
 	|type_list							{ $$ = $1;}	
 	|epsilon							{ $$ = mknode("ARGS",1,mknode("NONE",0)); }
 	;
@@ -165,6 +167,7 @@ stmt:	assign ';'				{ $$ = $1; }
 	|loops					{ $$ = $1; }
 	|procedure_func_call ';'		{ $$ = $1; }
 	|return ';'				{ $$ = $1; }
+	|expression				{ $$ = $1; }
 	;
 
 /*---------------------------------------Assignment----------------------------------------------------------------------*/
@@ -196,8 +199,8 @@ code_block:
 /*----------------------------------------Conditions--------------------------------------------------------------------*/
 
 conditions:
-	IF '(' expression ')' stmt			{ $$ = mknode("IF", 2, $3, $5); }
-	|IF '(' expression ')' stmt ELSE stmt		{ $$ = mknode("IF-ELSE", 3, $3, $5, $7); }
+	IF '(' expression ')' stmt %prec LOWER_THEN_ELSE		{ $$ = mknode("IF", 2, $3, $5); }
+	|IF '(' expression ')' stmt ELSE stmt				{ $$ = mknode("IF-ELSE", 3, $3, $5, $7); }
 	;
 
 /*-----------------------------------------loops------------------------------------------------------------------------*/
@@ -225,8 +228,8 @@ return:
 /*-----------------------------------------expresion--------------------------------------------------------------------*/
 
 expression:
-	expression PLUS expression		{ $$ = mknode($2,2,$1,$3); }	
-	|expression MINUS expression		{ $$ = mknode($2,2,$1,$3); }
+	expression PLUS expression               { $$ = mknode($2,2,$1,$3); }
+	|expression MINUS expression               { $$ = mknode($2,2,$1,$3); }
 	|expression DIV expression		{ $$ = mknode($2,2,$1,$3); }
 	|expression MUL expression		{ $$ = mknode($2,2,$1,$3); }
 	|expression AND expression		{ $$ = mknode($2,2,$1,$3); }
@@ -237,12 +240,12 @@ expression:
 	|expression GE expression		{ $$ = mknode($2,2,$1,$3); }
 	|expression L expression		{ $$ = mknode($2,2,$1,$3); }
 	|expression LE expression		{ $$ = mknode($2,2,$1,$3); }
-	|expression NOT expression		{ $$ = mknode($2,2,$1,$3); }
 	|unary_op expression %prec UNARY	{ $$ = mknode($1,1,$2);}
 	|primitive_val				{ $$ = $1; }
 	|ID					{ $$ = mknode($1,0); }
 	|procedure_func_call			{ $$ = $1;}
 	| '|' ID '|'				{ $$ = mknode("STR_LEN",1,mknode($2,0)); }
+	| '(' expression ')'			{ $$ = $2; }
 	;
 unary_op:
 	PLUS	{ $$ = $1; }

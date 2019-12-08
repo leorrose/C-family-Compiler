@@ -10,7 +10,7 @@ function void condition(int x, y, z; real f){
 }
 
 function char ret(){
-	return ‘a’;
+	return 'a';
 }
 
 function void dec(){
@@ -72,11 +72,11 @@ function int foo(int i, j, k)
 function void dec(){
 	var int i = 0;
 	var bool m = true, n = false, x;
-	var char c = ‘a’;
+	var char c = 'a';
 }
 
 function void decstr(){
-	string a[30], b[100] = “moshe”;
+	string a[30], b[100] = "moshe";
 	var char c;
 	var int i;
 	c = 'e';
@@ -145,6 +145,5 @@ function void stmt(){
 	if(true) i = 5;
 	if(true) { j = 3; } else x = x -1;
 	while(false) x = x + 1;
-	for (i=0; i<10; i=i+2){ a = a + i;}
 	do {a = a + i; i= i + 1;} while (i<=10);
 }
