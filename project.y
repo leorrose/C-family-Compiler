@@ -20,6 +20,7 @@ node *mknode (char *token,int count,...);
 node *combineNodes(char *token,node *one,node *two);
 void printTree(node *tree, int tab);
 void printTabs(int a);
+void freeTree(node *tree);
 
 %}
 
@@ -67,7 +68,7 @@ void printTabs(int a);
 /*---------------------------------------start program--------------------------------------------------------------*/
 
 initial:
-	program							{ printTree($1,0); }
+	program							{ printTree($1,0); freeTree($1);}
 	;
 
 program:
@@ -83,14 +84,11 @@ cmd:
 /*----------------------------------------Procedure And Functions---------------------------------------------------*/
 
 function:
-	FUNCTION VALTYPE ID '(' parameter_list ')' '{' body '}'					{ 
-																				char *string =(char*)malloc((6+strlen($2)) * sizeof(char));
-																				strcat(string,"TYPE "); 
-																				$$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode(strcat(string,$2),0),$8); 
-																			}
+	FUNCTION VALTYPE ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode($2,0)),$8); }
 	;
+	
 procedure:
-	FUNCTION VOID ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE VOID",0),$8);}
+	FUNCTION VOID ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode("VOID",0)),$8);}
 	;
 
 parameter_list:
@@ -110,8 +108,8 @@ param:
 
 body:
 	declarations nested_statements				{ $$ = combineNodes("BODY",$1,$2); }
-    |declarations								{ $1->token =strdup("BODY"); $$=$1; }
-	|nested_statements							{ $1->token =strdup("BODY"); $$=$1; }
+    |declarations								{ free($1->token); $1->token=strdup("BODY"); $$=$1; }
+	|nested_statements							{ free($1->token); $1->token =strdup("BODY"); $$=$1; }
 	|epsilon									{ $$ = mknode("BODY",1,mknode("NONE",0)); }
 	;
 
@@ -205,7 +203,7 @@ pointer_assign:
 code_block:
 	'{' declaration nested_statements '}'					{ $$ = mknode("BLOCK",2, $2, $3); }
 	|'{' declaration '}'									{ $$ = mknode("BLOCK",1,$2); }
-	|'{' nested_statements '}'								{ $2-> token = strdup("BLOCK"); $$ = $2; }
+	|'{' nested_statements '}'								{free($2->token); $2-> token = strdup("BLOCK"); $$ = $2; }
 	|'{' epsilon '}'										{ $$ = mknode("BLOCK",1,mknode("NONE",0)); }
 	;
 
@@ -222,7 +220,7 @@ loops:
 	WHILE '(' expression ')' stmt												{ $$ =	mknode("WHILE", 2, $3 , $5); } 
 	|DO code_block WHILE '(' expression ')' ';'									{ $$ =	mknode("DO-WHILE", 2, $5, $2); }
 	|FOR '(' multi_assign ';' expression ';' update ')'	stmt					{ 
-																					$3->token = strdup("INIT");
+																					free($3->token); $3->token = strdup("INIT");
 																					$$ = mknode("FOR",4,$3,mknode("COND",1,$5),$7, $9);
 																				}
 	;
@@ -234,7 +232,7 @@ multi_assign:
 update:
 	ID PLUS PLUS											{ $$ = mknode("UPDATE",1,mknode("=",1, mknode("+", 2, mknode($1,0), mknode("1",0)))); }
 	| ID MINUS MINUS										{ $$ = mknode("UPDATE",1,mknode("=",1, mknode("-", 2, mknode($1,0), mknode("1",0)))); }		
-	| multi_assign											{ $1-> token = strdup("UPDATE"); $$ = $1; }
+	| multi_assign											{ free($1->token); $1-> token = strdup("UPDATE"); $$ = $1; }
 	;
 
 /*-----------------------------------------procedure/function calls-----------------------------------------------------*/
@@ -295,10 +293,11 @@ epsilon: ;
 
 void main(){
 	yydebug = 1;
-        yyparse();
+    yyparse();
 }
 int yyerror(char *err){
-        fprintf(stderr, "Error: %s at line %d\n",err, yylineno);
+	fflush(stdout);
+    fprintf(stderr, "Error: %s at line %d\n",err, yylineno);
 	fprintf(stderr, "does not accept '%s'\n",yytext);
 	return 0;
 }
@@ -335,6 +334,7 @@ node *combineNodes(char *token, node *one, node *two) {
 	newnode->token = strdup(token);
 	newnode->numOfSubNodes = one->numOfSubNodes + two->numOfSubNodes;
 
+	// if one of the nodes is a leaf there is no sons to combine we need to combine itself
 	if(one->numOfSubNodes == 0)
 		newnode->numOfSubNodes += 1;
 	if(two->numOfSubNodes == 0) 
@@ -375,10 +375,10 @@ void printTree(node *tree, int tab) {
 	}
 	printf("%s \n", tree->token);
 
-	int i = 0;
-	for (i; i < tree->numOfSubNodes; i++) {
+	for (int i = 0 ; i < tree->numOfSubNodes; i++) {
 		printTree(tree->subNodes[i], tab + 1);
 	}
+
 	if (tree->numOfSubNodes != 0) {
 		printTabs(tab);
 		printf(")\n");
@@ -386,8 +386,18 @@ void printTree(node *tree, int tab) {
 }
 
 void printTabs(int a){ 
-	int j = 0;
-	for (j; j < a; j++) {
+	for (a; a > 0 ; a--) {
 		printf("\t");
 	}
+}
+
+void freeTree(node *tree){
+	if(!tree)
+		return;
+	for (int i=0 ; i < tree->numOfSubNodes; i++) {
+		freeTree(tree->subNodes[i]);
+	}
+	if(tree->token)
+		free(tree->token);
+	free(tree);
 }
