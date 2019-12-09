@@ -86,7 +86,7 @@ cmd:
 function:
 	FUNCTION VALTYPE ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode($2,0)),$8); }
 	;
-	
+
 procedure:
 	FUNCTION VOID ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode("VOID",0)),$8);}
 	;
@@ -211,7 +211,7 @@ code_block:
 
 conditions:
 	IF '(' expression ')' stmt %prec LOWER_THEN_ELSE		{ $$ = mknode("IF", 2, $3, $5); }
-	|IF '(' expression ')' stmt ELSE stmt					{ $$ = mknode("IF-ELSE", 3, $3, $5, $7); printTree($5,0); }
+	|IF '(' expression ')' stmt ELSE stmt					{ $$ = mknode("IF-ELSE", 3, $3, $5, $7);}
 	;
 
 /*-----------------------------------------loops------------------------------------------------------------------------*/

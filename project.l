@@ -5,6 +5,8 @@
 	#include "y.tab.h"
 %}
 
+%x COMMENT
+
 %%
 	/* Types */
 "bool"|"real"|"int"|"char"|"int"[\*]|"char"[\*]|"real"[\*]		{yylval.string = strdup(yytext); return VALTYPE;}
@@ -62,7 +64,11 @@
 
 "\n"															{yylineno++;}
 [ \t\r]															{;}
-\/\*.*\*\/														{;}
+"/*"															{BEGIN(COMMENT);}
+<COMMENT>"*/"													{BEGIN(INITIAL);}
+<COMMENT>\n													{yylineno++;}
+<COMMENT>.														{;}
+
 	/* Anything that doesnt match */
 .																{return yytext[0];}
 %%

@@ -1,0 +1,171 @@
+function void checkcomments(){
+	/*awadawd
+		adawd
+	*/
+}
+
+
+function void checkpointers(){
+	var char* x;  /* x is a pointer to a character variable */
+	var int x, z;
+	var int* y;
+	
+	x = 5;
+	y = &x; /* We take the address of x and assign it to y. As a result, y points to x, which is 5. */
+	x = 6; /* y still points to x, which is 6 now */
+	y = null; /* y is now the NULL pointer */
+}
+
+
+function int foo(){
+	return 0;
+}
+
+
+function void main(){
+	var int a;
+	a = foo();
+}
+
+
+function int foo(int i, j, k){
+	function bool fee(int l, m, n; real x, y){
+ 		return true;
+ 	}
+ 	return 0;
+}
+
+function void goo(int i, j, k){
+	function bool fee(int l, m, n){
+ 		return true;
+	}
+ 	fee(2,3,4);
+}
+
+function int foo() { 
+	return 0; 
+}
+
+function int foo_2() { 
+	return 0; 
+}
+
+function void f234() { }
+
+function int foo(int i, j, k; bool l, m, n) { 
+	return 0; 
+}
+
+function void fee(int a, b) { }
+
+function int fei(int a, b, c; bool d, e, f; int g, h) { 
+	return 0; 
+}
+
+function int foo(int i, j, k)
+{
+	function int square(int t) /* func declarations */
+	{
+		var int temp;
+		temp = t*t;
+		return 0;
+	}
+	var int total; /* variable declarations */
+	total = 1; /* statements */
+	return total;
+}
+
+function void checkdeclerations(){
+	var int i = 0;
+	var bool m = true, n = false, x;
+	var char c = 'a';
+	string a[30], b[100] = "moshe";
+	var char c;
+	var int i;
+	c = 'e';
+	a[19] = 'f';
+	a[4+2] = 'g';
+	b = a;
+	b[3] = c;
+	a = "test"; /* basically equivalent to a[0] = 't'; a[1] = 'e'; a[2] ='s'; a[3] = 't'; a[4] = '\0'; */
+	i = |b|; /* this assigns 100 to variable i, since the length operator returns the size of the character array */
+}
+
+function void checkassignment(){
+	x = expr; /* lhs is variable identifier */
+	str[expr] = expr; /* lhs is string element */
+}
+
+
+function int foo()
+{
+	var int x;
+	{
+		var int y;
+		x = 1;
+		y = 2;
+		{
+			x = 2;
+		}
+		y = 3;
+	}
+	return 0;
+}
+
+function int foo()
+{
+ 	{
+		{} /* empty code blocks are okay, although not very useful */
+	}
+	return 0;
+}
+
+function int foo() { return 0; }
+function int foo_2() { var int a; a = 2; return a; }
+function int foo_3() { if (true) { return foo(); } return 0; }
+function void foo_4() { var int a; a = 2; }
+
+function void checkexpression(){
+	x = 3 || 2;
+	x = (3 + 2) / 3 - 5 * 2;
+	x = true && false || false;
+	x = 5;
+	x = 3.234;
+	x = true;
+	x = -5;
+	x = !false;
+	x = a == b;
+}
+
+function void checkFuncCall(){
+	a = foo(i, j); /* 'a' has been declared already */
+}
+function void checkStmt(){
+	if(3 > 2){
+		/*...statements...*/
+		i = 5; /* i has been declared above */
+	}
+	/* more examples … */
+	if(true) { j = 3; } else { k = 4; }
+	while(true) { l = 2; k = l + j; }
+	if(true) i = 5;
+	if(true) { j = 3; } else x = x -1;
+	while(false) x = x + 1;
+	for (i=0; i<10; i=i+2){ a = a + i;}
+	do {a = a + i; i= i + 1;} while (i<=10);
+
+
+}
+function void checkPointers(){
+	var int x;
+	var int* y;
+	var char* x;
+	var char z;
+	string y[10];
+	x = 5;
+	y = &x;
+	x = 6;
+	y = "foobar";
+	x = &y[5]; /* x points to 'r' */
+	y = "barfoo"; /* z is still 'f', but x now points to 'o' */
+}
