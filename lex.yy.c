@@ -520,8 +520,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "project.l"
-#line 2 "project.l"
+#line 1 "scanner.l"
+#line 2 "scanner.l"
 	#include <string.h>
 	#include <stdlib.h>
 	#include <stdio.h> 
@@ -746,9 +746,9 @@ YY_DECL
 		}
 
 	{
-#line 10 "project.l"
+#line 10 "scanner.l"
 
-#line 12 "project.l"
+#line 12 "scanner.l"
 	/* Types */
 #line 754 "lex.yy.c"
 
@@ -809,229 +809,229 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 13 "project.l"
+#line 13 "scanner.l"
 {yylval.string = strdup(yytext); return VALTYPE;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 14 "project.l"
+#line 14 "scanner.l"
 {yylval.string = strdup(yytext); return STRING;}
 	YY_BREAK
 /* Condition */
 case 3:
 YY_RULE_SETUP
-#line 17 "project.l"
+#line 17 "scanner.l"
 {return IF;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 18 "project.l"
+#line 18 "scanner.l"
 {return ELSE;}
 	YY_BREAK
 /* Loops */
 case 5:
 YY_RULE_SETUP
-#line 21 "project.l"
+#line 21 "scanner.l"
 {return WHILE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "project.l"
+#line 22 "scanner.l"
 {return DO;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "project.l"
+#line 23 "scanner.l"
 {return FOR;}
 	YY_BREAK
 /* Assignment */
 case 8:
 YY_RULE_SETUP
-#line 26 "project.l"
+#line 26 "scanner.l"
 {return VAR;}
 	YY_BREAK
 /*Function and procedures */
 case 9:
 YY_RULE_SETUP
-#line 29 "project.l"
+#line 29 "scanner.l"
 {return FUNCTION;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 30 "project.l"
+#line 30 "scanner.l"
 {return RETURN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 31 "project.l"
+#line 31 "scanner.l"
 {return NULLP;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 32 "project.l"
+#line 32 "scanner.l"
 {return VOID;}
 	YY_BREAK
 /* Arithmetic Operators */
 case 13:
 YY_RULE_SETUP
-#line 35 "project.l"
+#line 35 "scanner.l"
 {yylval.string = strdup(yytext); return PLUS;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 36 "project.l"
+#line 36 "scanner.l"
 {yylval.string = strdup(yytext); return MINUS;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 37 "project.l"
+#line 37 "scanner.l"
 {yylval.string = strdup(yytext); return DIV;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 38 "project.l"
+#line 38 "scanner.l"
 {yylval.string = strdup(yytext); return MUL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 39 "project.l"
+#line 39 "scanner.l"
 {yylval.string = strdup(yytext); return ASS;}
 	YY_BREAK
 /* Relational Operators */
 case 18:
 YY_RULE_SETUP
-#line 42 "project.l"
+#line 42 "scanner.l"
 {yylval.string = strdup(yytext); return AND;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 43 "project.l"
+#line 43 "scanner.l"
 {yylval.string = strdup(yytext); return EQ;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 44 "project.l"
+#line 44 "scanner.l"
 {yylval.string = strdup(yytext); return G;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 45 "project.l"
+#line 45 "scanner.l"
 {yylval.string = strdup(yytext); return GE;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 46 "project.l"
+#line 46 "scanner.l"
 {yylval.string = strdup(yytext); return L;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 47 "project.l"
+#line 47 "scanner.l"
 {yylval.string = strdup(yytext); return LE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 48 "project.l"
+#line 48 "scanner.l"
 {yylval.string = strdup(yytext); return NOT;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 49 "project.l"
+#line 49 "scanner.l"
 {yylval.string = strdup(yytext); return NOTEQ;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 50 "project.l"
+#line 50 "scanner.l"
 {yylval.string = strdup(yytext); return OR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 51 "project.l"
+#line 51 "scanner.l"
 {yylval.string = strdup(yytext); return ADDRESS;}
 	YY_BREAK
 /* Values */
 case 28:
 YY_RULE_SETUP
-#line 55 "project.l"
+#line 55 "scanner.l"
 {yylval.string = strdup(yytext); return BOOLVAL;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 56 "project.l"
+#line 56 "scanner.l"
 {yylval.string = strdup(yytext); return BOOLVAL;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 57 "project.l"
+#line 57 "scanner.l"
 { yylval.string = strdup(yytext); return DECIMALINTVAL; };
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 58 "project.l"
+#line 58 "scanner.l"
 { yylval.string = strdup(yytext); return HEXINTVAL; };
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 59 "project.l"
+#line 59 "scanner.l"
 { yylval.string = strdup(yytext); return REALVAL; };
 	YY_BREAK
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 60 "project.l"
+#line 60 "scanner.l"
 { yylval.string = strdup(yytext); return STRINGVAL; };
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 61 "project.l"
+#line 61 "scanner.l"
 {yylval.string=strdup(yytext); return ID;}
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 62 "project.l"
+#line 62 "scanner.l"
 {yylval.string = strdup(yytext); return CHARVAL;}
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 66 "project.l"
+#line 66 "scanner.l"
 {yylineno++;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 67 "project.l"
+#line 67 "scanner.l"
 {;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 68 "project.l"
+#line 68 "scanner.l"
 {BEGIN(COMMENT);}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 69 "project.l"
+#line 69 "scanner.l"
 {BEGIN(INITIAL);}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 70 "project.l"
+#line 70 "scanner.l"
 {yylineno++;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 71 "project.l"
+#line 71 "scanner.l"
 {;}
 	YY_BREAK
 /* Anything that doesnt match */
 case 42:
 YY_RULE_SETUP
-#line 74 "project.l"
+#line 74 "scanner.l"
 {return yytext[0];}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 75 "project.l"
+#line 75 "scanner.l"
 ECHO;
 	YY_BREAK
 #line 1038 "lex.yy.c"
@@ -2040,6 +2040,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 75 "project.l"
+#line 75 "scanner.l"
 
 

@@ -1,6 +1,5 @@
 %{
 
-#define YYDEBUG 1
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -41,7 +40,7 @@ void freeTree(node *tree);
 %type <node> function procedure parameter_list type_list param body declarations
 %type <node> primitive_val
 %type <node> declaration primitive_declaration declaration_parameters string_declaration string_parameters 
-%type <node> nested_statements stmt code_block conditions loops multi_assign update procedure_func_call expression_list return
+%type <node> nested_statements stmt code_block declaration_no_function conditions loops multi_assign update procedure_func_call expression_list return
 %type <node> assign primitive_assign index_assign string_assign  pointer_assign
 %type <node> expression
 %type <string> unary_op
@@ -116,9 +115,9 @@ body:
 declarations:
 	declaration declarations					{ $$ = combineNodes("BODY",mknode("BODY",1,$1),$2); }
 	|declaration								{ $$ = mknode("BODY",1,$1); }
-	|function declarations						{ $$ = combineNodes("BODY",$1,$2); }
+	|function declarations						{ $$ = combineNodes("BODY",mknode("BODY",1,$1),$2); }
     |function									{ $$ = mknode("BODY",1,$1); }
-    |procedure declarations						{ $$ = combineNodes("BODY",$1,$2); }
+    |procedure declarations						{ $$ = combineNodes("BODY",mknode("BODY",1,$1),$2); }
     |procedure									{ $$ = mknode("BODY",1,$1); }
 	;
 
@@ -201,10 +200,14 @@ pointer_assign:
 /*----------------------------------------Code Block--------------------------------------------------------------------*/
 
 code_block:
-	'{' declaration nested_statements '}'					{ $$ = mknode("BLOCK",2, $2, $3); }
-	|'{' declaration '}'									{ $$ = mknode("BLOCK",1,$2); }
-	|'{' nested_statements '}'								{free($2->token); $2-> token = strdup("BLOCK"); $$ = $2; }
-	|'{' epsilon '}'										{ $$ = mknode("BLOCK",1,mknode("NONE",0)); }
+	'{' declaration_no_function nested_statements '}'					{ $$ = combineNodes("BLOCK",$2, $3); }
+	|'{' declaration_no_function '}'									{ $$ = $2; }
+	|'{' nested_statements '}'											{free($2->token); $2-> token = strdup("BLOCK"); $$ = $2; }
+	|'{' epsilon '}'													{ $$ = mknode("BLOCK",1,mknode("NONE",0)); }
+	;
+declaration_no_function:
+	declaration declaration_no_function									{ $$ = combineNodes("BLOCK", mknode("BLOCK",1,$1), $2);}
+	|declaration														{ $$ = mknode("BLOCK", 1, $1);}
 	;
 
 /*----------------------------------------Conditions--------------------------------------------------------------------*/
@@ -292,7 +295,6 @@ epsilon: ;
 
 
 void main(){
-	yydebug = 1;
     yyparse();
 }
 int yyerror(char *err){
