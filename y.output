@@ -135,8 +135,9 @@ Grammar
    98 unary_op: PLUS
    99         | MINUS
   100         | NOT
+  101         | MUL
 
-  101 epsilon: %empty
+  102 epsilon: %empty
 
 
 Terminals, with rules where they appear
@@ -167,7 +168,7 @@ DO (269) 66
 PLUS (270) 70 78 98
 MINUS (271) 71 79 99
 DIV (272) 80
-MUL (273) 56 81
+MUL (273) 56 81 101
 ASS (274) 40 53 54 55 56
 AND (275) 82
 EQ (276) 84
@@ -263,9 +264,9 @@ expression (81)
     96 97, on right: 39 40 53 54 56 63 64 65 66 67 74 75 77 78 79 80
     81 82 83 84 85 86 87 88 89 90 95 97
 unary_op (82)
-    on left: 98 99 100, on right: 90
+    on left: 98 99 100 101, on right: 90
 epsilon (83)
-    on left: 101, on right: 10 17 60 76
+    on left: 102, on right: 10 17 60 76
 
 
 State 0
@@ -380,7 +381,7 @@ State 13
 
     VALTYPE  shift, and go to state 15
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
     parameter_list  go to state 16
     type_list       go to state 17
@@ -393,7 +394,7 @@ State 14
 
     VALTYPE  shift, and go to state 15
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
     parameter_list  go to state 19
     type_list       go to state 17
@@ -470,7 +471,7 @@ State 23
 
     VALTYPE  shift, and go to state 15
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
     parameter_list  go to state 27
     type_list       go to state 17
@@ -509,7 +510,7 @@ State 26
     ID        shift, and go to state 38
     '{'       shift, and go to state 39
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
     function               go to state 40
     procedure              go to state 41
@@ -555,7 +556,7 @@ State 28
     ID        shift, and go to state 38
     '{'       shift, and go to state 39
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
     function               go to state 40
     procedure              go to state 41
@@ -631,21 +632,22 @@ State 35
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 82
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 83
+    unary_op             go to state 84
 
 
 State 36
@@ -654,14 +656,14 @@ State 36
 
     '{'  shift, and go to state 39
 
-    code_block  go to state 84
+    code_block  go to state 85
 
 
 State 37
 
    56 pointer_assign: MUL . ID ASS expression
 
-    ID  shift, and go to state 85
+    ID  shift, and go to state 86
 
 
 State 38
@@ -671,9 +673,9 @@ State 38
    55 string_assign: ID . ASS STRINGVAL
    73 procedure_func_call: ID . '(' expression_list ')'
 
-    ASS  shift, and go to state 86
-    '('  shift, and go to state 87
-    '['  shift, and go to state 88
+    ASS  shift, and go to state 87
+    '('  shift, and go to state 88
+    '['  shift, and go to state 89
 
 
 State 39
@@ -694,11 +696,11 @@ State 39
     ID      shift, and go to state 38
     '{'     shift, and go to state 39
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
-    declaration              go to state 89
+    declaration              go to state 90
     primitive_declaration    go to state 45
-    nested_statements        go to state 90
+    nested_statements        go to state 91
     stmt                     go to state 47
     assign                   go to state 48
     primitive_assign         go to state 49
@@ -706,12 +708,12 @@ State 39
     string_assign            go to state 51
     pointer_assign           go to state 52
     code_block               go to state 53
-    declaration_no_function  go to state 91
+    declaration_no_function  go to state 92
     conditions               go to state 54
     loops                    go to state 55
     procedure_func_call      go to state 56
     return                   go to state 57
-    epsilon                  go to state 92
+    epsilon                  go to state 93
 
 
 State 40
@@ -727,7 +729,7 @@ State 40
 
     function               go to state 40
     procedure              go to state 41
-    declarations           go to state 93
+    declarations           go to state 94
     declaration            go to state 44
     primitive_declaration  go to state 45
 
@@ -745,7 +747,7 @@ State 41
 
     function               go to state 40
     procedure              go to state 41
-    declarations           go to state 94
+    declarations           go to state 95
     declaration            go to state 44
     primitive_declaration  go to state 45
 
@@ -754,7 +756,7 @@ State 42
 
     6 function: FUNCTION VALTYPE ID '(' parameter_list ')' '{' body . '}'
 
-    '}'  shift, and go to state 95
+    '}'  shift, and go to state 96
 
 
 State 43
@@ -773,7 +775,7 @@ State 43
 
     $default  reduce using rule 15 (body)
 
-    nested_statements    go to state 96
+    nested_statements    go to state 97
     stmt                 go to state 47
     assign               go to state 48
     primitive_assign     go to state 49
@@ -800,7 +802,7 @@ State 44
 
     function               go to state 40
     procedure              go to state 41
-    declarations           go to state 97
+    declarations           go to state 98
     declaration            go to state 44
     primitive_declaration  go to state 45
 
@@ -835,7 +837,7 @@ State 47
 
     $default  reduce using rule 41 (nested_statements)
 
-    nested_statements    go to state 98
+    nested_statements    go to state 99
     stmt                 go to state 47
     assign               go to state 48
     primitive_assign     go to state 49
@@ -853,7 +855,7 @@ State 48
 
    43 stmt: assign . ';'
 
-    ';'  shift, and go to state 99
+    ';'  shift, and go to state 100
 
 
 State 49
@@ -909,14 +911,14 @@ State 56
 
    47 stmt: procedure_func_call . ';'
 
-    ';'  shift, and go to state 100
+    ';'  shift, and go to state 101
 
 
 State 57
 
    48 stmt: return . ';'
 
-    ';'  shift, and go to state 101
+    ';'  shift, and go to state 102
 
 
 State 58
@@ -930,7 +932,7 @@ State 59
 
     7 procedure: FUNCTION VOID ID '(' parameter_list ')' '{' body . '}'
 
-    '}'  shift, and go to state 102
+    '}'  shift, and go to state 103
 
 
 State 60
@@ -938,14 +940,14 @@ State 60
    39 string_parameters: ID . '[' expression ']'
    40                  | ID . '[' expression ']' ASS STRINGVAL
 
-    '['  shift, and go to state 103
+    '['  shift, and go to state 104
 
 
 State 61
 
    31 declaration: STRING string_declaration . ';'
 
-    ';'  shift, and go to state 104
+    ';'  shift, and go to state 105
 
 
 State 62
@@ -953,7 +955,7 @@ State 62
    37 string_declaration: string_parameters . ',' string_declaration
    38                   | string_parameters .
 
-    ','  shift, and go to state 105
+    ','  shift, and go to state 106
 
     $default  reduce using rule 38 (string_declaration)
 
@@ -966,21 +968,22 @@ State 63
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 106
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 107
+    unary_op             go to state 84
 
 
 State 64
@@ -990,41 +993,42 @@ State 64
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 107
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 108
+    unary_op             go to state 84
 
 
 State 65
 
    67 loops: FOR '(' . multi_assign ';' expression ';' update ')' stmt
 
-    ID  shift, and go to state 108
+    ID  shift, and go to state 109
 
-    primitive_assign  go to state 109
-    multi_assign      go to state 110
+    primitive_assign  go to state 110
+    multi_assign      go to state 111
 
 
 State 66
 
    32 primitive_declaration: VAR VALTYPE . declaration_parameters ';'
 
-    ID  shift, and go to state 111
+    ID  shift, and go to state 112
 
-    declaration_parameters  go to state 112
-    primitive_assign        go to state 113
+    declaration_parameters  go to state 113
+    primitive_assign        go to state 114
 
 
 State 67
@@ -1050,110 +1054,118 @@ State 69
 
 State 70
 
+  101 unary_op: MUL .
+
+    $default  reduce using rule 101 (unary_op)
+
+
+State 71
+
   100 unary_op: NOT .
 
     $default  reduce using rule 100 (unary_op)
 
 
-State 71
+State 72
 
    96 expression: ADDRESS . ID
    97           | ADDRESS . ID '[' expression ']'
 
-    ID  shift, and go to state 114
+    ID  shift, and go to state 115
 
 
-State 72
+State 73
 
    24 primitive_val: BOOLVAL .
 
     $default  reduce using rule 24 (primitive_val)
 
 
-State 73
+State 74
 
    25 primitive_val: CHARVAL .
 
     $default  reduce using rule 25 (primitive_val)
 
 
-State 74
+State 75
 
    26 primitive_val: DECIMALINTVAL .
 
     $default  reduce using rule 26 (primitive_val)
 
 
-State 75
+State 76
 
    27 primitive_val: HEXINTVAL .
 
     $default  reduce using rule 27 (primitive_val)
 
 
-State 76
+State 77
 
    28 primitive_val: REALVAL .
 
     $default  reduce using rule 28 (primitive_val)
 
 
-State 77
+State 78
 
    73 procedure_func_call: ID . '(' expression_list ')'
    92 expression: ID .
 
-    '('  shift, and go to state 87
+    '('  shift, and go to state 88
 
     $default  reduce using rule 92 (expression)
 
 
-State 78
+State 79
 
    95 expression: '(' . expression ')'
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 115
-    unary_op             go to state 83
-
-
-State 79
-
-   94 expression: '|' . ID '|'
-
-    ID  shift, and go to state 116
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 116
+    unary_op             go to state 84
 
 
 State 80
+
+   94 expression: '|' . ID '|'
+
+    ID  shift, and go to state 117
+
+
+State 81
 
    91 expression: primitive_val .
 
     $default  reduce using rule 91 (expression)
 
 
-State 81
+State 82
 
    93 expression: procedure_func_call .
 
     $default  reduce using rule 93 (expression)
 
 
-State 82
+State 83
 
    77 return: RETURN expression .
    78 expression: expression . PLUS expression
@@ -1169,61 +1181,62 @@ State 82
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
 
     $default  reduce using rule 77 (return)
 
 
-State 83
+State 84
 
    90 expression: unary_op . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 129
-    unary_op             go to state 83
-
-
-State 84
-
-   66 loops: DO code_block . WHILE '(' expression ')' ';'
-
-    WHILE  shift, and go to state 130
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 130
+    unary_op             go to state 84
 
 
 State 85
 
-   56 pointer_assign: MUL ID . ASS expression
+   66 loops: DO code_block . WHILE '(' expression ')' ';'
 
-    ASS  shift, and go to state 131
+    WHILE  shift, and go to state 131
 
 
 State 86
+
+   56 pointer_assign: MUL ID . ASS expression
+
+    ASS  shift, and go to state 132
+
+
+State 87
 
    53 primitive_assign: ID ASS . expression
    55 string_assign: ID ASS . STRINGVAL
@@ -1231,77 +1244,80 @@ State 86
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    STRINGVAL      shift, and go to state 132
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    STRINGVAL      shift, and go to state 133
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 133
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 134
+    unary_op             go to state 84
 
 
-State 87
+State 88
 
    73 procedure_func_call: ID '(' . expression_list ')'
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression_list      go to state 134
-    expression           go to state 135
-    unary_op             go to state 83
-    epsilon              go to state 136
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression_list      go to state 135
+    expression           go to state 136
+    unary_op             go to state 84
+    epsilon              go to state 137
 
 
-State 88
+State 89
 
    54 index_assign: ID '[' . expression ']' ASS expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 137
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 138
+    unary_op             go to state 84
 
 
-State 89
+State 90
 
    61 declaration_no_function: declaration . declaration_no_function
    62                        | declaration .
@@ -1311,19 +1327,19 @@ State 89
 
     $default  reduce using rule 62 (declaration_no_function)
 
-    declaration              go to state 89
+    declaration              go to state 90
     primitive_declaration    go to state 45
-    declaration_no_function  go to state 138
-
-
-State 90
-
-   59 code_block: '{' nested_statements . '}'
-
-    '}'  shift, and go to state 139
+    declaration_no_function  go to state 139
 
 
 State 91
+
+   59 code_block: '{' nested_statements . '}'
+
+    '}'  shift, and go to state 140
+
+
+State 92
 
    57 code_block: '{' declaration_no_function . nested_statements '}'
    58           | '{' declaration_no_function . '}'
@@ -1336,9 +1352,9 @@ State 91
     MUL     shift, and go to state 37
     ID      shift, and go to state 38
     '{'     shift, and go to state 39
-    '}'     shift, and go to state 140
+    '}'     shift, and go to state 141
 
-    nested_statements    go to state 141
+    nested_statements    go to state 142
     stmt                 go to state 47
     assign               go to state 48
     primitive_assign     go to state 49
@@ -1352,84 +1368,84 @@ State 91
     return               go to state 57
 
 
-State 92
+State 93
 
    60 code_block: '{' epsilon . '}'
 
-    '}'  shift, and go to state 142
+    '}'  shift, and go to state 143
 
 
-State 93
+State 94
 
    20 declarations: function declarations .
 
     $default  reduce using rule 20 (declarations)
 
 
-State 94
+State 95
 
    22 declarations: procedure declarations .
 
     $default  reduce using rule 22 (declarations)
 
 
-State 95
+State 96
 
     6 function: FUNCTION VALTYPE ID '(' parameter_list ')' '{' body '}' .
 
     $default  reduce using rule 6 (function)
 
 
-State 96
+State 97
 
    14 body: declarations nested_statements .
 
     $default  reduce using rule 14 (body)
 
 
-State 97
+State 98
 
    18 declarations: declaration declarations .
 
     $default  reduce using rule 18 (declarations)
 
 
-State 98
+State 99
 
    42 nested_statements: stmt nested_statements .
 
     $default  reduce using rule 42 (nested_statements)
 
 
-State 99
+State 100
 
    43 stmt: assign ';' .
 
     $default  reduce using rule 43 (stmt)
 
 
-State 100
+State 101
 
    47 stmt: procedure_func_call ';' .
 
     $default  reduce using rule 47 (stmt)
 
 
-State 101
+State 102
 
    48 stmt: return ';' .
 
     $default  reduce using rule 48 (stmt)
 
 
-State 102
+State 103
 
     7 procedure: FUNCTION VOID ID '(' parameter_list ')' '{' body '}' .
 
     $default  reduce using rule 7 (procedure)
 
 
-State 103
+State 104
 
    39 string_parameters: ID '[' . expression ']'
    40                  | ID '[' . expression ']' ASS STRINGVAL
@@ -1437,41 +1453,42 @@ State 103
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 143
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 144
+    unary_op             go to state 84
 
 
-State 104
+State 105
 
    31 declaration: STRING string_declaration ';' .
 
     $default  reduce using rule 31 (declaration)
 
 
-State 105
+State 106
 
    37 string_declaration: string_parameters ',' . string_declaration
 
     ID  shift, and go to state 60
 
-    string_declaration  go to state 144
+    string_declaration  go to state 145
     string_parameters   go to state 62
 
 
-State 106
+State 107
 
    63 conditions: IF '(' expression . ')' stmt
    64           | IF '(' expression . ')' stmt ELSE stmt
@@ -1488,22 +1505,22 @@ State 106
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ')'    shift, and go to state 145
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ')'    shift, and go to state 146
 
 
-State 107
+State 108
 
    65 loops: WHILE '(' expression . ')' stmt
    78 expression: expression . PLUS expression
@@ -1519,85 +1536,85 @@ State 107
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ')'    shift, and go to state 146
-
-
-State 108
-
-   53 primitive_assign: ID . ASS expression
-
-    ASS  shift, and go to state 147
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ')'    shift, and go to state 147
 
 
 State 109
 
-   68 multi_assign: primitive_assign . ',' multi_assign
-   69             | primitive_assign .
+   53 primitive_assign: ID . ASS expression
 
-    ','  shift, and go to state 148
-
-    $default  reduce using rule 69 (multi_assign)
+    ASS  shift, and go to state 148
 
 
 State 110
 
-   67 loops: FOR '(' multi_assign . ';' expression ';' update ')' stmt
+   68 multi_assign: primitive_assign . ',' multi_assign
+   69             | primitive_assign .
 
-    ';'  shift, and go to state 149
+    ','  shift, and go to state 149
+
+    $default  reduce using rule 69 (multi_assign)
 
 
 State 111
+
+   67 loops: FOR '(' multi_assign . ';' expression ';' update ')' stmt
+
+    ';'  shift, and go to state 150
+
+
+State 112
 
    33 declaration_parameters: ID . ',' declaration_parameters
    35                       | ID .
    53 primitive_assign: ID . ASS expression
 
-    ASS  shift, and go to state 147
-    ','  shift, and go to state 150
+    ASS  shift, and go to state 148
+    ','  shift, and go to state 151
 
     $default  reduce using rule 35 (declaration_parameters)
 
 
-State 112
+State 113
 
    32 primitive_declaration: VAR VALTYPE declaration_parameters . ';'
 
-    ';'  shift, and go to state 151
-
-
-State 113
-
-   34 declaration_parameters: primitive_assign . ',' declaration_parameters
-   36                       | primitive_assign .
-
-    ','  shift, and go to state 152
-
-    $default  reduce using rule 36 (declaration_parameters)
+    ';'  shift, and go to state 152
 
 
 State 114
 
+   34 declaration_parameters: primitive_assign . ',' declaration_parameters
+   36                       | primitive_assign .
+
+    ','  shift, and go to state 153
+
+    $default  reduce using rule 36 (declaration_parameters)
+
+
+State 115
+
    96 expression: ADDRESS ID .
    97           | ADDRESS ID . '[' expression ']'
 
-    '['  shift, and go to state 153
+    '['  shift, and go to state 154
 
     $default  reduce using rule 96 (expression)
 
 
-State 115
+State 116
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -1613,317 +1630,329 @@ State 115
    89           | expression . LE expression
    95           | '(' expression . ')'
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ')'    shift, and go to state 154
-
-
-State 116
-
-   94 expression: '|' ID . '|'
-
-    '|'  shift, and go to state 155
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ')'    shift, and go to state 155
 
 
 State 117
+
+   94 expression: '|' ID . '|'
+
+    '|'  shift, and go to state 156
+
+
+State 118
 
    78 expression: expression PLUS . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 156
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 157
+    unary_op             go to state 84
 
 
-State 118
+State 119
 
    79 expression: expression MINUS . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 157
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 158
+    unary_op             go to state 84
 
 
-State 119
+State 120
 
    80 expression: expression DIV . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 158
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 159
+    unary_op             go to state 84
 
 
-State 120
+State 121
 
    81 expression: expression MUL . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 159
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 160
+    unary_op             go to state 84
 
 
-State 121
+State 122
 
    82 expression: expression AND . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 160
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 161
+    unary_op             go to state 84
 
 
-State 122
+State 123
 
    84 expression: expression EQ . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 161
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 162
+    unary_op             go to state 84
 
 
-State 123
+State 124
 
    86 expression: expression G . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 162
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 163
+    unary_op             go to state 84
 
 
-State 124
+State 125
 
    87 expression: expression GE . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 163
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 164
+    unary_op             go to state 84
 
 
-State 125
+State 126
 
    88 expression: expression L . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 164
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 165
+    unary_op             go to state 84
 
 
-State 126
+State 127
 
    89 expression: expression LE . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 165
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 166
+    unary_op             go to state 84
 
 
-State 127
+State 128
 
    85 expression: expression NOTEQ . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 166
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 167
+    unary_op             go to state 84
 
 
-State 128
+State 129
 
    83 expression: expression OR . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 167
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 168
+    unary_op             go to state 84
 
 
-State 129
+State 130
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -1939,61 +1968,62 @@ State 129
    89           | expression . LE expression
    90           | unary_op expression .
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
 
     $default  reduce using rule 90 (expression)
 
 
-State 130
+State 131
 
    66 loops: DO code_block WHILE . '(' expression ')' ';'
 
-    '('  shift, and go to state 168
+    '('  shift, and go to state 169
 
 
-State 131
+State 132
 
    56 pointer_assign: MUL ID ASS . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 169
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 170
+    unary_op             go to state 84
 
 
-State 132
+State 133
 
    55 string_assign: ID ASS STRINGVAL .
 
     $default  reduce using rule 55 (string_assign)
 
 
-State 133
+State 134
 
    53 primitive_assign: ID ASS expression .
    78 expression: expression . PLUS expression
@@ -2009,30 +2039,30 @@ State 133
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
 
     $default  reduce using rule 53 (primitive_assign)
 
 
-State 134
+State 135
 
    73 procedure_func_call: ID '(' expression_list . ')'
 
-    ')'  shift, and go to state 170
+    ')'  shift, and go to state 171
 
 
-State 135
+State 136
 
    74 expression_list: expression . ',' expression_list
    75                | expression .
@@ -2049,31 +2079,31 @@ State 135
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ','    shift, and go to state 171
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ','    shift, and go to state 172
 
     $default  reduce using rule 75 (expression_list)
 
 
-State 136
+State 137
 
    76 expression_list: epsilon .
 
     $default  reduce using rule 76 (expression_list)
 
 
-State 137
+State 138
 
    54 index_assign: ID '[' expression . ']' ASS expression
    78 expression: expression . PLUS expression
@@ -2089,57 +2119,57 @@ State 137
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ']'    shift, and go to state 172
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ']'    shift, and go to state 173
 
 
-State 138
+State 139
 
    61 declaration_no_function: declaration declaration_no_function .
 
     $default  reduce using rule 61 (declaration_no_function)
 
 
-State 139
+State 140
 
    59 code_block: '{' nested_statements '}' .
 
     $default  reduce using rule 59 (code_block)
 
 
-State 140
+State 141
 
    58 code_block: '{' declaration_no_function '}' .
 
     $default  reduce using rule 58 (code_block)
 
 
-State 141
+State 142
 
    57 code_block: '{' declaration_no_function nested_statements . '}'
 
-    '}'  shift, and go to state 173
+    '}'  shift, and go to state 174
 
 
-State 142
+State 143
 
    60 code_block: '{' epsilon '}' .
 
     $default  reduce using rule 60 (code_block)
 
 
-State 143
+State 144
 
    39 string_parameters: ID '[' expression . ']'
    40                  | ID '[' expression . ']' ASS STRINGVAL
@@ -2156,58 +2186,32 @@ State 143
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ']'    shift, and go to state 174
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ']'    shift, and go to state 175
 
 
-State 144
+State 145
 
    37 string_declaration: string_parameters ',' string_declaration .
 
     $default  reduce using rule 37 (string_declaration)
 
 
-State 145
+State 146
 
    63 conditions: IF '(' expression ')' . stmt
    64           | IF '(' expression ')' . stmt ELSE stmt
-
-    IF      shift, and go to state 31
-    WHILE   shift, and go to state 32
-    FOR     shift, and go to state 33
-    RETURN  shift, and go to state 35
-    DO      shift, and go to state 36
-    MUL     shift, and go to state 37
-    ID      shift, and go to state 38
-    '{'     shift, and go to state 39
-
-    stmt                 go to state 175
-    assign               go to state 48
-    primitive_assign     go to state 49
-    index_assign         go to state 50
-    string_assign        go to state 51
-    pointer_assign       go to state 52
-    code_block           go to state 53
-    conditions           go to state 54
-    loops                go to state 55
-    procedure_func_call  go to state 56
-    return               go to state 57
-
-
-State 146
-
-   65 loops: WHILE '(' expression ')' . stmt
 
     IF      shift, and go to state 31
     WHILE   shift, and go to state 32
@@ -2233,128 +2237,157 @@ State 146
 
 State 147
 
+   65 loops: WHILE '(' expression ')' . stmt
+
+    IF      shift, and go to state 31
+    WHILE   shift, and go to state 32
+    FOR     shift, and go to state 33
+    RETURN  shift, and go to state 35
+    DO      shift, and go to state 36
+    MUL     shift, and go to state 37
+    ID      shift, and go to state 38
+    '{'     shift, and go to state 39
+
+    stmt                 go to state 177
+    assign               go to state 48
+    primitive_assign     go to state 49
+    index_assign         go to state 50
+    string_assign        go to state 51
+    pointer_assign       go to state 52
+    code_block           go to state 53
+    conditions           go to state 54
+    loops                go to state 55
+    procedure_func_call  go to state 56
+    return               go to state 57
+
+
+State 148
+
    53 primitive_assign: ID ASS . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 133
-    unary_op             go to state 83
-
-
-State 148
-
-   68 multi_assign: primitive_assign ',' . multi_assign
-
-    ID  shift, and go to state 108
-
-    primitive_assign  go to state 109
-    multi_assign      go to state 177
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 134
+    unary_op             go to state 84
 
 
 State 149
+
+   68 multi_assign: primitive_assign ',' . multi_assign
+
+    ID  shift, and go to state 109
+
+    primitive_assign  go to state 110
+    multi_assign      go to state 178
+
+
+State 150
 
    67 loops: FOR '(' multi_assign ';' . expression ';' update ')' stmt
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 178
-    unary_op             go to state 83
-
-
-State 150
-
-   33 declaration_parameters: ID ',' . declaration_parameters
-
-    ID  shift, and go to state 111
-
-    declaration_parameters  go to state 179
-    primitive_assign        go to state 113
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 179
+    unary_op             go to state 84
 
 
 State 151
+
+   33 declaration_parameters: ID ',' . declaration_parameters
+
+    ID  shift, and go to state 112
+
+    declaration_parameters  go to state 180
+    primitive_assign        go to state 114
+
+
+State 152
 
    32 primitive_declaration: VAR VALTYPE declaration_parameters ';' .
 
     $default  reduce using rule 32 (primitive_declaration)
 
 
-State 152
+State 153
 
    34 declaration_parameters: primitive_assign ',' . declaration_parameters
 
-    ID  shift, and go to state 111
+    ID  shift, and go to state 112
 
-    declaration_parameters  go to state 180
-    primitive_assign        go to state 113
+    declaration_parameters  go to state 181
+    primitive_assign        go to state 114
 
 
-State 153
+State 154
 
    97 expression: ADDRESS ID '[' . expression ']'
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 181
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 182
+    unary_op             go to state 84
 
 
-State 154
+State 155
 
    95 expression: '(' expression ')' .
 
     $default  reduce using rule 95 (expression)
 
 
-State 155
+State 156
 
    94 expression: '|' ID '|' .
 
     $default  reduce using rule 94 (expression)
 
 
-State 156
+State 157
 
    78 expression: expression . PLUS expression
    78           | expression PLUS expression .
@@ -2370,13 +2403,13 @@ State 156
    88           | expression . L expression
    89           | expression . LE expression
 
-    DIV  shift, and go to state 119
-    MUL  shift, and go to state 120
+    DIV  shift, and go to state 120
+    MUL  shift, and go to state 121
 
     $default  reduce using rule 78 (expression)
 
 
-State 157
+State 158
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2392,13 +2425,13 @@ State 157
    88           | expression . L expression
    89           | expression . LE expression
 
-    DIV  shift, and go to state 119
-    MUL  shift, and go to state 120
+    DIV  shift, and go to state 120
+    MUL  shift, and go to state 121
 
     $default  reduce using rule 79 (expression)
 
 
-State 158
+State 159
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2417,7 +2450,7 @@ State 158
     $default  reduce using rule 80 (expression)
 
 
-State 159
+State 160
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2436,7 +2469,7 @@ State 159
     $default  reduce using rule 81 (expression)
 
 
-State 160
+State 161
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2452,22 +2485,22 @@ State 160
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
 
     $default  reduce using rule 82 (expression)
 
 
-State 161
+State 162
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2483,19 +2516,19 @@ State 161
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
 
     $default  reduce using rule 84 (expression)
 
 
-State 162
+State 163
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2511,15 +2544,15 @@ State 162
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
 
     $default  reduce using rule 86 (expression)
 
 
-State 163
+State 164
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2535,36 +2568,12 @@ State 163
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
 
     $default  reduce using rule 87 (expression)
-
-
-State 164
-
-   78 expression: expression . PLUS expression
-   79           | expression . MINUS expression
-   80           | expression . DIV expression
-   81           | expression . MUL expression
-   82           | expression . AND expression
-   83           | expression . OR expression
-   84           | expression . EQ expression
-   85           | expression . NOTEQ expression
-   86           | expression . G expression
-   87           | expression . GE expression
-   88           | expression . L expression
-   88           | expression L expression .
-   89           | expression . LE expression
-
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-
-    $default  reduce using rule 88 (expression)
 
 
 State 165
@@ -2580,18 +2589,42 @@ State 165
    86           | expression . G expression
    87           | expression . GE expression
    88           | expression . L expression
+   88           | expression L expression .
+   89           | expression . LE expression
+
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+
+    $default  reduce using rule 88 (expression)
+
+
+State 166
+
+   78 expression: expression . PLUS expression
+   79           | expression . MINUS expression
+   80           | expression . DIV expression
+   81           | expression . MUL expression
+   82           | expression . AND expression
+   83           | expression . OR expression
+   84           | expression . EQ expression
+   85           | expression . NOTEQ expression
+   86           | expression . G expression
+   87           | expression . GE expression
+   88           | expression . L expression
    89           | expression . LE expression
    89           | expression LE expression .
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
 
     $default  reduce using rule 89 (expression)
 
 
-State 166
+State 167
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2607,19 +2640,19 @@ State 166
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
 
     $default  reduce using rule 85 (expression)
 
 
-State 167
+State 168
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2635,45 +2668,46 @@ State 167
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
 
     $default  reduce using rule 83 (expression)
 
 
-State 168
+State 169
 
    66 loops: DO code_block WHILE '(' . expression ')' ';'
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 182
-    unary_op             go to state 83
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 183
+    unary_op             go to state 84
 
 
-State 169
+State 170
 
    56 pointer_assign: MUL ID ASS expression .
    78 expression: expression . PLUS expression
@@ -2689,106 +2723,107 @@ State 169
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
 
     $default  reduce using rule 56 (pointer_assign)
 
 
-State 170
+State 171
 
    73 procedure_func_call: ID '(' expression_list ')' .
 
     $default  reduce using rule 73 (procedure_func_call)
 
 
-State 171
+State 172
 
    74 expression_list: expression ',' . expression_list
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    $default  reduce using rule 101 (epsilon)
+    $default  reduce using rule 102 (epsilon)
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression_list      go to state 183
-    expression           go to state 135
-    unary_op             go to state 83
-    epsilon              go to state 136
-
-
-State 172
-
-   54 index_assign: ID '[' expression ']' . ASS expression
-
-    ASS  shift, and go to state 184
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression_list      go to state 184
+    expression           go to state 136
+    unary_op             go to state 84
+    epsilon              go to state 137
 
 
 State 173
+
+   54 index_assign: ID '[' expression ']' . ASS expression
+
+    ASS  shift, and go to state 185
+
+
+State 174
 
    57 code_block: '{' declaration_no_function nested_statements '}' .
 
     $default  reduce using rule 57 (code_block)
 
 
-State 174
+State 175
 
    39 string_parameters: ID '[' expression ']' .
    40                  | ID '[' expression ']' . ASS STRINGVAL
 
-    ASS  shift, and go to state 185
+    ASS  shift, and go to state 186
 
     $default  reduce using rule 39 (string_parameters)
 
 
-State 175
+State 176
 
    63 conditions: IF '(' expression ')' stmt .
    64           | IF '(' expression ')' stmt . ELSE stmt
 
-    ELSE  shift, and go to state 186
+    ELSE  shift, and go to state 187
 
     $default  reduce using rule 63 (conditions)
 
 
-State 176
+State 177
 
    65 loops: WHILE '(' expression ')' stmt .
 
     $default  reduce using rule 65 (loops)
 
 
-State 177
+State 178
 
    68 multi_assign: primitive_assign ',' multi_assign .
 
     $default  reduce using rule 68 (multi_assign)
 
 
-State 178
+State 179
 
    67 loops: FOR '(' multi_assign ';' expression . ';' update ')' stmt
    78 expression: expression . PLUS expression
@@ -2804,36 +2839,36 @@ State 178
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ';'    shift, and go to state 187
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ';'    shift, and go to state 188
 
 
-State 179
+State 180
 
    33 declaration_parameters: ID ',' declaration_parameters .
 
     $default  reduce using rule 33 (declaration_parameters)
 
 
-State 180
+State 181
 
    34 declaration_parameters: primitive_assign ',' declaration_parameters .
 
     $default  reduce using rule 34 (declaration_parameters)
 
 
-State 181
+State 182
 
    78 expression: expression . PLUS expression
    79           | expression . MINUS expression
@@ -2849,22 +2884,22 @@ State 181
    89           | expression . LE expression
    97           | ADDRESS ID '[' expression . ']'
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ']'    shift, and go to state 188
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ']'    shift, and go to state 189
 
 
-State 182
+State 183
 
    66 loops: DO code_block WHILE '(' expression . ')' ';'
    78 expression: expression . PLUS expression
@@ -2880,60 +2915,61 @@ State 182
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
-    ')'    shift, and go to state 189
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
+    ')'    shift, and go to state 190
 
 
-State 183
+State 184
 
    74 expression_list: expression ',' expression_list .
 
     $default  reduce using rule 74 (expression_list)
 
 
-State 184
+State 185
 
    54 index_assign: ID '[' expression ']' ASS . expression
 
     NULLP          shift, and go to state 67
     PLUS           shift, and go to state 68
     MINUS          shift, and go to state 69
-    NOT            shift, and go to state 70
-    ADDRESS        shift, and go to state 71
-    BOOLVAL        shift, and go to state 72
-    CHARVAL        shift, and go to state 73
-    DECIMALINTVAL  shift, and go to state 74
-    HEXINTVAL      shift, and go to state 75
-    REALVAL        shift, and go to state 76
-    ID             shift, and go to state 77
-    '('            shift, and go to state 78
-    '|'            shift, and go to state 79
+    MUL            shift, and go to state 70
+    NOT            shift, and go to state 71
+    ADDRESS        shift, and go to state 72
+    BOOLVAL        shift, and go to state 73
+    CHARVAL        shift, and go to state 74
+    DECIMALINTVAL  shift, and go to state 75
+    HEXINTVAL      shift, and go to state 76
+    REALVAL        shift, and go to state 77
+    ID             shift, and go to state 78
+    '('            shift, and go to state 79
+    '|'            shift, and go to state 80
 
-    primitive_val        go to state 80
-    procedure_func_call  go to state 81
-    expression           go to state 190
-    unary_op             go to state 83
-
-
-State 185
-
-   40 string_parameters: ID '[' expression ']' ASS . STRINGVAL
-
-    STRINGVAL  shift, and go to state 191
+    primitive_val        go to state 81
+    procedure_func_call  go to state 82
+    expression           go to state 191
+    unary_op             go to state 84
 
 
 State 186
+
+   40 string_parameters: ID '[' expression ']' ASS . STRINGVAL
+
+    STRINGVAL  shift, and go to state 192
+
+
+State 187
 
    64 conditions: IF '(' expression ')' stmt ELSE . stmt
 
@@ -2946,7 +2982,7 @@ State 186
     ID      shift, and go to state 38
     '{'     shift, and go to state 39
 
-    stmt                 go to state 192
+    stmt                 go to state 193
     assign               go to state 48
     primitive_assign     go to state 49
     index_assign         go to state 50
@@ -2959,32 +2995,32 @@ State 186
     return               go to state 57
 
 
-State 187
+State 188
 
    67 loops: FOR '(' multi_assign ';' expression ';' . update ')' stmt
 
-    ID  shift, and go to state 193
+    ID  shift, and go to state 194
 
-    primitive_assign  go to state 109
-    multi_assign      go to state 194
-    update            go to state 195
+    primitive_assign  go to state 110
+    multi_assign      go to state 195
+    update            go to state 196
 
 
-State 188
+State 189
 
    97 expression: ADDRESS ID '[' expression ']' .
 
     $default  reduce using rule 97 (expression)
 
 
-State 189
+State 190
 
    66 loops: DO code_block WHILE '(' expression ')' . ';'
 
-    ';'  shift, and go to state 196
+    ';'  shift, and go to state 197
 
 
-State 190
+State 191
 
    54 index_assign: ID '[' expression ']' ASS expression .
    78 expression: expression . PLUS expression
@@ -3000,83 +3036,83 @@ State 190
    88           | expression . L expression
    89           | expression . LE expression
 
-    PLUS   shift, and go to state 117
-    MINUS  shift, and go to state 118
-    DIV    shift, and go to state 119
-    MUL    shift, and go to state 120
-    AND    shift, and go to state 121
-    EQ     shift, and go to state 122
-    G      shift, and go to state 123
-    GE     shift, and go to state 124
-    L      shift, and go to state 125
-    LE     shift, and go to state 126
-    NOTEQ  shift, and go to state 127
-    OR     shift, and go to state 128
+    PLUS   shift, and go to state 118
+    MINUS  shift, and go to state 119
+    DIV    shift, and go to state 120
+    MUL    shift, and go to state 121
+    AND    shift, and go to state 122
+    EQ     shift, and go to state 123
+    G      shift, and go to state 124
+    GE     shift, and go to state 125
+    L      shift, and go to state 126
+    LE     shift, and go to state 127
+    NOTEQ  shift, and go to state 128
+    OR     shift, and go to state 129
 
     $default  reduce using rule 54 (index_assign)
 
 
-State 191
+State 192
 
    40 string_parameters: ID '[' expression ']' ASS STRINGVAL .
 
     $default  reduce using rule 40 (string_parameters)
 
 
-State 192
+State 193
 
    64 conditions: IF '(' expression ')' stmt ELSE stmt .
 
     $default  reduce using rule 64 (conditions)
 
 
-State 193
+State 194
 
    53 primitive_assign: ID . ASS expression
    70 update: ID . PLUS PLUS
    71       | ID . MINUS MINUS
 
-    PLUS   shift, and go to state 197
-    MINUS  shift, and go to state 198
-    ASS    shift, and go to state 147
+    PLUS   shift, and go to state 198
+    MINUS  shift, and go to state 199
+    ASS    shift, and go to state 148
 
 
-State 194
+State 195
 
    72 update: multi_assign .
 
     $default  reduce using rule 72 (update)
 
 
-State 195
+State 196
 
    67 loops: FOR '(' multi_assign ';' expression ';' update . ')' stmt
 
-    ')'  shift, and go to state 199
+    ')'  shift, and go to state 200
 
 
-State 196
+State 197
 
    66 loops: DO code_block WHILE '(' expression ')' ';' .
 
     $default  reduce using rule 66 (loops)
 
 
-State 197
+State 198
 
    70 update: ID PLUS . PLUS
 
-    PLUS  shift, and go to state 200
-
-
-State 198
-
-   71 update: ID MINUS . MINUS
-
-    MINUS  shift, and go to state 201
+    PLUS  shift, and go to state 201
 
 
 State 199
+
+   71 update: ID MINUS . MINUS
+
+    MINUS  shift, and go to state 202
+
+
+State 200
 
    67 loops: FOR '(' multi_assign ';' expression ';' update ')' . stmt
 
@@ -3089,7 +3125,7 @@ State 199
     ID      shift, and go to state 38
     '{'     shift, and go to state 39
 
-    stmt                 go to state 202
+    stmt                 go to state 203
     assign               go to state 48
     primitive_assign     go to state 49
     index_assign         go to state 50
@@ -3102,21 +3138,21 @@ State 199
     return               go to state 57
 
 
-State 200
+State 201
 
    70 update: ID PLUS PLUS .
 
     $default  reduce using rule 70 (update)
 
 
-State 201
+State 202
 
    71 update: ID MINUS MINUS .
 
     $default  reduce using rule 71 (update)
 
 
-State 202
+State 203
 
    67 loops: FOR '(' multi_assign ';' expression ';' update ')' stmt .
 

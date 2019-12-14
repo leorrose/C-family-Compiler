@@ -284,6 +284,7 @@ unary_op:
 	PLUS													{ $$ = $1; }
 	|MINUS													{ $$ = $1; }
 	|NOT													{ $$ = $1; }
+	|MUL													{ $$ = "POINTER";}
 	;
 
 epsilon: ;
