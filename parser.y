@@ -151,13 +151,13 @@ declaration_parameters:
 	;
 
 string_declaration:
-	string_parameters ',' string_declaration				{ $$ = combineNodes("STRING", mknode("STRING",1,$1), mknode("STRING",1,$3)); }
+	string_parameters ',' string_declaration				{ $$ = combineNodes("STRING", $1, $3);}
 	|string_parameters										{ $$ = $1;}
     ;
 
 string_parameters:
-	ID '[' expression ']'									{ $$ = mknode($1,1,$3); }
-	|ID '[' expression ']' ASS STRINGVAL					{ $$ = mknode($5,3,mknode($1,0),$3,mknode($6,0)); }
+	ID '[' expression ']'									{ $$ = mknode("STRING",1,mknode($1,1,$3)); }
+	|ID '[' expression ']' ASS STRINGVAL					{ $$ = mknode("STRING",1,mknode($5,3,mknode($1,0),$3,mknode($6,0))); }
 	;
 
 /*-------------------------------------------Statments--------------------------------------------------------------------*/
@@ -278,6 +278,7 @@ expression:
 	| '(' expression ')'									{ $$ = $2; }
 	| ADDRESS ID											{ $$ = mknode("ADDRESS-OF",1,mknode($2,0)); }
 	| ADDRESS ID '[' expression ']'							{ $$ = mknode("ADDRESS-OF",2,mknode($2,0),$4);}
+	| ID '[' expression ']'									{ $$ = mknode($1,1,$3); }
 	;
 
 unary_op:
