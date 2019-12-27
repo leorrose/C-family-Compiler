@@ -36,9 +36,11 @@ typedef struct table {
 
 
 typedef enum bool{ false,true } bool;
+int numOfmains = 0;
 node *mknode(char *token, int count, ...);
 int yywrap();
 int yyerror(char *err);
+node *mknode(char *token, int count, ...);
 node *combineNodes(char *token, node *one, node *two);
 void printTree(node *tree, int tab);
 void printTabs(int a);
@@ -48,7 +50,7 @@ int numOfArgs(node *node);
 int* argumentRep(node *node);
 int getTypeVal(char *string);
 var *mkvar(char *name, int type);
-table *mktable(table *upperEnv);
+table *mktable(table *upperEnv, int returnType);
 void insertVar(table *stable, node *tree, node* fullTree);
 void insertString(table *stable, node *tree, node* fullTree);
 void insertArgs(table *stable, node *tree, node* fullTree);
@@ -60,14 +62,15 @@ bool checkDupVar(table *table, char *name);
 void startSemantics(node *node);
 void printTable(table *table);
 bool checkFuncExist(table *env, char *name);
-void evalExp(node *tree, table* stable);
+int evalExp(node *subTree, table* stable, node *tree);
 void quitProgram(node *tree);
 int* getFuncArgsTypes(char* name, table *env);
 bool checkVarExist(table *env, char *id);
 bool funcCallCheck(node* tree, table *env);
 int getFuncNumOfArgs(char* name, table *env);
 int getVarType(table *env, char *id);
-
+bool checkReturnVal(node *subTree, table *env, node* tree);
+int getFuncType(table *env, char *name);
 %}
 
 
@@ -114,7 +117,7 @@ int getVarType(table *env, char *id);
 /*---------------------------------------start program--------------------------------------------------------------*/
 
 initial:
-	program							{ startSemantics($1); printTree($1,0); freeTree($1);}
+	program							{  startSemantics($1); printTree($1,0); freeTree($1);}
 	;
 
 program:
@@ -204,7 +207,7 @@ string_declaration:
 
 string_parameters:
 	ID '[' expression ']'									{ $$ = mknode("STRING",1,mknode($1,1,$3)); }
-	|ID '[' expression ']' ASS STRINGVAL					{ $$ = mknode("STRING",1,mknode($5,3,mknode($1,0),$3,mknode($6,0))); }
+	|ID '[' expression ']' ASS STRINGVAL					{ $$ = mknode("STRING",1,mknode($5,2,mknode($1,1,$3),mknode($6,0))); }
 	;
 
 /*-------------------------------------------Statments--------------------------------------------------------------------*/
@@ -236,7 +239,7 @@ primitive_assign:
     ID ASS expression										{ $$ = mknode($2,2, mknode($1,0), $3); }
     ;
 index_assign:
-	ID '[' expression ']' ASS expression					{ $$ = mknode($5,3,mknode($1,0),$3,$6); }
+	ID '[' expression ']' ASS expression					{ $$ = mknode($5,2,mknode($1,1,$3),$6); }
 	;	
 string_assign:
 	ID ASS STRINGVAL										{ $$ = mknode($2,2,mknode($1,0),mknode($3,0)); }
@@ -280,8 +283,8 @@ multi_assign:
 	|primitive_assign										{ $$ = mknode("ass",1,$1); }
 	;
 update:
-	ID PLUS PLUS											{ $$ = mknode("UPDATE",1,mknode("=",1, mknode("+", 2, mknode($1,0), mknode("1",0)))); }
-	| ID MINUS MINUS										{ $$ = mknode("UPDATE",1,mknode("=",1, mknode("-", 2, mknode($1,0), mknode("1",0)))); }		
+	ID PLUS PLUS											{ $$ = mknode("UPDATE",1,mknode("=",2, mknode($1,0), mknode("+", 2, mknode($1,0), mknode("int",1, mknode("1",0))))); }
+	| ID MINUS MINUS										{ $$ = mknode("UPDATE",1,mknode("=",2, mknode($1,0), mknode("-", 2, mknode($1,0), mknode("int",1,mknode("1",0))))); }		
 	| multi_assign											{ free($1->token); $1-> token = strdup("UPDATE"); $$ = $1; }
 	;
 
@@ -321,10 +324,10 @@ expression:
 	|primitive_val											{ $$ = $1; }
 	|ID														{ $$ = mknode($1,0); }
 	|procedure_func_call									{ $$ = $1;}
-	| '|' ID '|'											{ $$ = mknode("STR_LEN",1,mknode($2,0)); }
+	| '|' ID '|'											{ $$ = mknode("STR-LEN",1,mknode($2,0)); }
 	| '(' expression ')'									{ $$ = $2; }
 	| ADDRESS ID											{ $$ = mknode("ADDRESS-OF",1,mknode($2,0)); }
-	| ADDRESS ID '[' expression ']'							{ $$ = mknode("ADDRESS-OF",2,mknode($2,0),$4);}
+	| ADDRESS ID '[' expression ']'							{ $$ = mknode("ADDRESS-OF",1,mknode($2,1,$4));}
 	| ID '[' expression ']'									{ $$ = mknode($1,1,$3); }
 	;
 
@@ -503,6 +506,8 @@ int getTypeVal(char *string) {
 		return 6;
 	else if (strcmp(string, "STRING") == 0)
 		return 7;
+	else if (strcmp(string, "null") == 0)
+		return 8;
 }
 /*--------------------------------------------------------------create variable representation----------------------------------------------*/
 var *mkvar(char *name, int type) {
@@ -539,10 +544,10 @@ void insertString(table *stable, node *tree, node* fullTree) {
 	for (int i = 0; i < tree->numOfSubNodes; i++) {
 
 		if (strcmp("=", tree->subNodes[i]->token) == 0) {
-			if (checkDupVar(stable, tree->subNodes[i]->token))
-				addVar(stable, mkvar(tree->subNodes[i]->token, type));
+			if (checkDupVar(stable, tree->subNodes[i]->subNodes[0]->token))
+				addVar(stable, mkvar(tree->subNodes[i]->subNodes[0]->token, type));
 			else {
-				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->token);
+				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->subNodes[0]->token);
 				quitProgram(fullTree);
 			}
 		}
@@ -574,12 +579,12 @@ void insertArgs(table *stable, node *tree, node* fullTree) {
 
 /*------------------------------------------------Build Envirments---------------------------------------------------------*/
 
-table *mktable(table *upperEnv) {
+table *mktable(table *upperEnv, int returnType) {
 	table *newtable = (table*)malloc(sizeof(table));
 	newtable->upperEnv = upperEnv;
 	newtable->functions = NULL;
 	newtable->variables = NULL;
-	newtable->returnType = -1;
+	newtable->returnType = returnType; // -1 no return, 0-7 types, 8 go up and check return  
 	newtable->numOfFunction = 0;
 	newtable->numOfvariables = 0;
 	return newtable;
@@ -611,8 +616,12 @@ void addVar(table *table, var *varAdd) {
 /*-------------------------------------------------------------------------------------------------------------------------*/
 
 void startSemantics(node *tree) {
-	table *global = mktable(NULL);
+	table *global = mktable(NULL,-1);
 	checkTree(tree, global,tree);
+	if(numOfmains==0){
+		printf("Error: no main function\n");
+		quitProgram(tree);
+	}
 }
 
 void checkTree(node *subTree , table *env, node *tree) {
@@ -634,7 +643,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 				quitProgram(tree);
 			}
 				
-			else if (!strcmp(subTree->subNodes[2]->subNodes[0]->token, "VOID")) {
+			else if (strcmp(subTree->subNodes[2]->subNodes[0]->token, "VOID")) {
 				printf("Error: main type can only be void\n");
 				quitProgram(tree);
 			}
@@ -643,11 +652,20 @@ void checkTree(node *subTree , table *env, node *tree) {
 				printf("Error: main cannot have arguments\n");
 				quitProgram(tree);
 			}
+			else {
+				func *func = mkfunc(subTree->subNodes[0]->token, getTypeVal(subTree->subNodes[2]->subNodes[0]->token), numOfArgs(subTree->subNodes[1]), argumentRep(subTree->subNodes[1]));
+				addFunc(env, func);
+				table *newEnv = mktable(env, getTypeVal(subTree->subNodes[2]->subNodes[0]->token));
+				insertArgs(newEnv, (subTree->subNodes[1]), tree);
+				checkTree(subTree->subNodes[3], newEnv, tree);
+				free(newEnv);
+				numOfmains += 1;
+			}
 		}
 		else if (checkDupFunc(env, subTree->subNodes[0]->token)) {
 			func *func = mkfunc(subTree->subNodes[0]->token, getTypeVal(subTree->subNodes[2]->subNodes[0]->token), numOfArgs(subTree->subNodes[1]), argumentRep(subTree->subNodes[1]));
 			addFunc(env, func);
-			table *newEnv = mktable(env);
+			table *newEnv = mktable(env, getTypeVal(subTree->subNodes[2]->subNodes[0]->token));
 			insertArgs(newEnv, (subTree->subNodes[1]), tree);
 			checkTree(subTree->subNodes[3], newEnv, tree);
 			free(newEnv);
@@ -657,6 +675,16 @@ void checkTree(node *subTree , table *env, node *tree) {
 			quitProgram(tree);
 		}
 	}
+	
+	//block
+	else if (!strcmp(subTree->token, "BLOCK")) {
+		table *newEnv = mktable(env, 8);
+		for (int i = 0; i < subTree->numOfSubNodes; i++) {
+			checkTree(subTree->subNodes[i], newEnv, tree);
+		}
+		free(newEnv);
+	}
+
 	// function body
 	else if (!strcmp(subTree->token, "BODY")) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
@@ -676,46 +704,62 @@ void checkTree(node *subTree , table *env, node *tree) {
 
 	//if
 	else if (!strcmp(subTree->token, "IF")) {
-		evalExp(subTree->subNodes[0], env);
-		checkTree(subTree->subNodes[1],env, tree);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"if\" expected bool\n");
+			quitProgram(tree);
+		}
+		checkTree(subTree->subNodes[1], env, tree);
 	}
 
 	//if-else
 	else if (!strcmp(subTree->token, "IF-ELSE")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"if-else\" expected bool\n");
+			quitProgram(tree);
+		}
 		checkTree(subTree->subNodes[1], env, tree);
 		checkTree(subTree->subNodes[2], env, tree);
 	}
 	//while
 	else if (!strcmp(subTree->token, "WHILE")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"while\" expected bool\n");
+			quitProgram(tree);
+		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
 	//do while
 	else if (!strcmp(subTree->token, "DO-WHILE")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"do while\" expected bool\n");
+			quitProgram(tree);
+		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
 	//for
 	else if (!strcmp(subTree->token, "FOR")) {
-		for (int i = 0; i < subTree->numOfSubNodes; i++) {
+		for (int i = 0; i < subTree->numOfSubNodes-1; i++) {
 			checkTree(subTree->subNodes[i], env, tree);
 		}
+		checkTree(subTree->subNodes[subTree->numOfSubNodes - 1], env, tree);
 	}
 	//for-init
 	else if (!strcmp(subTree->token, "INIT")) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
-			evalExp(subTree->subNodes[i], env);
+			checkTree(subTree->subNodes[i], env, tree);
 		}
 	}
 	//for-condition
 	else if (!strcmp(subTree->token, "COND")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"for\" expected bool\n");
+			quitProgram(tree);
+		}
 	}
 	//for-update
 	else if (!strcmp(subTree->token, "UPDATE")) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
-			evalExp(subTree->subNodes[i],env);
+			checkTree(subTree->subNodes[i],env,tree);
 		}
 	}
 	//function call
@@ -725,12 +769,188 @@ void checkTree(node *subTree , table *env, node *tree) {
 		}
 	}
 
+	//return
+	else if (!strcmp(subTree->token, "RET")) {
+		if (!checkReturnVal(subTree, env,tree)) {
+			printf("Error: Incompatible return type\n");
+			quitProgram(tree);
+		}
+		evalExp(subTree->subNodes[0], env, tree);
+	}
+
+	//assignment
+	else if (!strcmp(subTree->token, "=")) {
+		if (!checkVarExist(env, subTree->subNodes[0]->token)) {
+			printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->token);
+			quitProgram(tree);
+		}
+		if(evalExp(subTree->subNodes[1], env, tree) == 8 && (getVarType(env, subTree->subNodes[0]->token)==4 || getVarType(env, subTree->subNodes[0]->token)==5 || getVarType(env, subTree->subNodes[0]->token)==6))
+			return;
+
+		if(getVarType(env, subTree->subNodes[0]->token) == 7){
+			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) == 2 && evalExp(subTree->subNodes[1], env, tree) == 1)
+				return;
+		}
+		if (getVarType(env, subTree->subNodes[0]->token) != evalExp(subTree->subNodes[1], env, tree)) {
+			printf("Error: Incompatible assignment - %s\n", subTree->subNodes[0]->token);
+			quitProgram(tree);
+		}	
+	}
+	
+	//del at end
+	else {
+		printf("%s\n", subTree->token);
+	}
+
 	printTable(env);
 	printf("---------\n");
 }
 
-void evalExp(node *tree, table* stable) {
-	return ;
+//return type of exp
+int evalExp(node *subTree, table* stable, node *tree) {
+	if (!strcmp("+", subTree->token) || !strcmp("-", subTree->token) || !strcmp("*", subTree->token) || !strcmp("/", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 == 2 || type1 == 3) {
+			if (type2 == 2 || type2 == 3) {
+				if (type1 + type2 == 4) // int = 2; 2+2 = 4;
+					return 2;
+				else
+					return 3;
+			}
+			else {
+				printf("Error: unsupported operand types %s\n", subTree->token);
+				quitProgram(tree);
+			}
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp("&&", subTree->token) || !strcmp("||", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 != 0 || type2 != 0) {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+		return 0;
+	}
+	if (!strcmp("==", subTree->token) || !strcmp("!=", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 == 0 && type2 == 0) 
+			return 0;
+		else if (type1 == 1 && type2 == 1)
+			return 0;
+		else if (type1 == 2 && type2 == 2)
+			return 0;
+		else if (type1 == 3 && type2 == 3)
+			return 0;
+		else if (type1 == 4 && type2 == 4)
+			return 0;
+		else if (type1 == 5 && type2 == 5)
+			return 0;
+		else if (type1 == 6 && type2 == 6)
+			return 0;
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp(">", subTree->token) || !strcmp(">=", subTree->token) || !strcmp("<", subTree->token) || !strcmp("<=", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 == 2 || type1 == 3) {
+			if (type2 == 2 || type2 == 3) {
+				return 0;
+			}
+			else {
+				printf("Error: unsupported operand types %s\n", subTree->token);
+				quitProgram(tree);
+			}
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp("!", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		if (type1 != 0) {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+		return 0;
+	}
+	if (!strcmp("STR-LEN", subTree->token)) {
+		if (getVarType(stable, subTree->subNodes[0]->token) != 7) {
+			printf("Error: unsupported operand types | str |\n");
+			quitProgram(tree);
+		}
+		return 2;
+	}
+	if (!strcmp("POINTER", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		if (type1 == 4 || type1==5 || type1==6) {
+			return type1;
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp("ADDRESS-OF", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		printf("%d\n",type1);
+		if (type1 == 1 ) {
+			return 4;
+		}
+		else if (type1 == 2) {
+			return 6;
+		}
+		else if (type1 == 3) {
+			return 5;
+		}
+		else if (type1 == 7) {
+			printf("%d\n",evalExp(subTree->subNodes[0], stable, tree));
+			if (evalExp(subTree->subNodes[0], stable, tree)!= 1) {
+				printf("Error: unsupported operand types %s\n", subTree->token);
+				quitProgram(tree);
+			}
+			return 4;
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+		return 0;
+	}
+	if (!strcmp("FUNC-CALL", subTree->token)) {
+		if (!funcCallCheck(subTree, stable)) {
+			quitProgram(tree);
+		}
+		return getFuncType(stable, subTree->subNodes[0]->token);
+	}
+	else {
+		if ((getVarType(stable, subTree->token) <= 6 && getVarType(stable, subTree->token)>=0) || getVarType(stable, subTree->token) == 8)
+			return getVarType(stable, subTree->token);
+		else if (getVarType(stable, subTree->token) == 7) {
+			if(subTree -> numOfSubNodes != 0){
+				if (evalExp(subTree->subNodes[0], stable, tree) != 2) {
+					printf("Error:  %s Index must be int\n", subTree->subNodes[0]->token);
+					quitProgram(tree);
+				}
+				return 1;
+			}
+			return 7;
+		}
+		else {
+			printf("Error: variable %s does not exist\n", subTree->token);
+			quitProgram(tree);
+		}	
+	}
 }
 
 
@@ -764,6 +984,7 @@ bool checkFuncExist(table *env, char *name) {
 
 void quitProgram(node *tree) {
 	freeTree(tree);
+	getchar();
 	exit(1);
 }
 
@@ -772,21 +993,32 @@ bool funcCallCheck(node* tree, table *env) {
 		printf("Error: calling function %s that does not exist\n", tree->subNodes[0]->token);
 		return false;
 	}
-	else if (getFuncNumOfArgs(tree->subNodes[0]->token, env) != tree->numOfSubNodes - 1) {
+	int numOfarguments = tree->numOfSubNodes;
+	for(int i=0; i<tree->numOfSubNodes; i++){
+		if(!strcmp("NONE", tree->subNodes[i]->token))
+			numOfarguments -= 1;
+	}
+	if (getFuncNumOfArgs(tree->subNodes[0]->token, env) != numOfarguments - 1) {
+		printf("%d\n",getFuncNumOfArgs(tree->subNodes[0]->token, env));
+		printf("%d\n",tree->numOfSubNodes);
 		printf("Error: number of arguments does not match calling function %s\n", tree->subNodes[0]->token);
 		return false;
 	}
 	for(int i=1; i<tree->numOfSubNodes;i++){
-		if (!checkVarExist(env, tree->subNodes[i]->token)) {
-			printf("Error: variable %s does not exist\n", tree->subNodes[i]->token);
-			return false;
+		if(strcmp("NONE",tree->subNodes[i]->token) !=0 ){
+			if (!checkVarExist(env, tree->subNodes[i]->token)) {
+				printf("Error: variable %s does not exist\n", tree->subNodes[i]->token);
+				return false;
+			}	
 		}
 	}
 	int *args = getFuncArgsTypes(tree->subNodes[0]->token, env);
 	for (int i = 1; i < tree->numOfSubNodes; i++) {
-		if (getVarType(env, tree->subNodes[i]->token) != args[i-1]) {
-			printf("Error: variable %s does not match expected type\n", tree->subNodes[i]->token);
-			return false;
+		if(strcmp("NONE",tree->subNodes[i]->token) != 0){
+			if (getVarType(env, tree->subNodes[i]->token) != args[i-1]) {
+				printf("Error: variable %s does not match expected type\n", tree->subNodes[i]->token);
+				return false;
+			}
 		}
 	}
 }
@@ -815,6 +1047,19 @@ int* getFuncArgsTypes(char* name, table *env) {
 	}
 }
 
+int getFuncType(table *env, char *name) {
+	table *temp = env;
+	while (temp != NULL) {
+		for (int i = 0; i < temp->numOfFunction; i++) {
+			if (!strcmp(name, temp->functions[i]->name)) {
+				return temp->functions[i]->type;
+			}
+		}
+		temp = temp->upperEnv;
+	}
+	return -1;
+}
+
 int getVarType(table *env, char *id) {
 	if (!strcmp("bool", id) || !strcmp("char", id) || !strcmp("int", id) || !strcmp("real", id) || !strcmp("null", id)) {
 		return getTypeVal(id);
@@ -828,6 +1073,7 @@ int getVarType(table *env, char *id) {
 		}
 		temp = temp->upperEnv;
 	}
+	return -1;
 }
 
 bool checkVarExist(table *env, char *id) {
@@ -846,9 +1092,22 @@ bool checkVarExist(table *env, char *id) {
 	return false;
 }
 
-
-
-
+bool checkReturnVal(node *subTree, table *env, node* tree) {
+	if (env->returnType <= 6 && env->returnType >= 0) {
+		if (evalExp(subTree->subNodes[0], env, tree) != env->returnType) {
+			return false;
+		}
+	}
+	if (env->returnType == 8) {
+		if (env->upperEnv != NULL)
+			return checkReturnVal(subTree, env->upperEnv, tree);
+		else
+			return false;
+	}
+	if (env->returnType == -1) {
+		return false;
+	}
+}
 
 void printTable(table *table) {
 	printf("Functions:\n");

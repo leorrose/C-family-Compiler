@@ -101,9 +101,11 @@ typedef struct table {
 
 
 typedef enum bool{ false,true } bool;
+int numOfmains = 0;
 node *mknode(char *token, int count, ...);
 int yywrap();
 int yyerror(char *err);
+node *mknode(char *token, int count, ...);
 node *combineNodes(char *token, node *one, node *two);
 void printTree(node *tree, int tab);
 void printTabs(int a);
@@ -113,7 +115,7 @@ int numOfArgs(node *node);
 int* argumentRep(node *node);
 int getTypeVal(char *string);
 var *mkvar(char *name, int type);
-table *mktable(table *upperEnv);
+table *mktable(table *upperEnv, int returnType);
 void insertVar(table *stable, node *tree, node* fullTree);
 void insertString(table *stable, node *tree, node* fullTree);
 void insertArgs(table *stable, node *tree, node* fullTree);
@@ -125,16 +127,17 @@ bool checkDupVar(table *table, char *name);
 void startSemantics(node *node);
 void printTable(table *table);
 bool checkFuncExist(table *env, char *name);
-void evalExp(node *tree, table* stable);
+int evalExp(node *subTree, table* stable, node *tree);
 void quitProgram(node *tree);
 int* getFuncArgsTypes(char* name, table *env);
 bool checkVarExist(table *env, char *id);
 bool funcCallCheck(node* tree, table *env);
 int getFuncNumOfArgs(char* name, table *env);
 int getVarType(table *env, char *id);
+bool checkReturnVal(node *subTree, table *env, node* tree);
+int getFuncType(table *env, char *name);
 
-
-#line 138 "y.tab.c" /* yacc.c:339  */
+#line 141 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -247,12 +250,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 75 "parser.y" /* yacc.c:355  */
+#line 78 "parser.y" /* yacc.c:355  */
 
 	char *string;
 	struct node *node;
 
-#line 256 "y.tab.c" /* yacc.c:355  */
+#line 259 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -269,7 +272,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 273 "y.tab.c" /* yacc.c:358  */
+#line 276 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -570,17 +573,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   117,   117,   121,   122,   126,   127,   133,   137,   141,
-     142,   143,   147,   151,   152,   156,   157,   158,   159,   163,
-     164,   165,   166,   167,   168,   174,   175,   176,   177,   178,
-     179,   185,   186,   190,   194,   195,   196,   197,   201,   202,
-     206,   207,   213,   214,   218,   219,   220,   221,   222,   223,
-     229,   230,   231,   232,   236,   239,   242,   245,   250,   251,
-     252,   253,   256,   257,   263,   264,   270,   271,   272,   279,
-     280,   283,   284,   285,   291,   294,   295,   296,   302,   308,
-     309,   310,   311,   312,   313,   314,   315,   316,   317,   318,
-     319,   320,   321,   322,   323,   324,   325,   326,   327,   328,
-     332,   333,   334,   335,   338
+       0,   120,   120,   124,   125,   129,   130,   136,   140,   144,
+     145,   146,   150,   154,   155,   159,   160,   161,   162,   166,
+     167,   168,   169,   170,   171,   177,   178,   179,   180,   181,
+     182,   188,   189,   193,   197,   198,   199,   200,   204,   205,
+     209,   210,   216,   217,   221,   222,   223,   224,   225,   226,
+     232,   233,   234,   235,   239,   242,   245,   248,   253,   254,
+     255,   256,   259,   260,   266,   267,   273,   274,   275,   282,
+     283,   286,   287,   288,   294,   297,   298,   299,   305,   311,
+     312,   313,   314,   315,   316,   317,   318,   319,   320,   321,
+     322,   323,   324,   325,   326,   327,   328,   329,   330,   331,
+     335,   336,   337,   338,   341
 };
 #endif
 
@@ -1532,622 +1535,622 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 117 "parser.y" /* yacc.c:1646  */
-    { startSemantics((yyvsp[0].node)); printTree((yyvsp[0].node),0); freeTree((yyvsp[0].node));}
-#line 1538 "y.tab.c" /* yacc.c:1646  */
+#line 120 "parser.y" /* yacc.c:1646  */
+    {  startSemantics((yyvsp[0].node)); printTree((yyvsp[0].node),0); freeTree((yyvsp[0].node));}
+#line 1541 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 121 "parser.y" /* yacc.c:1646  */
+#line 124 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("CODE",1, (yyvsp[0].node)); }
-#line 1544 "y.tab.c" /* yacc.c:1646  */
+#line 1547 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 122 "parser.y" /* yacc.c:1646  */
+#line 125 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("CODE",(yyvsp[-1].node), mknode("CODE",1,(yyvsp[0].node))); }
-#line 1550 "y.tab.c" /* yacc.c:1646  */
+#line 1553 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 126 "parser.y" /* yacc.c:1646  */
+#line 129 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1556 "y.tab.c" /* yacc.c:1646  */
+#line 1559 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 127 "parser.y" /* yacc.c:1646  */
+#line 130 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1562 "y.tab.c" /* yacc.c:1646  */
+#line 1565 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 133 "parser.y" /* yacc.c:1646  */
+#line 136 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("FUNCTION",4,mknode((yyvsp[-6].string),0),(yyvsp[-4].node),mknode("TYPE",1,mknode((yyvsp[-7].string),0)),(yyvsp[-1].node)); }
-#line 1568 "y.tab.c" /* yacc.c:1646  */
+#line 1571 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 137 "parser.y" /* yacc.c:1646  */
+#line 140 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("FUNCTION",4,mknode((yyvsp[-6].string),0),(yyvsp[-4].node),mknode("TYPE",1,mknode("VOID",0)),(yyvsp[-1].node));}
-#line 1574 "y.tab.c" /* yacc.c:1646  */
+#line 1577 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 141 "parser.y" /* yacc.c:1646  */
+#line 144 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("ARGS",(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 1580 "y.tab.c" /* yacc.c:1646  */
+#line 1583 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 142 "parser.y" /* yacc.c:1646  */
+#line 145 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1586 "y.tab.c" /* yacc.c:1646  */
+#line 1589 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 143 "parser.y" /* yacc.c:1646  */
+#line 146 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ARGS",1,mknode("NONE",0)); }
-#line 1592 "y.tab.c" /* yacc.c:1646  */
+#line 1595 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 147 "parser.y" /* yacc.c:1646  */
+#line 150 "parser.y" /* yacc.c:1646  */
     { (yyvsp[0].node)->token = strdup((yyvsp[-1].string)); (yyval.node) = mknode("ARGS",1, (yyvsp[0].node)); }
-#line 1598 "y.tab.c" /* yacc.c:1646  */
+#line 1601 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 151 "parser.y" /* yacc.c:1646  */
+#line 154 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("ARGS", mknode((yyvsp[-2].string),0), (yyvsp[0].node)); }
-#line 1604 "y.tab.c" /* yacc.c:1646  */
+#line 1607 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 152 "parser.y" /* yacc.c:1646  */
+#line 155 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ARGS",1,mknode((yyvsp[0].string),0)); }
-#line 1610 "y.tab.c" /* yacc.c:1646  */
+#line 1613 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 156 "parser.y" /* yacc.c:1646  */
+#line 159 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",(yyvsp[-1].node),(yyvsp[0].node)); }
-#line 1616 "y.tab.c" /* yacc.c:1646  */
+#line 1619 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 157 "parser.y" /* yacc.c:1646  */
+#line 160 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)->token=strdup("BODY"); (yyval.node)=(yyvsp[0].node); }
-#line 1622 "y.tab.c" /* yacc.c:1646  */
+#line 1625 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 158 "parser.y" /* yacc.c:1646  */
+#line 161 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)->token =strdup("BODY"); (yyval.node)=(yyvsp[0].node); }
-#line 1628 "y.tab.c" /* yacc.c:1646  */
+#line 1631 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 159 "parser.y" /* yacc.c:1646  */
+#line 162 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,mknode("NONE",0)); }
-#line 1634 "y.tab.c" /* yacc.c:1646  */
+#line 1637 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 163 "parser.y" /* yacc.c:1646  */
+#line 166 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",mknode("BODY",1,(yyvsp[-1].node)),(yyvsp[0].node)); }
-#line 1640 "y.tab.c" /* yacc.c:1646  */
+#line 1643 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 164 "parser.y" /* yacc.c:1646  */
+#line 167 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,(yyvsp[0].node)); }
-#line 1646 "y.tab.c" /* yacc.c:1646  */
+#line 1649 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 165 "parser.y" /* yacc.c:1646  */
+#line 168 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",mknode("BODY",1,(yyvsp[-1].node)),(yyvsp[0].node)); }
-#line 1652 "y.tab.c" /* yacc.c:1646  */
+#line 1655 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 166 "parser.y" /* yacc.c:1646  */
+#line 169 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,(yyvsp[0].node)); }
-#line 1658 "y.tab.c" /* yacc.c:1646  */
+#line 1661 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 167 "parser.y" /* yacc.c:1646  */
+#line 170 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",mknode("BODY",1,(yyvsp[-1].node)),(yyvsp[0].node)); }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 1667 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 168 "parser.y" /* yacc.c:1646  */
+#line 171 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,(yyvsp[0].node)); }
-#line 1670 "y.tab.c" /* yacc.c:1646  */
+#line 1673 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 174 "parser.y" /* yacc.c:1646  */
+#line 177 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("bool",1,mknode((yyvsp[0].string),0)); }
-#line 1676 "y.tab.c" /* yacc.c:1646  */
+#line 1679 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 175 "parser.y" /* yacc.c:1646  */
+#line 178 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("char",1,mknode((yyvsp[0].string),0)); }
-#line 1682 "y.tab.c" /* yacc.c:1646  */
+#line 1685 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 176 "parser.y" /* yacc.c:1646  */
+#line 179 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("int",1,mknode((yyvsp[0].string),0)); }
-#line 1688 "y.tab.c" /* yacc.c:1646  */
+#line 1691 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 177 "parser.y" /* yacc.c:1646  */
+#line 180 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("int",1,mknode((yyvsp[0].string),0)); }
-#line 1694 "y.tab.c" /* yacc.c:1646  */
+#line 1697 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 178 "parser.y" /* yacc.c:1646  */
+#line 181 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("real",1,mknode((yyvsp[0].string),0)); }
-#line 1700 "y.tab.c" /* yacc.c:1646  */
+#line 1703 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 179 "parser.y" /* yacc.c:1646  */
+#line 182 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("null",1,mknode("0",0)); }
-#line 1706 "y.tab.c" /* yacc.c:1646  */
+#line 1709 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 185 "parser.y" /* yacc.c:1646  */
+#line 188 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1712 "y.tab.c" /* yacc.c:1646  */
+#line 1715 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 186 "parser.y" /* yacc.c:1646  */
+#line 189 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1718 "y.tab.c" /* yacc.c:1646  */
+#line 1721 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 190 "parser.y" /* yacc.c:1646  */
+#line 193 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("VAR", mknode("VAR",1,mknode((yyvsp[-2].string),0)), (yyvsp[-1].node)); }
-#line 1724 "y.tab.c" /* yacc.c:1646  */
+#line 1727 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 194 "parser.y" /* yacc.c:1646  */
+#line 197 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("VAR", mknode("VAR",1,mknode((yyvsp[-2].string),0)), (yyvsp[0].node)); }
-#line 1730 "y.tab.c" /* yacc.c:1646  */
+#line 1733 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 195 "parser.y" /* yacc.c:1646  */
+#line 198 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("VAR", mknode("ASS",1,(yyvsp[-2].node)) ,(yyvsp[0].node)); }
-#line 1736 "y.tab.c" /* yacc.c:1646  */
+#line 1739 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 196 "parser.y" /* yacc.c:1646  */
+#line 199 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[0].string),0); }
-#line 1742 "y.tab.c" /* yacc.c:1646  */
+#line 1745 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 197 "parser.y" /* yacc.c:1646  */
+#line 200 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ASS",1,(yyvsp[0].node)); }
-#line 1748 "y.tab.c" /* yacc.c:1646  */
+#line 1751 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 201 "parser.y" /* yacc.c:1646  */
+#line 204 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("STRING", (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1754 "y.tab.c" /* yacc.c:1646  */
+#line 1757 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 202 "parser.y" /* yacc.c:1646  */
+#line 205 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1760 "y.tab.c" /* yacc.c:1646  */
+#line 1763 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 206 "parser.y" /* yacc.c:1646  */
+#line 209 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("STRING",1,mknode((yyvsp[-3].string),1,(yyvsp[-1].node))); }
-#line 1766 "y.tab.c" /* yacc.c:1646  */
+#line 1769 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 207 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode("STRING",1,mknode((yyvsp[-1].string),3,mknode((yyvsp[-5].string),0),(yyvsp[-3].node),mknode((yyvsp[0].string),0))); }
-#line 1772 "y.tab.c" /* yacc.c:1646  */
+#line 210 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode("STRING",1,mknode((yyvsp[-1].string),2,mknode((yyvsp[-5].string),1,(yyvsp[-3].node)),mknode((yyvsp[0].string),0))); }
+#line 1775 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 213 "parser.y" /* yacc.c:1646  */
+#line 216 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("stmt",1,(yyvsp[0].node)); }
-#line 1778 "y.tab.c" /* yacc.c:1646  */
+#line 1781 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 214 "parser.y" /* yacc.c:1646  */
+#line 217 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("Statments", mknode("stmt",1,(yyvsp[-1].node)),(yyvsp[0].node));}
-#line 1784 "y.tab.c" /* yacc.c:1646  */
+#line 1787 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 218 "parser.y" /* yacc.c:1646  */
+#line 221 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1790 "y.tab.c" /* yacc.c:1646  */
+#line 1793 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 219 "parser.y" /* yacc.c:1646  */
+#line 222 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1796 "y.tab.c" /* yacc.c:1646  */
+#line 1799 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 220 "parser.y" /* yacc.c:1646  */
+#line 223 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1802 "y.tab.c" /* yacc.c:1646  */
+#line 1805 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 221 "parser.y" /* yacc.c:1646  */
+#line 224 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1808 "y.tab.c" /* yacc.c:1646  */
+#line 1811 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 222 "parser.y" /* yacc.c:1646  */
+#line 225 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1814 "y.tab.c" /* yacc.c:1646  */
+#line 1817 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 223 "parser.y" /* yacc.c:1646  */
+#line 226 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1820 "y.tab.c" /* yacc.c:1646  */
+#line 1823 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 229 "parser.y" /* yacc.c:1646  */
+#line 232 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1826 "y.tab.c" /* yacc.c:1646  */
+#line 1829 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 230 "parser.y" /* yacc.c:1646  */
+#line 233 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1832 "y.tab.c" /* yacc.c:1646  */
+#line 1835 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 231 "parser.y" /* yacc.c:1646  */
+#line 234 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1838 "y.tab.c" /* yacc.c:1646  */
+#line 1841 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 232 "parser.y" /* yacc.c:1646  */
+#line 235 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1844 "y.tab.c" /* yacc.c:1646  */
+#line 1847 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 236 "parser.y" /* yacc.c:1646  */
+#line 239 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2, mknode((yyvsp[-2].string),0), (yyvsp[0].node)); }
-#line 1850 "y.tab.c" /* yacc.c:1646  */
+#line 1853 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 239 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode((yyvsp[-1].string),3,mknode((yyvsp[-5].string),0),(yyvsp[-3].node),(yyvsp[0].node)); }
-#line 1856 "y.tab.c" /* yacc.c:1646  */
+#line 242 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode((yyvsp[-1].string),2,mknode((yyvsp[-5].string),1,(yyvsp[-3].node)),(yyvsp[0].node)); }
+#line 1859 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 242 "parser.y" /* yacc.c:1646  */
+#line 245 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,mknode((yyvsp[-2].string),0),mknode((yyvsp[0].string),0)); }
-#line 1862 "y.tab.c" /* yacc.c:1646  */
+#line 1865 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 245 "parser.y" /* yacc.c:1646  */
+#line 248 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string), 1 , mknode("POINTER", 2, mknode((yyvsp[-2].string),0), (yyvsp[0].node),0)); }
-#line 1868 "y.tab.c" /* yacc.c:1646  */
+#line 1871 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 250 "parser.y" /* yacc.c:1646  */
+#line 253 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BLOCK",(yyvsp[-2].node), (yyvsp[-1].node)); }
-#line 1874 "y.tab.c" /* yacc.c:1646  */
+#line 1877 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 251 "parser.y" /* yacc.c:1646  */
+#line 254 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1880 "y.tab.c" /* yacc.c:1646  */
+#line 1883 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 252 "parser.y" /* yacc.c:1646  */
+#line 255 "parser.y" /* yacc.c:1646  */
     {free((yyvsp[-1].node)->token); (yyvsp[-1].node)-> token = strdup("BLOCK"); (yyval.node) = (yyvsp[-1].node); }
-#line 1886 "y.tab.c" /* yacc.c:1646  */
+#line 1889 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 253 "parser.y" /* yacc.c:1646  */
+#line 256 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BLOCK",1,mknode("NONE",0)); }
-#line 1892 "y.tab.c" /* yacc.c:1646  */
+#line 1895 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 256 "parser.y" /* yacc.c:1646  */
+#line 259 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BLOCK", mknode("BLOCK",1,(yyvsp[-1].node)), (yyvsp[0].node));}
-#line 1898 "y.tab.c" /* yacc.c:1646  */
+#line 1901 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 257 "parser.y" /* yacc.c:1646  */
+#line 260 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BLOCK", 1, (yyvsp[0].node));}
-#line 1904 "y.tab.c" /* yacc.c:1646  */
+#line 1907 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 263 "parser.y" /* yacc.c:1646  */
+#line 266 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("IF", 2, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1910 "y.tab.c" /* yacc.c:1646  */
+#line 1913 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 264 "parser.y" /* yacc.c:1646  */
+#line 267 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("IF-ELSE", 3, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1916 "y.tab.c" /* yacc.c:1646  */
+#line 1919 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 270 "parser.y" /* yacc.c:1646  */
+#line 273 "parser.y" /* yacc.c:1646  */
     { (yyval.node) =	mknode("WHILE", 2, (yyvsp[-2].node) , (yyvsp[0].node)); }
-#line 1922 "y.tab.c" /* yacc.c:1646  */
+#line 1925 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 271 "parser.y" /* yacc.c:1646  */
+#line 274 "parser.y" /* yacc.c:1646  */
     { (yyval.node) =	mknode("DO-WHILE", 2, (yyvsp[-2].node), (yyvsp[-5].node)); }
-#line 1928 "y.tab.c" /* yacc.c:1646  */
+#line 1931 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 272 "parser.y" /* yacc.c:1646  */
+#line 275 "parser.y" /* yacc.c:1646  */
     { 
 																					free((yyvsp[-6].node)->token); (yyvsp[-6].node)->token = strdup("INIT");
 																					(yyval.node) = mknode("FOR",4,(yyvsp[-6].node),mknode("COND",1,(yyvsp[-4].node)),(yyvsp[-2].node), (yyvsp[0].node));
 																				}
-#line 1937 "y.tab.c" /* yacc.c:1646  */
+#line 1940 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 279 "parser.y" /* yacc.c:1646  */
+#line 282 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("ass", mknode("ass",1,(yyvsp[-2].node)),(yyvsp[0].node)); }
-#line 1943 "y.tab.c" /* yacc.c:1646  */
+#line 1946 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 280 "parser.y" /* yacc.c:1646  */
+#line 283 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ass",1,(yyvsp[0].node)); }
-#line 1949 "y.tab.c" /* yacc.c:1646  */
+#line 1952 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 283 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode("UPDATE",1,mknode("=",1, mknode("+", 2, mknode((yyvsp[-2].string),0), mknode("1",0)))); }
-#line 1955 "y.tab.c" /* yacc.c:1646  */
+#line 286 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode("UPDATE",1,mknode("=",2, mknode((yyvsp[-2].string),0), mknode("+", 2, mknode((yyvsp[-2].string),0), mknode("int",1, mknode("1",0))))); }
+#line 1958 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 284 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode("UPDATE",1,mknode("=",1, mknode("-", 2, mknode((yyvsp[-2].string),0), mknode("1",0)))); }
-#line 1961 "y.tab.c" /* yacc.c:1646  */
+#line 287 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode("UPDATE",1,mknode("=",2, mknode((yyvsp[-2].string),0), mknode("-", 2, mknode((yyvsp[-2].string),0), mknode("int",1,mknode("1",0))))); }
+#line 1964 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 285 "parser.y" /* yacc.c:1646  */
+#line 288 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)-> token = strdup("UPDATE"); (yyval.node) = (yyvsp[0].node); }
-#line 1967 "y.tab.c" /* yacc.c:1646  */
+#line 1970 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 291 "parser.y" /* yacc.c:1646  */
+#line 294 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("FUNC-CALL", mknode((yyvsp[-3].string),0), (yyvsp[-1].node)); }
-#line 1973 "y.tab.c" /* yacc.c:1646  */
+#line 1976 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 294 "parser.y" /* yacc.c:1646  */
+#line 297 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("paramters",mknode("param",1,(yyvsp[-2].node)), (yyvsp[0].node));}
-#line 1979 "y.tab.c" /* yacc.c:1646  */
+#line 1982 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 295 "parser.y" /* yacc.c:1646  */
+#line 298 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("paramters",1,(yyvsp[0].node)); }
-#line 1985 "y.tab.c" /* yacc.c:1646  */
+#line 1988 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 296 "parser.y" /* yacc.c:1646  */
+#line 299 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("NONE",0); }
-#line 1991 "y.tab.c" /* yacc.c:1646  */
+#line 1994 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 302 "parser.y" /* yacc.c:1646  */
+#line 305 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("RET",1,(yyvsp[0].node)); }
-#line 1997 "y.tab.c" /* yacc.c:1646  */
+#line 2000 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 308 "parser.y" /* yacc.c:1646  */
+#line 311 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2003 "y.tab.c" /* yacc.c:1646  */
+#line 2006 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 309 "parser.y" /* yacc.c:1646  */
+#line 312 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2009 "y.tab.c" /* yacc.c:1646  */
+#line 2012 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 310 "parser.y" /* yacc.c:1646  */
+#line 313 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2015 "y.tab.c" /* yacc.c:1646  */
+#line 2018 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 311 "parser.y" /* yacc.c:1646  */
+#line 314 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2021 "y.tab.c" /* yacc.c:1646  */
+#line 2024 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 312 "parser.y" /* yacc.c:1646  */
+#line 315 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2027 "y.tab.c" /* yacc.c:1646  */
+#line 2030 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 313 "parser.y" /* yacc.c:1646  */
+#line 316 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2033 "y.tab.c" /* yacc.c:1646  */
+#line 2036 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 314 "parser.y" /* yacc.c:1646  */
+#line 317 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2039 "y.tab.c" /* yacc.c:1646  */
+#line 2042 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 315 "parser.y" /* yacc.c:1646  */
+#line 318 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2045 "y.tab.c" /* yacc.c:1646  */
+#line 2048 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 316 "parser.y" /* yacc.c:1646  */
+#line 319 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2051 "y.tab.c" /* yacc.c:1646  */
+#line 2054 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 317 "parser.y" /* yacc.c:1646  */
+#line 320 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2057 "y.tab.c" /* yacc.c:1646  */
+#line 2060 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 318 "parser.y" /* yacc.c:1646  */
+#line 321 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2063 "y.tab.c" /* yacc.c:1646  */
+#line 2066 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 319 "parser.y" /* yacc.c:1646  */
+#line 322 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2069 "y.tab.c" /* yacc.c:1646  */
+#line 2072 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 320 "parser.y" /* yacc.c:1646  */
+#line 323 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),1,(yyvsp[0].node));}
-#line 2075 "y.tab.c" /* yacc.c:1646  */
+#line 2078 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 321 "parser.y" /* yacc.c:1646  */
+#line 324 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 2081 "y.tab.c" /* yacc.c:1646  */
+#line 2084 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 322 "parser.y" /* yacc.c:1646  */
+#line 325 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[0].string),0); }
-#line 2087 "y.tab.c" /* yacc.c:1646  */
+#line 2090 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 323 "parser.y" /* yacc.c:1646  */
+#line 326 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 2093 "y.tab.c" /* yacc.c:1646  */
+#line 2096 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 324 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode("STR_LEN",1,mknode((yyvsp[-1].string),0)); }
-#line 2099 "y.tab.c" /* yacc.c:1646  */
+#line 327 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode("STR-LEN",1,mknode((yyvsp[-1].string),0)); }
+#line 2102 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 325 "parser.y" /* yacc.c:1646  */
+#line 328 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2105 "y.tab.c" /* yacc.c:1646  */
+#line 2108 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 326 "parser.y" /* yacc.c:1646  */
+#line 329 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ADDRESS-OF",1,mknode((yyvsp[0].string),0)); }
-#line 2111 "y.tab.c" /* yacc.c:1646  */
+#line 2114 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 327 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode("ADDRESS-OF",2,mknode((yyvsp[-3].string),0),(yyvsp[-1].node));}
-#line 2117 "y.tab.c" /* yacc.c:1646  */
+#line 330 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode("ADDRESS-OF",1,mknode((yyvsp[-3].string),1,(yyvsp[-1].node)));}
+#line 2120 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 328 "parser.y" /* yacc.c:1646  */
+#line 331 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-3].string),1,(yyvsp[-1].node)); }
-#line 2123 "y.tab.c" /* yacc.c:1646  */
+#line 2126 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 332 "parser.y" /* yacc.c:1646  */
+#line 335 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = (yyvsp[0].string); }
-#line 2129 "y.tab.c" /* yacc.c:1646  */
+#line 2132 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 333 "parser.y" /* yacc.c:1646  */
+#line 336 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = (yyvsp[0].string); }
-#line 2135 "y.tab.c" /* yacc.c:1646  */
+#line 2138 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 334 "parser.y" /* yacc.c:1646  */
+#line 337 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = (yyvsp[0].string); }
-#line 2141 "y.tab.c" /* yacc.c:1646  */
+#line 2144 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 335 "parser.y" /* yacc.c:1646  */
+#line 338 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = "POINTER";}
-#line 2147 "y.tab.c" /* yacc.c:1646  */
+#line 2150 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2151 "y.tab.c" /* yacc.c:1646  */
+#line 2154 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2375,7 +2378,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 340 "parser.y" /* yacc.c:1906  */
+#line 343 "parser.y" /* yacc.c:1906  */
 
 
 
@@ -2542,6 +2545,8 @@ int getTypeVal(char *string) {
 		return 6;
 	else if (strcmp(string, "STRING") == 0)
 		return 7;
+	else if (strcmp(string, "null") == 0)
+		return 8;
 }
 /*--------------------------------------------------------------create variable representation----------------------------------------------*/
 var *mkvar(char *name, int type) {
@@ -2578,10 +2583,10 @@ void insertString(table *stable, node *tree, node* fullTree) {
 	for (int i = 0; i < tree->numOfSubNodes; i++) {
 
 		if (strcmp("=", tree->subNodes[i]->token) == 0) {
-			if (checkDupVar(stable, tree->subNodes[i]->token))
-				addVar(stable, mkvar(tree->subNodes[i]->token, type));
+			if (checkDupVar(stable, tree->subNodes[i]->subNodes[0]->token))
+				addVar(stable, mkvar(tree->subNodes[i]->subNodes[0]->token, type));
 			else {
-				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->token);
+				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->subNodes[0]->token);
 				quitProgram(fullTree);
 			}
 		}
@@ -2613,12 +2618,12 @@ void insertArgs(table *stable, node *tree, node* fullTree) {
 
 /*------------------------------------------------Build Envirments---------------------------------------------------------*/
 
-table *mktable(table *upperEnv) {
+table *mktable(table *upperEnv, int returnType) {
 	table *newtable = (table*)malloc(sizeof(table));
 	newtable->upperEnv = upperEnv;
 	newtable->functions = NULL;
 	newtable->variables = NULL;
-	newtable->returnType = -1;
+	newtable->returnType = returnType; // -1 no return, 0-7 types, 8 go up and check return  
 	newtable->numOfFunction = 0;
 	newtable->numOfvariables = 0;
 	return newtable;
@@ -2650,8 +2655,12 @@ void addVar(table *table, var *varAdd) {
 /*-------------------------------------------------------------------------------------------------------------------------*/
 
 void startSemantics(node *tree) {
-	table *global = mktable(NULL);
+	table *global = mktable(NULL,-1);
 	checkTree(tree, global,tree);
+	if(numOfmains==0){
+		printf("Error: no main function\n");
+		quitProgram(tree);
+	}
 }
 
 void checkTree(node *subTree , table *env, node *tree) {
@@ -2673,7 +2682,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 				quitProgram(tree);
 			}
 				
-			else if (!strcmp(subTree->subNodes[2]->subNodes[0]->token, "VOID")) {
+			else if (strcmp(subTree->subNodes[2]->subNodes[0]->token, "VOID")) {
 				printf("Error: main type can only be void\n");
 				quitProgram(tree);
 			}
@@ -2682,11 +2691,20 @@ void checkTree(node *subTree , table *env, node *tree) {
 				printf("Error: main cannot have arguments\n");
 				quitProgram(tree);
 			}
+			else {
+				func *func = mkfunc(subTree->subNodes[0]->token, getTypeVal(subTree->subNodes[2]->subNodes[0]->token), numOfArgs(subTree->subNodes[1]), argumentRep(subTree->subNodes[1]));
+				addFunc(env, func);
+				table *newEnv = mktable(env, getTypeVal(subTree->subNodes[2]->subNodes[0]->token));
+				insertArgs(newEnv, (subTree->subNodes[1]), tree);
+				checkTree(subTree->subNodes[3], newEnv, tree);
+				free(newEnv);
+				numOfmains += 1;
+			}
 		}
 		else if (checkDupFunc(env, subTree->subNodes[0]->token)) {
 			func *func = mkfunc(subTree->subNodes[0]->token, getTypeVal(subTree->subNodes[2]->subNodes[0]->token), numOfArgs(subTree->subNodes[1]), argumentRep(subTree->subNodes[1]));
 			addFunc(env, func);
-			table *newEnv = mktable(env);
+			table *newEnv = mktable(env, getTypeVal(subTree->subNodes[2]->subNodes[0]->token));
 			insertArgs(newEnv, (subTree->subNodes[1]), tree);
 			checkTree(subTree->subNodes[3], newEnv, tree);
 			free(newEnv);
@@ -2696,6 +2714,16 @@ void checkTree(node *subTree , table *env, node *tree) {
 			quitProgram(tree);
 		}
 	}
+	
+	//block
+	else if (!strcmp(subTree->token, "BLOCK")) {
+		table *newEnv = mktable(env, 8);
+		for (int i = 0; i < subTree->numOfSubNodes; i++) {
+			checkTree(subTree->subNodes[i], newEnv, tree);
+		}
+		free(newEnv);
+	}
+
 	// function body
 	else if (!strcmp(subTree->token, "BODY")) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
@@ -2715,46 +2743,62 @@ void checkTree(node *subTree , table *env, node *tree) {
 
 	//if
 	else if (!strcmp(subTree->token, "IF")) {
-		evalExp(subTree->subNodes[0], env);
-		checkTree(subTree->subNodes[1],env, tree);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"if\" expected bool\n");
+			quitProgram(tree);
+		}
+		checkTree(subTree->subNodes[1], env, tree);
 	}
 
 	//if-else
 	else if (!strcmp(subTree->token, "IF-ELSE")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"if-else\" expected bool\n");
+			quitProgram(tree);
+		}
 		checkTree(subTree->subNodes[1], env, tree);
 		checkTree(subTree->subNodes[2], env, tree);
 	}
 	//while
 	else if (!strcmp(subTree->token, "WHILE")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"while\" expected bool\n");
+			quitProgram(tree);
+		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
 	//do while
 	else if (!strcmp(subTree->token, "DO-WHILE")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"do while\" expected bool\n");
+			quitProgram(tree);
+		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
 	//for
 	else if (!strcmp(subTree->token, "FOR")) {
-		for (int i = 0; i < subTree->numOfSubNodes; i++) {
+		for (int i = 0; i < subTree->numOfSubNodes-1; i++) {
 			checkTree(subTree->subNodes[i], env, tree);
 		}
+		checkTree(subTree->subNodes[subTree->numOfSubNodes - 1], env, tree);
 	}
 	//for-init
 	else if (!strcmp(subTree->token, "INIT")) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
-			evalExp(subTree->subNodes[i], env);
+			checkTree(subTree->subNodes[i], env, tree);
 		}
 	}
 	//for-condition
 	else if (!strcmp(subTree->token, "COND")) {
-		evalExp(subTree->subNodes[0], env);
+		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
+			printf("Error: Incompatible expression in \"for\" expected bool\n");
+			quitProgram(tree);
+		}
 	}
 	//for-update
 	else if (!strcmp(subTree->token, "UPDATE")) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
-			evalExp(subTree->subNodes[i],env);
+			checkTree(subTree->subNodes[i],env,tree);
 		}
 	}
 	//function call
@@ -2764,12 +2808,188 @@ void checkTree(node *subTree , table *env, node *tree) {
 		}
 	}
 
+	//return
+	else if (!strcmp(subTree->token, "RET")) {
+		if (!checkReturnVal(subTree, env,tree)) {
+			printf("Error: Incompatible return type\n");
+			quitProgram(tree);
+		}
+		evalExp(subTree->subNodes[0], env, tree);
+	}
+
+	//assignment
+	else if (!strcmp(subTree->token, "=")) {
+		if (!checkVarExist(env, subTree->subNodes[0]->token)) {
+			printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->token);
+			quitProgram(tree);
+		}
+		if(evalExp(subTree->subNodes[1], env, tree) == 8 && (getVarType(env, subTree->subNodes[0]->token)==4 || getVarType(env, subTree->subNodes[0]->token)==5 || getVarType(env, subTree->subNodes[0]->token)==6))
+			return;
+
+		if(getVarType(env, subTree->subNodes[0]->token) == 7){
+			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) == 2 && evalExp(subTree->subNodes[1], env, tree) == 1)
+				return;
+		}
+		if (getVarType(env, subTree->subNodes[0]->token) != evalExp(subTree->subNodes[1], env, tree)) {
+			printf("Error: Incompatible assignment - %s\n", subTree->subNodes[0]->token);
+			quitProgram(tree);
+		}	
+	}
+	
+	//del at end
+	else {
+		printf("%s\n", subTree->token);
+	}
+
 	printTable(env);
 	printf("---------\n");
 }
 
-void evalExp(node *tree, table* stable) {
-	return ;
+//return type of exp
+int evalExp(node *subTree, table* stable, node *tree) {
+	if (!strcmp("+", subTree->token) || !strcmp("-", subTree->token) || !strcmp("*", subTree->token) || !strcmp("/", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 == 2 || type1 == 3) {
+			if (type2 == 2 || type2 == 3) {
+				if (type1 + type2 == 4) // int = 2; 2+2 = 4;
+					return 2;
+				else
+					return 3;
+			}
+			else {
+				printf("Error: unsupported operand types %s\n", subTree->token);
+				quitProgram(tree);
+			}
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp("&&", subTree->token) || !strcmp("||", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 != 0 || type2 != 0) {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+		return 0;
+	}
+	if (!strcmp("==", subTree->token) || !strcmp("!=", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 == 0 && type2 == 0) 
+			return 0;
+		else if (type1 == 1 && type2 == 1)
+			return 0;
+		else if (type1 == 2 && type2 == 2)
+			return 0;
+		else if (type1 == 3 && type2 == 3)
+			return 0;
+		else if (type1 == 4 && type2 == 4)
+			return 0;
+		else if (type1 == 5 && type2 == 5)
+			return 0;
+		else if (type1 == 6 && type2 == 6)
+			return 0;
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp(">", subTree->token) || !strcmp(">=", subTree->token) || !strcmp("<", subTree->token) || !strcmp("<=", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		int type2 = evalExp(subTree->subNodes[1], stable, tree);
+		if (type1 == 2 || type1 == 3) {
+			if (type2 == 2 || type2 == 3) {
+				return 0;
+			}
+			else {
+				printf("Error: unsupported operand types %s\n", subTree->token);
+				quitProgram(tree);
+			}
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp("!", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		if (type1 != 0) {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+		return 0;
+	}
+	if (!strcmp("STR-LEN", subTree->token)) {
+		if (getVarType(stable, subTree->subNodes[0]->token) != 7) {
+			printf("Error: unsupported operand types | str |\n");
+			quitProgram(tree);
+		}
+		return 2;
+	}
+	if (!strcmp("POINTER", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		if (type1 == 4 || type1==5 || type1==6) {
+			return type1;
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+	}
+	if (!strcmp("ADDRESS-OF", subTree->token)) {
+		int type1 = evalExp(subTree->subNodes[0], stable, tree);
+		printf("%d\n",type1);
+		if (type1 == 1 ) {
+			return 4;
+		}
+		else if (type1 == 2) {
+			return 6;
+		}
+		else if (type1 == 3) {
+			return 5;
+		}
+		else if (type1 == 7) {
+			printf("%d\n",evalExp(subTree->subNodes[0], stable, tree));
+			if (evalExp(subTree->subNodes[0], stable, tree)!= 1) {
+				printf("Error: unsupported operand types %s\n", subTree->token);
+				quitProgram(tree);
+			}
+			return 4;
+		}
+		else {
+			printf("Error: unsupported operand types %s\n", subTree->token);
+			quitProgram(tree);
+		}
+		return 0;
+	}
+	if (!strcmp("FUNC-CALL", subTree->token)) {
+		if (!funcCallCheck(subTree, stable)) {
+			quitProgram(tree);
+		}
+		return getFuncType(stable, subTree->subNodes[0]->token);
+	}
+	else {
+		if ((getVarType(stable, subTree->token) <= 6 && getVarType(stable, subTree->token)>=0) || getVarType(stable, subTree->token) == 8)
+			return getVarType(stable, subTree->token);
+		else if (getVarType(stable, subTree->token) == 7) {
+			if(subTree -> numOfSubNodes != 0){
+				if (evalExp(subTree->subNodes[0], stable, tree) != 2) {
+					printf("Error:  %s Index must be int\n", subTree->subNodes[0]->token);
+					quitProgram(tree);
+				}
+				return 1;
+			}
+			return 7;
+		}
+		else {
+			printf("Error: variable %s does not exist\n", subTree->token);
+			quitProgram(tree);
+		}	
+	}
 }
 
 
@@ -2803,6 +3023,7 @@ bool checkFuncExist(table *env, char *name) {
 
 void quitProgram(node *tree) {
 	freeTree(tree);
+	getchar();
 	exit(1);
 }
 
@@ -2811,21 +3032,32 @@ bool funcCallCheck(node* tree, table *env) {
 		printf("Error: calling function %s that does not exist\n", tree->subNodes[0]->token);
 		return false;
 	}
-	else if (getFuncNumOfArgs(tree->subNodes[0]->token, env) != tree->numOfSubNodes - 1) {
+	int numOfarguments = tree->numOfSubNodes;
+	for(int i=0; i<tree->numOfSubNodes; i++){
+		if(!strcmp("NONE", tree->subNodes[i]->token))
+			numOfarguments -= 1;
+	}
+	if (getFuncNumOfArgs(tree->subNodes[0]->token, env) != numOfarguments - 1) {
+		printf("%d\n",getFuncNumOfArgs(tree->subNodes[0]->token, env));
+		printf("%d\n",tree->numOfSubNodes);
 		printf("Error: number of arguments does not match calling function %s\n", tree->subNodes[0]->token);
 		return false;
 	}
 	for(int i=1; i<tree->numOfSubNodes;i++){
-		if (!checkVarExist(env, tree->subNodes[i]->token)) {
-			printf("Error: variable %s does not exist\n", tree->subNodes[i]->token);
-			return false;
+		if(strcmp("NONE",tree->subNodes[i]->token) !=0 ){
+			if (!checkVarExist(env, tree->subNodes[i]->token)) {
+				printf("Error: variable %s does not exist\n", tree->subNodes[i]->token);
+				return false;
+			}	
 		}
 	}
 	int *args = getFuncArgsTypes(tree->subNodes[0]->token, env);
 	for (int i = 1; i < tree->numOfSubNodes; i++) {
-		if (getVarType(env, tree->subNodes[i]->token) != args[i-1]) {
-			printf("Error: variable %s does not match expected type\n", tree->subNodes[i]->token);
-			return false;
+		if(strcmp("NONE",tree->subNodes[i]->token) != 0){
+			if (getVarType(env, tree->subNodes[i]->token) != args[i-1]) {
+				printf("Error: variable %s does not match expected type\n", tree->subNodes[i]->token);
+				return false;
+			}
 		}
 	}
 }
@@ -2854,6 +3086,19 @@ int* getFuncArgsTypes(char* name, table *env) {
 	}
 }
 
+int getFuncType(table *env, char *name) {
+	table *temp = env;
+	while (temp != NULL) {
+		for (int i = 0; i < temp->numOfFunction; i++) {
+			if (!strcmp(name, temp->functions[i]->name)) {
+				return temp->functions[i]->type;
+			}
+		}
+		temp = temp->upperEnv;
+	}
+	return -1;
+}
+
 int getVarType(table *env, char *id) {
 	if (!strcmp("bool", id) || !strcmp("char", id) || !strcmp("int", id) || !strcmp("real", id) || !strcmp("null", id)) {
 		return getTypeVal(id);
@@ -2867,6 +3112,7 @@ int getVarType(table *env, char *id) {
 		}
 		temp = temp->upperEnv;
 	}
+	return -1;
 }
 
 bool checkVarExist(table *env, char *id) {
@@ -2885,9 +3131,22 @@ bool checkVarExist(table *env, char *id) {
 	return false;
 }
 
-
-
-
+bool checkReturnVal(node *subTree, table *env, node* tree) {
+	if (env->returnType <= 6 && env->returnType >= 0) {
+		if (evalExp(subTree->subNodes[0], env, tree) != env->returnType) {
+			return false;
+		}
+	}
+	if (env->returnType == 8) {
+		if (env->upperEnv != NULL)
+			return checkReturnVal(subTree, env->upperEnv, tree);
+		else
+			return false;
+	}
+	if (env->returnType == -1) {
+		return false;
+	}
+}
 
 void printTable(table *table) {
 	printf("Functions:\n");
