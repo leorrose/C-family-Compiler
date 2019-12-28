@@ -946,11 +946,6 @@ void checkTree(node *subTree , table *env, node *tree) {
 			quitProgram(tree, env);
 		}	
 	}
-	
-	//del at end
-	else {
-		printf("%s\n", subTree->token);
-	}
 }
 
 /* function to evaluate expression type */

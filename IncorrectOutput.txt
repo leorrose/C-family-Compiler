@@ -1,0 +1,1511 @@
+---------------------------------------------
+/* index is not int */
+function void main(){
+	function int test(int x,y){
+		string str[100], str1['e'];
+		return 1;
+	}	
+}
+Error: str1 Index must be int
+---------------------------------------------
+/* index is not int */
+function void main(){
+	function int test(int x,y){
+		string str[100], str1[30];
+		return 1;
+	}
+	string str[100], str1[10.65];	
+}
+Error: str1 Index must be int
+---------------------------------------------
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	string str[null], str1[30];
+	return 1;
+}
+Error: str Index must be int
+---------------------------------------------
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	string str[100], str1[30];
+
+	str['e'] = str[3];
+	return 1;
+}
+Error: str Index must be int
+---------------------------------------------
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	string str[100], str1[30];
+
+	str[3] = str['r'];
+	return 1;
+}
+Error:  char Index must be int
+---------------------------------------------
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	string str[100], str1[30];
+	var int x;
+	var int y = x[0];
+	return 1;
+}
+Error: Duplicate variable name - x
+---------------------------------------------
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	var char s;
+	s = s[0];
+	return 1;
+}
+Error: s has no Index operator
+---------------------------------------------
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	var real x;
+
+	if (x[0] > 10){
+
+	}
+	return 1;
+}
+Error: Duplicate variable name - x
+---------------------------------------------
+/* index is not int */
+function void main(){
+	function int test(int x,y){
+	var real x;
+
+	if (x[0] > 10){
+
+	}
+	return 1;
+}
+}
+
+Error: Duplicate variable name - x
+---------------------------------------------
+function int test(int x,y){
+	if (null[0] > 10){
+
+	}
+	return 1;
+}
+Error: syntax error at line 2                                                                                                                                 
+does not accept '['   
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x =  &x;
+}
+Error: unsupported operand types ADDRESS-OF
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = &b;
+}
+Error: unsupported operand types ADDRESS-OF
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x =&str ;
+}
+Error: unsupported operand types ADDRESS-OF
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = &null;
+}
+Error: syntax error at line 8                                                                                                                                 
+does not accept 'null'
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	var char y;
+
+	x = y;
+
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	var real z;
+
+	x = z;
+
+
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	var int* a;
+
+
+	x = a;
+
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	var real* b;
+
+	x = b;
+
+
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	var char* c;
+	x = c;
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	string str[100];
+
+	x = str;
+
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check assignment incorrect */
+function void main(){
+	var int x;
+	string str[100];
+
+	x = str[10];
+
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == 'c';	
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == true;	
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == str[100];
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == w;
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = !w;	
+}
+Error: unsupported operand types !
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	c = !str[100];
+}
+Error: Variable used before declaration - c
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = !x;
+}
+Error: unsupported operand types !
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = !(x+y);	
+}
+Error: unsupported operand types !
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = |y|;	
+}
+Error: unsupported operand types | str |
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = |w|;	
+}
+Error: unsupported operand types | str |
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = | str[100] |;
+}
+Error: syntax error at line 8                                                                                                                                
+does not accept '['  
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = |b|;
+}
+Error: unsupported operand types | str |
+---------------------------------------------
+/* do while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		do {
+			x = x + 10;
+		}
+		while ( x );
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible expression in "do while" expected bool
+---------------------------------------------
+/* do while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		do {
+			x = x + 10;
+		}
+		while ( 30 && 40.76 );
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: unsupported operand types &&
+---------------------------------------------
+/* do while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		do {
+			x = x + 10;
+		}
+		while ( "str" );
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: syntax error at line 7                                                                                                                                 
+does not accept '"str"'
+---------------------------------------------
+/* do while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if( x> 10){
+			do {
+				x = x + 10;
+			}
+			while ( 'c' || 4.87 );
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: unsupported operand types ||
+---------------------------------------------
+/* do while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		do {
+			x = x + 10;
+		}
+		while ( null );
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible expression in "do while" expected bool
+---------------------------------------------
+
+/* dupliacte function name in same scoope*/
+function void main(){}
+function int test(){
+	return 1;
+}
+function int test(){
+	return 1;
+}
+Error: Duplicate function name - test
+---------------------------------------------
+
+/* dupliacte function name in same scoope*/
+function void main(){}
+function int test(){
+	return 1;
+}
+function void test(){}
+Error: Duplicate function name - test
+---------------------------------------------
+/* dupliacte main  */
+function void main(){}
+function void main(){}
+Error: main can only used once
+---------------------------------------------
+/* dupliacte main  */
+function void main(){
+	function void main(){
+	}
+}
+Error: main can only used once
+---------------------------------------------
+/* dupliacte variable name in same scoope*/
+function void main(){
+	var int x;
+	var char x;
+}
+Error: Duplicate variable name - x
+---------------------------------------------
+/* dupliacte variable name in same scoope*/
+function void main(){
+	var int x, x;
+}
+Error: Duplicate variable name - x
+---------------------------------------------
+/* for condition is not bool */
+function void main(){
+	function int test(int x,y){
+		for(x = 0; x; x++){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible expression in "for" expected bool
+---------------------------------------------
+/* for condition is not bool */
+function void main(){
+	function int test(int x,y){
+		for(x = 0; 'c' || 'b'; x++){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: unsupported operand types ||
+---------------------------------------------
+/* for condition is not bool */
+function void main(){
+	function int test(int x,y){
+		{
+			for(x = 0; x+y ; x++){
+				x = x + 10;
+			}
+		}	
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible expression in "for" expected bool
+---------------------------------------------
+/* for condition is not bool */
+function void main(){
+	function int test(int x,y){
+		for(x = 0; "str"; x++){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: syntax error at line 4                                                                                                                                 
+does not accept '"str"' 
+---------------------------------------------
+/* for condition is not bool */
+function void main(){
+	function int test(int x,y){
+		for(x = 0; ; x++){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: syntax error at line 4                                                                                                                                 
+does not accept ';' 
+---------------------------------------------
+/* function return type is string */
+function string test(int x){
+	return 'str';
+}
+function void main(){
+	string a[100]
+	a = test(10);	
+}
+---------------------------------------------
+/* function used before declared */
+function void main(){
+	var int a ;
+	a = test();	
+}
+function int test(){
+	return 1;
+}
+Error: calling function test that does not exist
+---------------------------------------------
+/* function used before declared */
+function void main(){
+	function int test(){
+		var int a ;
+		a = test2();
+		return 1;
+	}
+	function int test2(){
+		return 1;
+	}	
+}
+
+Error: calling function test2 that does not exist
+---------------------------------------------
+/* if condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if( x ){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+		return 1;
+	}
+	var int a,b; 
+	a = test(b,b);
+	return 1;	
+}
+Error: Incompatible expression in "if-else" expected bool
+---------------------------------------------
+/* if condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if("str"){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+		return 1;
+	}
+	var int a,b; 
+	a = test(b,b);
+	return 1;	
+}
+Error: syntax error at line 10                                                                                                                                
+does not accept '}'
+---------------------------------------------
+/* if condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if( x== y && y > 10 || "str"){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+		return 1;
+	}
+	var int a,b; 
+	a = test(b,b);
+	return 1;	
+}
+ror: syntax error at line 4                                                                                                                                 
+does not accept '"str"' 
+---------------------------------------------
+/* if condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if( 'c' && 'h' ){
+			return 1;
+		}
+		return 1;
+	}
+	var int a,b; 
+	a = test(b,b);
+	return 1;	
+}
+Error: unsupported operand types &&
+---------------------------------------------
+/* if condition is not bool */
+function void main(){
+	function int test(int x,y){
+		{
+			if( 10.6 && 2 ){
+				return 1;
+			}
+			else{
+				return 0;
+			}
+		}
+		return 1;	
+	}
+	var int a,b; 
+	a = test(b,b);
+	return 1;	
+}
+Error: unsupported operand types &&
+---------------------------------------------
+/* main with args */
+function void main(int a,b; real z){
+	function int test(){
+		return 1;
+	}
+}
+function void test(){
+	return 1;
+}
+Error: main cannot have arguments
+---------------------------------------------
+
+/* main doesnt exist */
+function void test(){}
+Error: no main function
+---------------------------------------------
+
+/* main doesnt exist */
+function void test(){
+	function void test2(){}
+}
+Error: no main function
+---------------------------------------------
+/* variable not declared before used */
+function void main(){
+	var int a ;
+	a = x + y;	
+}
+Error: variable x does not exist
+---------------------------------------------
+/* variable not declared before used */
+function void main(){
+	var int a,y;
+	function void test(){
+		a = x + x;
+	}
+		
+}
+Error: variable x does not exist
+---------------------------------------------
+/* while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		while ( x ){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible expression in "while" expected bool
+---------------------------------------------
+/* while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		while ( 10.6 && true && false ){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: unsupported operand types &&
+---------------------------------------------
+/* while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		while ( "str" ){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: syntax error at line 4                                                                                                                                 
+does not accept '"str"'
+---------------------------------------------
+/* while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if( x> 10){
+			while ( 'c' && null ){
+				x = x + 10;
+			}
+			return x;
+		}
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: syntax error at line 4                                                                                                                                 
+does not accept ')'   
+---------------------------------------------
+/* while condition is not bool */
+function void main(){
+	function int test(int x,y){
+		while ( ){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: syntax error at line 4                                                                                                                                
+does not accept '"str"'
+---------------------------------------------
+/* function types of arguments is incorrect */
+function int test(int x){
+	return x;
+}
+function void main(){
+	var int a; 
+	var char z;
+	a = test(z);	
+}
+Error: variable z does not match expected type
+---------------------------------------------
+/* function types of arguments is incorrect */
+
+function void main(){
+	function int test(int x){
+		return x;
+	}
+	var int a; 
+	var char z;
+	a = test(z);	
+}
+Error: variable z does not match expected type
+---------------------------------------------
+/* assignment of function return type is incorrect */
+function real test(int x,y){
+	return 2.0;
+}
+function void main(){
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible assignment - a
+---------------------------------------------
+/* assignment of function return type is incorrect */
+function void main(){
+	function char test(int x,y){
+		return 'c';
+	}
+	var int a,b; 
+	a = test(b,b);	
+}
+Error: Incompatible assignment - a
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y > 'c';	
+}
+Error: unsupported operand types >
+---------------------------------------------
+/* function number of arguments is incorrect */
+function int test(int a,b,c,d){
+	return a;
+}
+function void main(){
+	var int a,b;
+	a = test(a,b,a);	
+}
+Error: number of arguments does not match calling function test
+---------------------------------------------
+/* function number of arguments is incorrect */
+
+function void main(){
+	function int test(){
+		return 1;
+	}
+	function void test2(){
+		test(2,3);
+	}	
+}
+Error: number of arguments does not match calling function test
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+	x = x + y;
+	
+}
+Error: unsupported operand types +
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = y + y ;
+
+	
+}
+Error: unsupported operand types +
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x + z ;
+
+	
+}
+Error: unsupported operand types +
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+	x = z + z;
+	
+}
+Error: unsupported operand types +
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+	x = x - y;
+	
+}
+Error: unsupported operand types -
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = y - y ;
+
+	
+}
+Error: unsupported operand types -
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x - z ;
+
+	
+}
+Error: unsupported operand types -
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x - z ;
+
+	
+}
+Error: unsupported operand types -
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y || 5;
+}
+Error: unsupported operand types ||
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y || 5.76;
+}
+Error: unsupported operand types ||
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	y = y || 'c' || 65;
+}
+Error: unsupported operand types ||
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x =  *w;
+}
+Error: unsupported operand types POINTER
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = &x;
+}
+Error: Incompatible assignment - x
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x =*str ;
+}
+Error: unsupported operand types POINTER
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = *b;
+}
+Error: unsupported operand types POINTER
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x =  x * y;
+}
+Error: unsupported operand types *
+---------------------------------------------
+/* function return type is incorrect */
+function int test(int x){
+	return 'c';
+}
+function void main(){
+	var int a; 
+	var char z;
+	a = test(a,a);	
+}
+Error: Incompatible return type
+---------------------------------------------
+/* function return type is incorrect */
+
+function void main(){
+
+	function int test(int x,y){
+		return 10.567;
+	}
+	var int a; 
+	var char z;
+	a = test(a,a);	
+}
+Error: Incompatible return type
+---------------------------------------------
+/* function return type is incorrect */
+
+function void main(){
+
+	function void test(int x,y){
+		return 10.567;
+	}
+	var int a; 
+	var char z;
+	test(a,a);	
+}
+Error: Incompatible return type
+---------------------------------------------
+/* main type not void*/
+function int main(){
+	return 2;
+}
+Error: main type can only be void
+---------------------------------------------
+/* main type not void*/
+function int test(){
+	return 2;
+}
+function int main(){
+	return 1;
+}
+Error: main type can only be void
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == w;
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == 'c';	
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == true;	
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == str[100];
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y == w;
+}
+Error: unsupported operand types ==
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y > true;	
+}
+Error: unsupported operand types >
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y > str[100];
+}
+Error: unsupported operand types >
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y > w;
+}
+Error: unsupported operand types >
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y >= 'c';	
+}
+Error: unsupported operand types >=
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y >= true;	
+}
+Error: unsupported operand types >=
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y >= str[100];
+}
+Error: unsupported operand types >=
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y >= w;
+}
+Error: unsupported operand types >=
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+	x = x * y;
+	
+}
+Error: unsupported operand types *
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = y * y ;
+
+	
+}
+Error: unsupported operand types *
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x * z ;
+
+	
+}
+Error: unsupported operand types *
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x * z ;
+
+	
+}
+Error: unsupported operand types *
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = x / x;
+}
+Error: unsupported operand types /
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = y && y ;
+}
+Error: unsupported operand types &&
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	x = y * y / y;
+}
+Error: unsupported operand types *
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y < 'c';	
+}
+Error: unsupported operand types <
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y < true;	
+}
+Error: unsupported operand types <
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y < str[100];
+}
+Error: unsupported operand types <
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y < w;
+}
+Error: unsupported operand types <
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real* w,z;
+	var bool b;
+	string str[100];
+
+	b = y == w;
+}
+Error: unsupported operand types ==
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y && 5;
+}
+Error: unsupported operand types &&
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y && 5;
+}
+Error: unsupported operand types &&
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y && 5.76;
+}
+Error: unsupported operand types &&
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	y = y && 'c' && 65;
+}
+Error: unsupported operand types &&
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+	x = x / y;
+	
+}
+Error: unsupported operand types /
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = y / y ;
+
+	
+}
+Error: unsupported operand types /
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x / z ;
+
+	
+}
+Error: unsupported operand types /
+---------------------------------------------
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = x / z ;
+
+	
+}
+Error: unsupported operand types /
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y <= 'c';	
+}
+Error: unsupported operand types <=
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y <= true;	
+}
+Error: unsupported operand types <=
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y <= str[100];
+}
+Error: unsupported operand types <=
+---------------------------------------------
+/* check expression eval > incorrect */
+function void main(){
+	var int* x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y <= w;
+}
+Error: unsupported operand types <=
+---------------------------------------------
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y || 5;
+}
+Error: unsupported operand types ||

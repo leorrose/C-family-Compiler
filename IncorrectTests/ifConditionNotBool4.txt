@@ -4,6 +4,7 @@ function void main(){
 		if( 'c' && 'h' ){
 			return 1;
 		}
+		return 1;
 	}
 	var int a,b; 
 	a = test(b,b);

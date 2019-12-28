@@ -4,5 +4,5 @@ function int test(int a,b,c,d){
 }
 function void main(){
 	var int a,b;
-	a = test(a,b,a,b);	
+	a = test(a,b,a,);	
 }

@@ -7,6 +7,7 @@ function void main(){
 			}
 			return x;
 		}
+		return x;
 	}
 	var int a,b; 
 	a = test(b,b);	
