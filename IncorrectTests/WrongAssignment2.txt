@@ -1,9 +1,0 @@
-/* check assignment incorrect */
-function void main(){
-	var int x;
-	var real z;
-
-	x = z;
-
-
-}

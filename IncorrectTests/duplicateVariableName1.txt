@@ -1,5 +1,0 @@
-/* dupliacte variable name in same scoope*/
-function void main(){
-	var int x;
-	var char x;
-}

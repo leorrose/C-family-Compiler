@@ -1,4 +1,0 @@
-/* main type not void*/
-function int main(){
-	return 2;
-}

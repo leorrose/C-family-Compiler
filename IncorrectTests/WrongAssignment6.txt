@@ -1,8 +1,0 @@
-/* check assignment incorrect */
-function void main(){
-	var int x;
-	string str[100];
-
-	x = str;
-
-}

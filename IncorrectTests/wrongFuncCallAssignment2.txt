@@ -1,8 +1,0 @@
-/* assignment of function return type is incorrect */
-function void main(){
-	function char test(int x,y){
-		return 'c';
-	}
-	var int a,b; 
-	a = test(b,b);	
-}

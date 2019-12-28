@@ -1,9 +1,0 @@
-/* index is not int */
-function void main(){
-	
-}
-function int test(int x,y){
-	var char s;
-	s = s[0];
-	return 1;
-}

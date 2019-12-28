@@ -1,8 +1,0 @@
-/* function return type is string */
-function string test(int x){
-	return 'str';
-}
-function void main(){
-	string a[100]
-	a = test(10);	
-}

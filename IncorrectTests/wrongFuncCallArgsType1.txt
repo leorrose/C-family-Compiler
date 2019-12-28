@@ -1,9 +1,0 @@
-/* function types of arguments is incorrect */
-function int test(int x){
-	return x;
-}
-function void main(){
-	var int a; 
-	var char z;
-	a = test(z);	
-}

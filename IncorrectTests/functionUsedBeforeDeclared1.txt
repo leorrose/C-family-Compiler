@@ -1,8 +1,0 @@
-/* function used before declared */
-function void main(){
-	var int a ;
-	a = test();	
-}
-function int test(){
-	return 1;
-}
