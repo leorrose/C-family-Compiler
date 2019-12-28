@@ -1,0 +1,8 @@
+/* assignment of function return type is incorrect */
+function real test(int x,y){
+	return 2.0;
+}
+function void main(){
+	var int a,b; 
+	a = test(b,b);	
+}

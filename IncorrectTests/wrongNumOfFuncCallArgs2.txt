@@ -1,0 +1,10 @@
+/* function number of arguments is incorrect */
+
+function void main(){
+	function int test(){
+		return 1;
+	}
+	function void test2(){
+		test(2,3);
+	}	
+}

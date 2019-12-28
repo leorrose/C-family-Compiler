@@ -1,0 +1,8 @@
+/* variable not declared before used */
+function void main(){
+	var int a,y;
+	function void test(){
+		a = x + x;
+	}
+		
+}

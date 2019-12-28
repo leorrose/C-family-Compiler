@@ -1,0 +1,10 @@
+/* function types of arguments is incorrect */
+
+function void main(){
+	function int test(int x){
+		return x;
+	}
+	var int a; 
+	var char z;
+	a = test(z);	
+}

@@ -1,0 +1,9 @@
+/* main with args */
+function void main(int a,b; real z){
+	function int test(){
+		return 1;
+	}
+}
+function void test(){
+	return 1;
+}

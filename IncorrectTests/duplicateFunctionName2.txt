@@ -1,0 +1,7 @@
+
+/* dupliacte function name in same scoope*/
+function void main(){}
+function int test(){
+	return 1;
+}
+function void test(){}

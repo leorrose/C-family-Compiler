@@ -1,38 +1,10 @@
-
-/* main doesnt exist */
-function void test(){}
-
-/* dupliacte main  */
-function void main(){
-	function void main(){
-	}
-}
-
-/* main type not void*/
-function int main(){}
-
-/* main has arguments*/
-function void main(int a,b){}
-
-/* dupliacte function name in same scoope*/
-function void main(){}
-function int test(){}
-function void test(){}
-
 /* dupliacte function name in differentscoope*/
 function void main(){
 	function int test(){}
 }
 function void test(){}
 
-
-/* dupliacte variable name in same scoope*/
-function void main(){
-	var int x;
-	var char x;
-}
-
-/* dupliacte variable name in differentscoope*/
+/* dupliacte variable name in differentscope*/
 function void main(){
 	var char x;
 	function int test(){
@@ -40,25 +12,11 @@ function void main(){
 	}
 }
 
-/* function not declared before used */
-function void main(){
-	var int a ;
-	a = test();	
-}
-function int test(){}
-
 /* function declared before used */
 function int test(){}
 function void main(){
 	var int a; 
 	a = test();	
-}
-
-
-/* variable not declared before used */
-function void main(){
-	var int a ;
-	a = x + y;	
 }
 
 /* variable declared before used */

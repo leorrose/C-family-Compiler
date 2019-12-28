@@ -1,0 +1,11 @@
+/* check expression eval + incorrect */
+function void main(){
+	var int x;
+	var char y;
+	var bool z;
+
+
+	y = y / y ;
+
+	
+}

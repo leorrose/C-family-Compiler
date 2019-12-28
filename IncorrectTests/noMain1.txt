@@ -1,0 +1,3 @@
+
+/* main doesnt exist */
+function void test(){}

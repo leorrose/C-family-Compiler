@@ -1,0 +1,11 @@
+/* function return type is incorrect */
+
+function void main(){
+
+	function void test(int x,y){
+		return 10.567;
+	}
+	var int a; 
+	var char z;
+	test(a,a);	
+}

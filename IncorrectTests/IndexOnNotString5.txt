@@ -1,0 +1,6 @@
+function int test(int x,y){
+	if (null[0] > 10){
+
+	}
+	return 1;
+}

@@ -3019,14 +3019,17 @@ void checkTree(node *subTree , table *env, node *tree) {
 
 /* function to evaluate expression type */
 int evalExp(node *subTree, table* stable, node *tree) {
+	/* if node token is + , - with pointer */
 	if(!strcmp("+", subTree->token) || !strcmp("-", subTree->token)){
 		int type1 = evalExp(subTree->subNodes[0], stable, tree); /* first node type */
 		int type2 = evalExp(subTree->subNodes[1], stable, tree); /* second node type */
 
+		/* check pointer and int  */
 		if( type1 >= 4 && type1 <= 7 && type2 == 2){
 			return type1;
 		}
 
+		/* check pointer and int  */
 		if( type2 >= 4 && type2 <= 7 && type1 == 2){
 			return type2;
 		}

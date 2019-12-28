@@ -1,0 +1,11 @@
+/* if condition is not bool */
+function void main(){
+	function int test(int x,y){
+		if( 'c' && 'h' ){
+			return 1;
+		}
+	}
+	var int a,b; 
+	a = test(b,b);
+	return 1;	
+}

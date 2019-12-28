@@ -1,0 +1,11 @@
+/* for condition is not bool */
+function void main(){
+	function int test(int x,y){
+		for(x = 0; 'c' || 'b'; x++){
+			x = x + 10;
+		}
+		return x;
+	}
+	var int a,b; 
+	a = test(b,b);	
+}

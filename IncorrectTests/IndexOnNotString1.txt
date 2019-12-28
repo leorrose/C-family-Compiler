@@ -1,0 +1,10 @@
+/* index is not int */
+function void main(){
+	
+}
+function int test(int x,y){
+	string str[100], str1[30];
+	var int x;
+	var int y = x[0];
+	return 1;
+}

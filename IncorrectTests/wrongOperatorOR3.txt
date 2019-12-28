@@ -1,0 +1,9 @@
+
+/* check expression eval && || incorrect */
+function void main(){
+	var bool x,y;
+	var int z;
+	string str[100];
+
+	x = y || 5.76;
+}

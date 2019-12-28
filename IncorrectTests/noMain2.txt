@@ -1,0 +1,5 @@
+
+/* main doesnt exist */
+function void test(){
+	function void test2(){}
+}

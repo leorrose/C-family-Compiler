@@ -1,0 +1,3 @@
+/* dupliacte main  */
+function void main(){}
+function void main(){}

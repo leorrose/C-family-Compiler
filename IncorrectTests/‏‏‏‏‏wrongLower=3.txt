@@ -1,0 +1,9 @@
+/* check expression eval > incorrect */
+function void main(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+	string str[100];
+
+	b = y <= str[100];
+}
