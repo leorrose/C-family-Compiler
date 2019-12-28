@@ -1,6 +1,11 @@
 /* check expression eval || incorrect */
 function void main(){
-	string str[10] ="scb" , str2['e'] ;
-
-	str[100] = 'c';
+	function int leor( int a; real b){
+		var real x,y ;
+		var real z;
+		var char* s,r ;
+		
+		s = s + a ;
+		return 1;
+	}
 }

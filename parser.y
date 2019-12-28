@@ -103,10 +103,10 @@ int getTypeVal(char *string);
 
 
 %type <node> program cmd 
-%type <node> function procedure parameter_list parameter_list_no_empty type_list param body declarations
+%type <node> function procedure parameter_list parameter_list_no_empty type_list param func_body proc_body declarations
 %type <node> primitive_val
 %type <node> declaration primitive_declaration declaration_parameters string_declaration string_parameters 
-%type <node> nested_statements stmt code_block declaration_no_function conditions loops multi_assign update procedure_func_call expression_list return
+%type <node> nested_statements_with_return nested_statements stmt code_block declaration_no_function conditions loops multi_assign update procedure_func_call expression_list return
 %type <node> assign primitive_assign index_assign string_assign  pointer_assign
 %type <node> expression
 %type <string> unary_op
@@ -149,11 +149,11 @@ cmd:
 /*----------------------------------------Procedure And Functions---------------------------------------------------*/
 
 function:
-	FUNCTION VALTYPE ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode($2,0)),$8); }
+	FUNCTION VALTYPE ID '(' parameter_list ')' '{' func_body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode($2,0)),$8); }
 	;
 
 procedure:
-	FUNCTION VOID ID '(' parameter_list ')' '{' body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode("VOID",0)),$8);}
+	FUNCTION VOID ID '(' parameter_list ')' '{' proc_body '}'					{ $$ = mknode("FUNCTION",4,mknode($3,0),$5,mknode("TYPE",1,mknode("VOID",0)),$8);}
 	;
 
 parameter_list:
@@ -162,7 +162,7 @@ parameter_list:
 	;
 
 parameter_list_no_empty:
-	type_list ';' parameter_list					{ $$ = combineNodes("ARGS",$1,$3); }
+	type_list ';' parameter_list_no_empty			{ $$ = combineNodes("ARGS",$1,$3); }
 	|type_list										{ $$ = $1;}
 	;
 
@@ -175,7 +175,12 @@ param:
 	|ID												{ $$ = mknode("ARGS",1,mknode($1,0)); }
 	;
 
-body:
+func_body:
+	declarations nested_statements_with_return	{ $$ = combineNodes("BODY",$1,$2); }
+	|nested_statements_with_return				{ free($1->token); $1->token =strdup("BODY"); $$=$1; }
+	;
+
+proc_body:
 	declarations nested_statements				{ $$ = combineNodes("BODY",$1,$2); }
     |declarations								{ free($1->token); $1->token=strdup("BODY"); $$=$1; }
 	|nested_statements							{ free($1->token); $1->token =strdup("BODY"); $$=$1; }
@@ -231,6 +236,11 @@ string_parameters:
 	;
 
 /*-------------------------------------------Statments--------------------------------------------------------------------*/
+
+nested_statements_with_return:
+	stmt nested_statements_with_return						{ $$ = combineNodes("Statments", mknode("stmt",1,$1),$2);}
+	|return ';'												{ $$ = mknode("stmt",1,$1);}
+	;
 
 nested_statements:
 	stmt													{ $$ = mknode("stmt",1,$1); }
@@ -367,6 +377,9 @@ epsilon: ;
 
 
 void main(){
+	#if YYDEBUG
+        yydebug = 1;
+    #endif
     yyparse();
 }
 
@@ -535,6 +548,8 @@ int getTypeVal(char *string) {
 		return 7;
 	else if (strcmp(string, "null") == 0)
 		return 8;
+	else if (strcmp(string, "VOID") == 0)
+		return -1;
 }
 /*--------------------------------------------------------------create variable representation----------------------------------------------*/
 
@@ -940,6 +955,22 @@ void checkTree(node *subTree , table *env, node *tree) {
 
 /* function to evaluate expression type */
 int evalExp(node *subTree, table* stable, node *tree) {
+	/* if node token is + , - with pointer */
+	if(!strcmp("+", subTree->token) || !strcmp("-", subTree->token)){
+		int type1 = evalExp(subTree->subNodes[0], stable, tree); /* first node type */
+		int type2 = evalExp(subTree->subNodes[1], stable, tree); /* second node type */
+
+		/* check pointer and int  */
+		if( type1 >= 4 && type1 <= 7 && type2 == 2){
+			return type1;
+		}
+
+		/* check pointer and int  */
+		if( type2 >= 4 && type2 <= 7 && type1 == 2){
+			return type2;
+		}
+	}
+
 	/* if node token is + , - , * , / */
 	if (!strcmp("+", subTree->token) || !strcmp("-", subTree->token) || !strcmp("*", subTree->token) || !strcmp("/", subTree->token)) {
 		int type1 = evalExp(subTree->subNodes[0], stable, tree); /* first node type */
