@@ -1,12 +1,9 @@
 /* check expression eval || incorrect */
 function void main(){
-	var int* a1;
-	var char* b1;
-	var real* c1;
+	var int a;
+	var char b;
+	string str[100];
 
-
-	a1 = *a1;
-	b1 = *b1;
-	c1 = *c1;
-
+	str[0] = 'c';
+	a[0] = a;
 }

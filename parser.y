@@ -71,6 +71,8 @@ int getFuncNumOfArgs(char* name, table *env);
 int getVarType(table *env, char *id);
 bool checkReturnVal(node *subTree, table *env, node* tree);
 int getFuncType(table *env, char *name);
+bool isConstant(char *id);
+
 %}
 
 
@@ -791,6 +793,10 @@ void checkTree(node *subTree , table *env, node *tree) {
 			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) == 2 && evalExp(subTree->subNodes[1], env, tree) == 1)
 				return;
 		}
+		if(getVarType(env, subTree->subNodes[0]->token) != 7 && subTree->subNodes[0]->numOfSubNodes!=0){
+			printf("Error: %s has no Index operator\n", subTree->subNodes[0]->token);
+			quitProgram(tree);
+		}
 		if (getVarType(env, subTree->subNodes[0]->token) != evalExp(subTree->subNodes[1], env, tree)) {
 			printf("Error: Incompatible assignment - %s\n", subTree->subNodes[0]->token);
 			quitProgram(tree);
@@ -934,8 +940,14 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		return getFuncType(stable, subTree->subNodes[0]->token);
 	}
 	else {
-		if ((getVarType(stable, subTree->token) <= 6 && getVarType(stable, subTree->token)>=0) || getVarType(stable, subTree->token) == 8)
+		if ((getVarType(stable, subTree->token) <= 6 && getVarType(stable, subTree->token)>=0) || getVarType(stable, subTree->token) == 8){
+			if(subTree->numOfSubNodes!=0 && subTree->subNodes[0] != NULL  && !isConstant(subTree->token)){
+				printf("Error: %s has no Index operator\n", subTree->token);
+				quitProgram(tree);
+			}
 			return getVarType(stable, subTree->token);
+		}
+			
 		else if (getVarType(stable, subTree->token) == 7) {
 			if(subTree -> numOfSubNodes != 0){
 				if (evalExp(subTree->subNodes[0], stable, tree) != 2) {
@@ -1074,6 +1086,13 @@ int getVarType(table *env, char *id) {
 		temp = temp->upperEnv;
 	}
 	return -1;
+}
+
+bool isConstant(char *id){
+	if (!strcmp("bool", id) || !strcmp("char", id) || !strcmp("int", id) || !strcmp("real", id) || !strcmp("null", id)) {
+		return true;
+	}
+	return false;
 }
 
 bool checkVarExist(table *env, char *id) {
