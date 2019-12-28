@@ -103,7 +103,7 @@ int getTypeVal(char *string);
 
 
 %type <node> program cmd 
-%type <node> function procedure parameter_list type_list param body declarations
+%type <node> function procedure parameter_list parameter_list_no_empty type_list param body declarations
 %type <node> primitive_val
 %type <node> declaration primitive_declaration declaration_parameters string_declaration string_parameters 
 %type <node> nested_statements stmt code_block declaration_no_function conditions loops multi_assign update procedure_func_call expression_list return
@@ -157,9 +157,13 @@ procedure:
 	;
 
 parameter_list:
-	type_list ';' parameter_list					{ $$ = combineNodes("ARGS",$1,$3); }
-	|type_list										{ $$ = $1;}	
+	parameter_list_no_empty							{ $$ = $1;}
 	|epsilon										{ $$ = mknode("ARGS",1,mknode("NONE",0)); }
+	;
+
+parameter_list_no_empty:
+	type_list ';' parameter_list					{ $$ = combineNodes("ARGS",$1,$3); }
+	|type_list										{ $$ = $1;}
 	;
 
 type_list:	
