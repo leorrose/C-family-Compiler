@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include "lex.yy.c"
 
+/* struct for parsing tree node */
 typedef struct node
 {
 	char *token;
@@ -13,6 +14,7 @@ typedef struct node
 	struct node **subNodes;
 }node;
 
+/* struct for symbol table function representation */
 typedef struct func {
 	char *name;
 	int *args;
@@ -20,11 +22,13 @@ typedef struct func {
 	int numOfArgs;
 }func;
 
+/* struct for symbol table var representation */
 typedef struct var {
 	char *name;
 	int type;
 }var;
 
+/* struct for symbol table */
 typedef struct table {
 	struct table *upperEnv;
 	struct func **functions;
@@ -34,9 +38,11 @@ typedef struct table {
 	int returnType;
 }table;
 
-
+/* global variables */
 typedef enum bool{ false,true } bool;
 int numOfmains = 0;
+
+/* parsing tree */
 node *mknode(char *token, int count, ...);
 int yywrap();
 int yyerror(char *err);
@@ -45,15 +51,20 @@ node *combineNodes(char *token, node *one, node *two);
 void printTree(node *tree, int tab);
 void printTabs(int a);
 void freeTree(node *tree);
+
+/* symbol table function representation */
 func *mkfunc(char *name, int type, int numOfArgs, int *args);
 int numOfArgs(node *node);
 int* argumentRep(node *node);
-int getTypeVal(char *string);
+
+/* symbol table var representation */
 var *mkvar(char *name, int type);
 table *mktable(table *upperEnv, int returnType);
 void insertVar(table *stable, node *tree, node* fullTree);
 void insertString(table *stable, node *tree, node* fullTree);
 void insertArgs(table *stable, node *tree, node* fullTree);
+
+/* semantic analysis*/
 void addFunc(table *table, func *func);
 void addVar(table *table, var *var);
 void checkTree(node *subTree, table *env, node *tree);
@@ -63,7 +74,7 @@ void startSemantics(node *node);
 void printTable(table *table);
 bool checkFuncExist(table *env, char *name);
 int evalExp(node *subTree, table* stable, node *tree);
-void quitProgram(node *tree);
+void quitProgram(node *tree, table *env);
 int* getFuncArgsTypes(char* name, table *env);
 bool checkVarExist(table *env, char *id);
 bool funcCallCheck(node* tree, table *env);
@@ -72,6 +83,9 @@ int getVarType(table *env, char *id);
 bool checkReturnVal(node *subTree, table *env, node* tree);
 int getFuncType(table *env, char *name);
 bool isValue(char *id);
+void freeTable(table *env);
+void freeAllTables(table *env);
+int getTypeVal(char *string);
 
 %}
 
@@ -540,7 +554,7 @@ void insertVar(table *stable, node *tree, node* fullTree) {
 			/* var was declared already */
 			else {
 				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->token);
-				quitProgram(fullTree);
+				quitProgram(fullTree, stable);
 			}
 		}
 		/* variable with assign */
@@ -548,7 +562,7 @@ void insertVar(table *stable, node *tree, node* fullTree) {
 			/* if left side type is not as right side type */
 			if (type != evalExp(tree->subNodes[i]->subNodes[1], stable, tree)) {
 				printf("Error: Incompatible assignment - %s\n", tree->subNodes[i]->subNodes[0]->token);
-				quitProgram(tree);
+				quitProgram(tree, stable);
 			}
 			/* check var wasnt declared already */
 			if (checkDupVar(stable, tree->subNodes[i]->subNodes[0]->token))
@@ -556,7 +570,7 @@ void insertVar(table *stable, node *tree, node* fullTree) {
 			/* var was declared already */
 			else {
 				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->subNodes[0]->token);
-				quitProgram(fullTree);
+				quitProgram(fullTree, stable);
 			}
 
 		}
@@ -572,7 +586,7 @@ void insertString(table *stable, node *tree, node* fullTree) {
 			/* if index is not int */
 			if(tree->subNodes[i]->subNodes[0]->numOfSubNodes !=0 && evalExp( tree->subNodes[i]->subNodes[0]->subNodes[0], stable, tree) != 2 ){
 				printf("Error: %s Index must be int\n", tree->subNodes[0]->subNodes[0]->token);
-				quitProgram(tree);
+				quitProgram(tree, stable);
 			}
 			/* check string wasnt declared already */
 			if (checkDupVar(stable, tree->subNodes[i]->subNodes[0]->token))
@@ -580,7 +594,7 @@ void insertString(table *stable, node *tree, node* fullTree) {
 			/* string was declared already */
 			else {
 				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->subNodes[0]->token);
-				quitProgram(fullTree);
+				quitProgram(fullTree, stable);
 			}
 		}
 		/* variable with no assign */
@@ -588,7 +602,7 @@ void insertString(table *stable, node *tree, node* fullTree) {
 			/* if index is not int */
 			if(tree->subNodes[i]->numOfSubNodes !=0 && evalExp( tree->subNodes[i]->subNodes[0], stable, tree) != 2 ){
 				printf("Error: %s Index must be int\n", tree->subNodes[i]->token);
-				quitProgram(tree);
+				quitProgram(tree, stable);
 			}
 			/* check string wasnt declared already */
 			if (checkDupVar(stable, tree->subNodes[i]->token))
@@ -596,7 +610,7 @@ void insertString(table *stable, node *tree, node* fullTree) {
 			/* string was declared already */
 			else {
 				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->token);
-				quitProgram(fullTree);
+				quitProgram(fullTree, stable);
 			}
 		}
 	}
@@ -613,7 +627,7 @@ void insertArgs(table *stable, node *tree, node* fullTree) {
 			/* var was declared already */
 			else {
 				printf("Error: Duplicate variable name - %s\n", tree->subNodes[i]->subNodes[j]->token);
-				quitProgram(fullTree);
+				quitProgram(fullTree, stable);
 			}
 		}
 	}
@@ -674,7 +688,7 @@ void startSemantics(node *tree) {
 	/* check if parsing tree has no main */
 	if(numOfmains==0){
 		printf("Error: no main function\n");
-		quitProgram(tree);
+		quitProgram(tree, global);
 	}
 }
 
@@ -709,17 +723,17 @@ void checkTree(node *subTree , table *env, node *tree) {
 			/* check dupliacte main */
 			if (!checkFuncExist(env,"main")) {
 				printf("Error: main can only used once\n");
-				quitProgram(tree);
+				quitProgram(tree, env);
 			}
 			/* check main has type void */	
 			else if (strcmp(subTree->subNodes[2]->subNodes[0]->token, "VOID")) {
 				printf("Error: main type can only be void\n");
-				quitProgram(tree);
+				quitProgram(tree, env);
 			}
 			/* check main has no arguments */
 			else if (numOfArgs(subTree->subNodes[1]) != 0) {
 				printf("Error: main cannot have arguments\n");
-				quitProgram(tree);
+				quitProgram(tree, env);
 			}
 
 			/* add to main count to check main exist */
@@ -728,7 +742,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 		/* if not main check dupliate function name */ 
 		else if (!checkDupFunc(env, subTree->subNodes[0]->token)){
 			printf("Error: Duplicate function name - %s\n", subTree->subNodes[0]->token);
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 		/* create new environment for function code and send function body for semantic check after recursive return 
 			delete function environment and continue with current environment
@@ -738,7 +752,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 		table *newEnv = mktable(env, getTypeVal(subTree->subNodes[2]->subNodes[0]->token));
 		insertArgs(newEnv, (subTree->subNodes[1]), tree);
 		checkTree(subTree->subNodes[3], newEnv, tree);
-		free(newEnv);
+		freeTable(newEnv);
 	}
 	
 	/* node with the value BLOCK
@@ -750,7 +764,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 		for (int i = 0; i < subTree->numOfSubNodes; i++) {
 			checkTree(subTree->subNodes[i], newEnv, tree);
 		}
-		free(newEnv);
+		freeTable(newEnv);
 	}
 
 	/* node with the value BODY
@@ -782,7 +796,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	else if (!strcmp(subTree->token, "IF")) {
 		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
 			printf("Error: Incompatible expression in \"if\" expected bool\n");
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
@@ -793,7 +807,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	else if (!strcmp(subTree->token, "IF-ELSE")) {
 		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
 			printf("Error: Incompatible expression in \"if-else\" expected bool\n");
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 		checkTree(subTree->subNodes[1], env, tree);
 		checkTree(subTree->subNodes[2], env, tree);
@@ -805,7 +819,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	else if (!strcmp(subTree->token, "WHILE")) {
 		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
 			printf("Error: Incompatible expression in \"while\" expected bool\n");
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
@@ -816,7 +830,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	else if (!strcmp(subTree->token, "DO-WHILE")) {
 		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
 			printf("Error: Incompatible expression in \"do while\" expected bool\n");
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 		checkTree(subTree->subNodes[1], env, tree);
 	}
@@ -844,7 +858,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	else if (!strcmp(subTree->token, "COND")) {
 		if (evalExp(subTree->subNodes[0], env, tree) != 0) {
 			printf("Error: Incompatible expression in \"for\" expected bool\n");
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 	}
 	
@@ -862,7 +876,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	*/
 	else if (!strcmp(subTree->token, "FUNC-CALL")) {
 		if (!funcCallCheck(subTree, env)) {
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 	}
 
@@ -872,7 +886,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 	else if (!strcmp(subTree->token, "RET")) {
 		if (!checkReturnVal(subTree, env,tree)) {
 			printf("Error: Incompatible return type\n");
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 	}
 
@@ -883,7 +897,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 		/* if left side of = doesnt exsist */
 		if (!checkVarExist(env, subTree->subNodes[0]->token)) {
 			printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->token);
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 
 		/* if left side is pointer and right is null */
@@ -895,7 +909,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 			/* if index is not int */
 			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) != 2 ){
 				printf("Error: %s Index must be int\n", subTree->subNodes[0]->token);
-				quitProgram(tree);
+				quitProgram(tree,env);
 			}
 			/* if left side str index and index is int str and right side is char example: str[0] = 'c' */
 			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) == 2 && evalExp(subTree->subNodes[1], env, tree) == 1)
@@ -905,12 +919,12 @@ void checkTree(node *subTree , table *env, node *tree) {
 		/* if left side is not string and trying to index*/
 		if(getVarType(env, subTree->subNodes[0]->token) != 7 && subTree->subNodes[0]->numOfSubNodes!=0){
 			printf("Error: %s has no Index operator\n", subTree->subNodes[0]->token);
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}
 		/* if left side type is not as right side type */
 		if (getVarType(env, subTree->subNodes[0]->token) != evalExp(subTree->subNodes[1], env, tree)) {
 			printf("Error: Incompatible assignment - %s\n", subTree->subNodes[0]->token);
-			quitProgram(tree);
+			quitProgram(tree, env);
 		}	
 	}
 	
@@ -941,13 +955,13 @@ int evalExp(node *subTree, table* stable, node *tree) {
 			/* type2 is not real or int*/
 			else {
 				printf("Error: unsupported operand types %s\n", subTree->token);
-				quitProgram(tree);
+				quitProgram(tree, stable);
 			}
 		}
 		/* type1 is not real or int*/
 		else {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 	}
 
@@ -959,7 +973,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/* check if type1 or type2 is not bool */
 		if (type1 != 0 || type2 != 0) {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 		/* return bool */
 		return 0;
@@ -975,7 +989,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/* type1 and type2 not the same type or not comparable */
 		else {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 	}
 
@@ -993,13 +1007,13 @@ int evalExp(node *subTree, table* stable, node *tree) {
 			/* type2 is not real or int*/
 			else {
 				printf("Error: unsupported operand types %s\n", subTree->token);
-				quitProgram(tree);
+				quitProgram(tree, stable);
 			}
 		}
 		/* type1 is not real or int*/
 		else {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 	}
 
@@ -1009,7 +1023,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/* check if type1 is not bool */
 		if (type1 != 0) {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 		/*return bool */
 		return 0;
@@ -1020,7 +1034,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/* if variable is not string - no len */
 		if (getVarType(stable, subTree->subNodes[0]->token) != 7) {
 			printf("Error: unsupported operand types | str |\n");
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 		/* return int */
 		return 2;
@@ -1048,7 +1062,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/*not a pointer */
 		else {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 	}
 
@@ -1077,7 +1091,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/* if type is not addres compatable */
 		else {
 			printf("Error: unsupported operand types %s\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 
 	}
@@ -1086,7 +1100,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 	if (!strcmp("FUNC-CALL", subTree->token)) {
 		/* check func call is correct */
 		if (!funcCallCheck(subTree, stable)) {
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}
 		/* return function type */ 
 		return getFuncType(stable, subTree->subNodes[0]->token);
@@ -1099,7 +1113,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 			/* if node has attemp to index */
 			if(subTree->numOfSubNodes!=0 && subTree->subNodes[0] != NULL  && !isValue(subTree->token)){
 				printf("Error: %s has no Index operator\n", subTree->token);
-				quitProgram(tree);
+				quitProgram(tree, stable);
 			}
 			/* return var type */
 			return getVarType(stable, subTree->token);
@@ -1112,7 +1126,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 				/* check index is int */
 				if (evalExp(subTree->subNodes[0], stable, tree) != 2) {
 					printf("Error:  %s Index must be int\n", subTree->subNodes[0]->token);
-					quitProgram(tree);
+					quitProgram(tree, stable);
 				}
 				/* return char = 1 */
 				return 1;
@@ -1123,7 +1137,7 @@ int evalExp(node *subTree, table* stable, node *tree) {
 		/* variable doesnt exist */
 		else {
 			printf("Error: variable %s does not exist\n", subTree->token);
-			quitProgram(tree);
+			quitProgram(tree, stable);
 		}	
 	}
 }
@@ -1168,8 +1182,9 @@ bool checkFuncExist(table *env, char *name) {
 }
 
 /* function to quit program and free memory if not valid */
-void quitProgram(node *tree) {
+void quitProgram(node *tree, table *env) {
 	freeTree(tree);
+	freeAllTables(env);
 	getchar();
 	exit(1);
 }
@@ -1344,20 +1359,23 @@ bool checkReturnVal(node *subTree, table *env, node* tree) {
 
 /*function to free table */
 void freeTable(table *env){
+	if(env == NULL ){
+		return ;
+	}
 	/*free functions */
 	for(int i=0; i< env->numOfFunction; i++){
 		free(env->functions[i]->name);
 		free(env->functions[i]->args);
-		free(env->functions[i])
+		free(env->functions[i]);
 	}
-	free((env->functions);
+	free(env->functions);
 
 	/*free fvariables */
 	for(int i=0; i< env->numOfvariables; i++){
 		free(env->variables[i]->name);
-		free(env->variables[i])
+		free(env->variables[i]);
 	}
-	free((env->variables);
+	free(env->variables);
 
 	/* free table */
 	free(env);
@@ -1366,8 +1384,8 @@ void freeTable(table *env){
 /*function to free all tables */
 void freeAllTables(table *env){
 	table *temp = NULL;
-	while(env!=NULL){
-		temp = enc->upperEnv;
+	while(env != NULL){
+		temp = env->upperEnv;
 		freeTable(env);
 		env = temp;
 	}
