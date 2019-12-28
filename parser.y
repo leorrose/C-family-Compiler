@@ -1342,3 +1342,33 @@ bool checkReturnVal(node *subTree, table *env, node* tree) {
 	}
 }
 
+/*function to free table */
+void freeTable(table *env){
+	/*free functions */
+	for(int i=0; i< env->numOfFunction; i++){
+		free(env->functions[i]->name);
+		free(env->functions[i]->args);
+		free(env->functions[i])
+	}
+	free((env->functions);
+
+	/*free fvariables */
+	for(int i=0; i< env->numOfvariables; i++){
+		free(env->variables[i]->name);
+		free(env->variables[i])
+	}
+	free((env->variables);
+
+	/* free table */
+	free(env);
+}
+
+/*function to free all tables */
+void freeAllTables(table *env){
+	table *temp = NULL;
+	while(env!=NULL){
+		temp = enc->upperEnv;
+		freeTable(env);
+		env = temp;
+	}
+}
