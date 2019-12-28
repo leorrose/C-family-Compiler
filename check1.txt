@@ -1,9 +1,6 @@
 /* check expression eval || incorrect */
 function void main(){
-	var int a;
-	var char b;
-	string str[100];
+	string str[10] ="scb" , str2['e'] ;
 
-	str[0] = 'c';
-	a[0] = a;
+	str[100] = 'c';
 }
