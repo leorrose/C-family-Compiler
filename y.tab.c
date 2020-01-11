@@ -103,9 +103,18 @@ typedef struct table {
 	int returnType;
 }table;
 
+typedef struct TAC {
+	char* var;
+	char* code;
+	char* truel;
+	char* falsel;
+}TAC;
+
 /* global variables */
 typedef enum bool{ false,true } bool;
 int numOfmains = 0;
+int varIndex = 0;
+int labelIndex = 0;
 
 /* parsing tree */
 node *mknode(char *token, int count, ...);
@@ -152,8 +161,18 @@ void freeTable(table *env);
 void freeAllTables(table *env);
 int getTypeVal(char *string);
 
+/* 3AC */
+TAC* to3AC(node *tree);
+TAC* Exp3AC(node *tree);
+char* getNewVarLabel();
+int calcFuncCallBytes(node *tree);
+char* getNewLabel();
+TAC* get3acCond(node* tree, char* l1, char* l2);
+TAC* get3acSimpleCond(node* tree, char* l1, char* l2);
+int isBoolOp(char *token);
 
-#line 157 "y.tab.c" /* yacc.c:339  */
+
+#line 176 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -266,12 +285,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 94 "parser.y" /* yacc.c:355  */
+#line 113 "parser.y" /* yacc.c:355  */
 
 	char *string;
 	struct node *node;
 
-#line 275 "y.tab.c" /* yacc.c:355  */
+#line 294 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -288,7 +307,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 292 "y.tab.c" /* yacc.c:358  */
+#line 311 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -589,17 +608,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   136,   136,   140,   141,   145,   146,   152,   156,   160,
-     161,   165,   166,   170,   174,   175,   179,   180,   184,   185,
-     186,   187,   191,   192,   193,   194,   195,   196,   202,   203,
-     204,   205,   206,   207,   213,   214,   218,   222,   223,   224,
-     225,   229,   230,   234,   235,   241,   242,   246,   247,   251,
-     252,   253,   254,   255,   256,   262,   263,   264,   265,   269,
-     272,   275,   278,   283,   284,   285,   286,   289,   290,   296,
-     297,   303,   304,   305,   312,   313,   316,   317,   318,   324,
-     327,   328,   329,   335,   341,   342,   343,   344,   345,   346,
-     347,   348,   349,   350,   351,   352,   353,   354,   355,   356,
-     357,   358,   359,   360,   361,   365,   366,   367,   368,   371
+       0,   155,   155,   159,   160,   164,   165,   171,   175,   179,
+     180,   184,   185,   189,   193,   194,   198,   199,   203,   204,
+     205,   206,   210,   211,   212,   213,   214,   215,   221,   222,
+     223,   224,   225,   226,   232,   233,   237,   241,   242,   243,
+     244,   248,   249,   253,   254,   260,   261,   265,   266,   270,
+     271,   272,   273,   274,   275,   281,   282,   283,   284,   288,
+     291,   294,   297,   302,   303,   304,   305,   308,   309,   315,
+     316,   322,   323,   324,   331,   332,   335,   336,   337,   343,
+     346,   347,   348,   354,   360,   361,   362,   363,   364,   365,
+     366,   367,   368,   369,   370,   371,   372,   373,   374,   375,
+     376,   377,   378,   379,   380,   384,   385,   386,   387,   390
 };
 #endif
 
@@ -1560,652 +1579,652 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 136 "parser.y" /* yacc.c:1646  */
-    {  startSemantics((yyvsp[0].node)); printTree((yyvsp[0].node),0); freeTree((yyvsp[0].node));}
-#line 1566 "y.tab.c" /* yacc.c:1646  */
+#line 155 "parser.y" /* yacc.c:1646  */
+    {  startSemantics((yyvsp[0].node)); printTree((yyvsp[0].node),0); to3AC((yyvsp[0].node)); freeTree((yyvsp[0].node));}
+#line 1585 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 140 "parser.y" /* yacc.c:1646  */
+#line 159 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("CODE",1, (yyvsp[0].node)); }
-#line 1572 "y.tab.c" /* yacc.c:1646  */
+#line 1591 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 141 "parser.y" /* yacc.c:1646  */
+#line 160 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("CODE",(yyvsp[-1].node), mknode("CODE",1,(yyvsp[0].node))); }
-#line 1578 "y.tab.c" /* yacc.c:1646  */
+#line 1597 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 145 "parser.y" /* yacc.c:1646  */
+#line 164 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1584 "y.tab.c" /* yacc.c:1646  */
+#line 1603 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 146 "parser.y" /* yacc.c:1646  */
+#line 165 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1590 "y.tab.c" /* yacc.c:1646  */
+#line 1609 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 152 "parser.y" /* yacc.c:1646  */
+#line 171 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("FUNCTION",4,mknode((yyvsp[-6].string),0),(yyvsp[-4].node),mknode("TYPE",1,mknode((yyvsp[-7].string),0)),(yyvsp[-1].node)); }
-#line 1596 "y.tab.c" /* yacc.c:1646  */
+#line 1615 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 156 "parser.y" /* yacc.c:1646  */
+#line 175 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("FUNCTION",4,mknode((yyvsp[-6].string),0),(yyvsp[-4].node),mknode("TYPE",1,mknode("VOID",0)),(yyvsp[-1].node));}
-#line 1602 "y.tab.c" /* yacc.c:1646  */
+#line 1621 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 160 "parser.y" /* yacc.c:1646  */
+#line 179 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1608 "y.tab.c" /* yacc.c:1646  */
+#line 1627 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 161 "parser.y" /* yacc.c:1646  */
+#line 180 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ARGS",1,mknode("NONE",0)); }
-#line 1614 "y.tab.c" /* yacc.c:1646  */
+#line 1633 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 165 "parser.y" /* yacc.c:1646  */
+#line 184 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("ARGS",(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 1620 "y.tab.c" /* yacc.c:1646  */
+#line 1639 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 166 "parser.y" /* yacc.c:1646  */
+#line 185 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1626 "y.tab.c" /* yacc.c:1646  */
+#line 1645 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 170 "parser.y" /* yacc.c:1646  */
+#line 189 "parser.y" /* yacc.c:1646  */
     { (yyvsp[0].node)->token = strdup((yyvsp[-1].string)); (yyval.node) = mknode("ARGS",1, (yyvsp[0].node)); }
-#line 1632 "y.tab.c" /* yacc.c:1646  */
+#line 1651 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 174 "parser.y" /* yacc.c:1646  */
+#line 193 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("ARGS", mknode((yyvsp[-2].string),0), (yyvsp[0].node)); }
-#line 1638 "y.tab.c" /* yacc.c:1646  */
+#line 1657 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 175 "parser.y" /* yacc.c:1646  */
+#line 194 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ARGS",1,mknode((yyvsp[0].string),0)); }
-#line 1644 "y.tab.c" /* yacc.c:1646  */
+#line 1663 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 179 "parser.y" /* yacc.c:1646  */
+#line 198 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",(yyvsp[-1].node),(yyvsp[0].node)); }
-#line 1650 "y.tab.c" /* yacc.c:1646  */
+#line 1669 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 180 "parser.y" /* yacc.c:1646  */
+#line 199 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)->token =strdup("BODY"); (yyval.node)=(yyvsp[0].node); }
-#line 1656 "y.tab.c" /* yacc.c:1646  */
+#line 1675 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 184 "parser.y" /* yacc.c:1646  */
+#line 203 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",(yyvsp[-1].node),(yyvsp[0].node)); }
-#line 1662 "y.tab.c" /* yacc.c:1646  */
+#line 1681 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 185 "parser.y" /* yacc.c:1646  */
+#line 204 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)->token=strdup("BODY"); (yyval.node)=(yyvsp[0].node); }
-#line 1668 "y.tab.c" /* yacc.c:1646  */
+#line 1687 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 186 "parser.y" /* yacc.c:1646  */
+#line 205 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)->token =strdup("BODY"); (yyval.node)=(yyvsp[0].node); }
-#line 1674 "y.tab.c" /* yacc.c:1646  */
+#line 1693 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 187 "parser.y" /* yacc.c:1646  */
+#line 206 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,mknode("NONE",0)); }
-#line 1680 "y.tab.c" /* yacc.c:1646  */
+#line 1699 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 191 "parser.y" /* yacc.c:1646  */
+#line 210 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",mknode("BODY",1,(yyvsp[-1].node)),(yyvsp[0].node)); }
-#line 1686 "y.tab.c" /* yacc.c:1646  */
+#line 1705 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 192 "parser.y" /* yacc.c:1646  */
+#line 211 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,(yyvsp[0].node)); }
-#line 1692 "y.tab.c" /* yacc.c:1646  */
+#line 1711 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 193 "parser.y" /* yacc.c:1646  */
+#line 212 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",mknode("BODY",1,(yyvsp[-1].node)),(yyvsp[0].node)); }
-#line 1698 "y.tab.c" /* yacc.c:1646  */
+#line 1717 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 194 "parser.y" /* yacc.c:1646  */
+#line 213 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,(yyvsp[0].node)); }
-#line 1704 "y.tab.c" /* yacc.c:1646  */
+#line 1723 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 195 "parser.y" /* yacc.c:1646  */
+#line 214 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BODY",mknode("BODY",1,(yyvsp[-1].node)),(yyvsp[0].node)); }
-#line 1710 "y.tab.c" /* yacc.c:1646  */
+#line 1729 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 196 "parser.y" /* yacc.c:1646  */
+#line 215 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BODY",1,(yyvsp[0].node)); }
-#line 1716 "y.tab.c" /* yacc.c:1646  */
+#line 1735 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 202 "parser.y" /* yacc.c:1646  */
+#line 221 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("bool",1,mknode((yyvsp[0].string),0)); }
-#line 1722 "y.tab.c" /* yacc.c:1646  */
+#line 1741 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 203 "parser.y" /* yacc.c:1646  */
+#line 222 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("char",1,mknode((yyvsp[0].string),0)); }
-#line 1728 "y.tab.c" /* yacc.c:1646  */
+#line 1747 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 204 "parser.y" /* yacc.c:1646  */
+#line 223 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("int",1,mknode((yyvsp[0].string),0)); }
-#line 1734 "y.tab.c" /* yacc.c:1646  */
+#line 1753 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 205 "parser.y" /* yacc.c:1646  */
+#line 224 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("int",1,mknode((yyvsp[0].string),0)); }
-#line 1740 "y.tab.c" /* yacc.c:1646  */
+#line 1759 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 206 "parser.y" /* yacc.c:1646  */
+#line 225 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("real",1,mknode((yyvsp[0].string),0)); }
-#line 1746 "y.tab.c" /* yacc.c:1646  */
+#line 1765 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 207 "parser.y" /* yacc.c:1646  */
+#line 226 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("null",1,mknode("0",0)); }
-#line 1752 "y.tab.c" /* yacc.c:1646  */
+#line 1771 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 213 "parser.y" /* yacc.c:1646  */
+#line 232 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1758 "y.tab.c" /* yacc.c:1646  */
+#line 1777 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 214 "parser.y" /* yacc.c:1646  */
+#line 233 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1764 "y.tab.c" /* yacc.c:1646  */
+#line 1783 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 218 "parser.y" /* yacc.c:1646  */
+#line 237 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("VAR", mknode("VAR",1,mknode((yyvsp[-2].string),0)), (yyvsp[-1].node)); }
-#line 1770 "y.tab.c" /* yacc.c:1646  */
+#line 1789 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 222 "parser.y" /* yacc.c:1646  */
+#line 241 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("VAR", mknode("VAR",1,mknode((yyvsp[-2].string),0)), (yyvsp[0].node)); }
-#line 1776 "y.tab.c" /* yacc.c:1646  */
+#line 1795 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 223 "parser.y" /* yacc.c:1646  */
+#line 242 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("VAR", mknode("ASS",1,(yyvsp[-2].node)) ,(yyvsp[0].node)); }
-#line 1782 "y.tab.c" /* yacc.c:1646  */
+#line 1801 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 224 "parser.y" /* yacc.c:1646  */
+#line 243 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[0].string),0); }
-#line 1788 "y.tab.c" /* yacc.c:1646  */
+#line 1807 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 225 "parser.y" /* yacc.c:1646  */
+#line 244 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ASS",1,(yyvsp[0].node)); }
-#line 1794 "y.tab.c" /* yacc.c:1646  */
+#line 1813 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 229 "parser.y" /* yacc.c:1646  */
+#line 248 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("STRING", (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1800 "y.tab.c" /* yacc.c:1646  */
+#line 1819 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 230 "parser.y" /* yacc.c:1646  */
+#line 249 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 1806 "y.tab.c" /* yacc.c:1646  */
+#line 1825 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 234 "parser.y" /* yacc.c:1646  */
+#line 253 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("STRING",1,mknode((yyvsp[-3].string),1,(yyvsp[-1].node))); }
-#line 1812 "y.tab.c" /* yacc.c:1646  */
+#line 1831 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 235 "parser.y" /* yacc.c:1646  */
+#line 254 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("STRING",1,mknode((yyvsp[-1].string),2,mknode((yyvsp[-5].string),1,(yyvsp[-3].node)),mknode((yyvsp[0].string),0))); }
-#line 1818 "y.tab.c" /* yacc.c:1646  */
+#line 1837 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 241 "parser.y" /* yacc.c:1646  */
+#line 260 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("Statments", mknode("stmt",1,(yyvsp[-1].node)),(yyvsp[0].node));}
-#line 1824 "y.tab.c" /* yacc.c:1646  */
+#line 1843 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 242 "parser.y" /* yacc.c:1646  */
+#line 261 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("stmt",1,(yyvsp[-1].node));}
-#line 1830 "y.tab.c" /* yacc.c:1646  */
+#line 1849 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 246 "parser.y" /* yacc.c:1646  */
+#line 265 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("stmt",1,(yyvsp[0].node)); }
-#line 1836 "y.tab.c" /* yacc.c:1646  */
+#line 1855 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 247 "parser.y" /* yacc.c:1646  */
+#line 266 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("Statments", mknode("stmt",1,(yyvsp[-1].node)),(yyvsp[0].node));}
-#line 1842 "y.tab.c" /* yacc.c:1646  */
+#line 1861 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 251 "parser.y" /* yacc.c:1646  */
+#line 270 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1848 "y.tab.c" /* yacc.c:1646  */
+#line 1867 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 252 "parser.y" /* yacc.c:1646  */
+#line 271 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1854 "y.tab.c" /* yacc.c:1646  */
+#line 1873 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 253 "parser.y" /* yacc.c:1646  */
+#line 272 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1860 "y.tab.c" /* yacc.c:1646  */
+#line 1879 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 254 "parser.y" /* yacc.c:1646  */
+#line 273 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1866 "y.tab.c" /* yacc.c:1646  */
+#line 1885 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 255 "parser.y" /* yacc.c:1646  */
+#line 274 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1872 "y.tab.c" /* yacc.c:1646  */
+#line 1891 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 256 "parser.y" /* yacc.c:1646  */
+#line 275 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1878 "y.tab.c" /* yacc.c:1646  */
+#line 1897 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 262 "parser.y" /* yacc.c:1646  */
+#line 281 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1884 "y.tab.c" /* yacc.c:1646  */
+#line 1903 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 263 "parser.y" /* yacc.c:1646  */
+#line 282 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1890 "y.tab.c" /* yacc.c:1646  */
+#line 1909 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 264 "parser.y" /* yacc.c:1646  */
+#line 283 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1896 "y.tab.c" /* yacc.c:1646  */
+#line 1915 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 265 "parser.y" /* yacc.c:1646  */
+#line 284 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 1902 "y.tab.c" /* yacc.c:1646  */
+#line 1921 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 269 "parser.y" /* yacc.c:1646  */
+#line 288 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2, mknode((yyvsp[-2].string),0), (yyvsp[0].node)); }
-#line 1908 "y.tab.c" /* yacc.c:1646  */
+#line 1927 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 272 "parser.y" /* yacc.c:1646  */
+#line 291 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,mknode((yyvsp[-5].string),1,(yyvsp[-3].node)),(yyvsp[0].node)); }
-#line 1914 "y.tab.c" /* yacc.c:1646  */
+#line 1933 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 275 "parser.y" /* yacc.c:1646  */
+#line 294 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,mknode((yyvsp[-2].string),0),mknode((yyvsp[0].string),0)); }
-#line 1920 "y.tab.c" /* yacc.c:1646  */
+#line 1939 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 278 "parser.y" /* yacc.c:1646  */
-    { (yyval.node) = mknode((yyvsp[-1].string), 1 , mknode("POINTER", 2, mknode((yyvsp[-2].string),0), (yyvsp[0].node),0)); }
-#line 1926 "y.tab.c" /* yacc.c:1646  */
+#line 297 "parser.y" /* yacc.c:1646  */
+    { (yyval.node) = mknode((yyvsp[-1].string), 2 , mknode("POINTER", 1, mknode((yyvsp[-2].string),0)), (yyvsp[0].node)); }
+#line 1945 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 283 "parser.y" /* yacc.c:1646  */
+#line 302 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BLOCK",(yyvsp[-2].node), (yyvsp[-1].node)); }
-#line 1932 "y.tab.c" /* yacc.c:1646  */
+#line 1951 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 284 "parser.y" /* yacc.c:1646  */
+#line 303 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 1938 "y.tab.c" /* yacc.c:1646  */
+#line 1957 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 285 "parser.y" /* yacc.c:1646  */
+#line 304 "parser.y" /* yacc.c:1646  */
     {free((yyvsp[-1].node)->token); (yyvsp[-1].node)-> token = strdup("BLOCK"); (yyval.node) = (yyvsp[-1].node); }
-#line 1944 "y.tab.c" /* yacc.c:1646  */
+#line 1963 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 286 "parser.y" /* yacc.c:1646  */
+#line 305 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BLOCK",1,mknode("NONE",0)); }
-#line 1950 "y.tab.c" /* yacc.c:1646  */
+#line 1969 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 289 "parser.y" /* yacc.c:1646  */
+#line 308 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("BLOCK", mknode("BLOCK",1,(yyvsp[-1].node)), (yyvsp[0].node));}
-#line 1956 "y.tab.c" /* yacc.c:1646  */
+#line 1975 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 290 "parser.y" /* yacc.c:1646  */
+#line 309 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("BLOCK", 1, (yyvsp[0].node));}
-#line 1962 "y.tab.c" /* yacc.c:1646  */
+#line 1981 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 296 "parser.y" /* yacc.c:1646  */
+#line 315 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("IF", 2, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1968 "y.tab.c" /* yacc.c:1646  */
+#line 1987 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 297 "parser.y" /* yacc.c:1646  */
+#line 316 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("IF-ELSE", 3, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1974 "y.tab.c" /* yacc.c:1646  */
+#line 1993 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 303 "parser.y" /* yacc.c:1646  */
+#line 322 "parser.y" /* yacc.c:1646  */
     { (yyval.node) =	mknode("WHILE", 2, (yyvsp[-2].node) , (yyvsp[0].node)); }
-#line 1980 "y.tab.c" /* yacc.c:1646  */
+#line 1999 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 304 "parser.y" /* yacc.c:1646  */
+#line 323 "parser.y" /* yacc.c:1646  */
     { (yyval.node) =	mknode("DO-WHILE", 2, (yyvsp[-2].node), (yyvsp[-5].node)); }
-#line 1986 "y.tab.c" /* yacc.c:1646  */
+#line 2005 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 305 "parser.y" /* yacc.c:1646  */
+#line 324 "parser.y" /* yacc.c:1646  */
     { 
 																					free((yyvsp[-6].node)->token); (yyvsp[-6].node)->token = strdup("INIT");
 																					(yyval.node) = mknode("FOR",4,(yyvsp[-6].node),mknode("COND",1,(yyvsp[-4].node)),(yyvsp[-2].node), (yyvsp[0].node));
 																				}
-#line 1995 "y.tab.c" /* yacc.c:1646  */
+#line 2014 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 312 "parser.y" /* yacc.c:1646  */
+#line 331 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("ass", mknode("ass",1,(yyvsp[-2].node)),(yyvsp[0].node)); }
-#line 2001 "y.tab.c" /* yacc.c:1646  */
+#line 2020 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 313 "parser.y" /* yacc.c:1646  */
+#line 332 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ass",1,(yyvsp[0].node)); }
-#line 2007 "y.tab.c" /* yacc.c:1646  */
+#line 2026 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 316 "parser.y" /* yacc.c:1646  */
+#line 335 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("UPDATE",1,mknode("=",2, mknode((yyvsp[-2].string),0), mknode("+", 2, mknode((yyvsp[-2].string),0), mknode("int",1, mknode("1",0))))); }
-#line 2013 "y.tab.c" /* yacc.c:1646  */
+#line 2032 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 317 "parser.y" /* yacc.c:1646  */
+#line 336 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("UPDATE",1,mknode("=",2, mknode((yyvsp[-2].string),0), mknode("-", 2, mknode((yyvsp[-2].string),0), mknode("int",1,mknode("1",0))))); }
-#line 2019 "y.tab.c" /* yacc.c:1646  */
+#line 2038 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 318 "parser.y" /* yacc.c:1646  */
+#line 337 "parser.y" /* yacc.c:1646  */
     { free((yyvsp[0].node)->token); (yyvsp[0].node)-> token = strdup("UPDATE"); (yyval.node) = (yyvsp[0].node); }
-#line 2025 "y.tab.c" /* yacc.c:1646  */
+#line 2044 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 324 "parser.y" /* yacc.c:1646  */
+#line 343 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("FUNC-CALL", mknode((yyvsp[-3].string),0), (yyvsp[-1].node)); }
-#line 2031 "y.tab.c" /* yacc.c:1646  */
+#line 2050 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 327 "parser.y" /* yacc.c:1646  */
+#line 346 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = combineNodes("paramters",mknode("param",1,(yyvsp[-2].node)), (yyvsp[0].node));}
-#line 2037 "y.tab.c" /* yacc.c:1646  */
+#line 2056 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 328 "parser.y" /* yacc.c:1646  */
+#line 347 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("paramters",1,(yyvsp[0].node)); }
-#line 2043 "y.tab.c" /* yacc.c:1646  */
+#line 2062 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 329 "parser.y" /* yacc.c:1646  */
+#line 348 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("NONE",0); }
-#line 2049 "y.tab.c" /* yacc.c:1646  */
+#line 2068 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 335 "parser.y" /* yacc.c:1646  */
+#line 354 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("RET",1,(yyvsp[0].node)); }
-#line 2055 "y.tab.c" /* yacc.c:1646  */
+#line 2074 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 341 "parser.y" /* yacc.c:1646  */
+#line 360 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2061 "y.tab.c" /* yacc.c:1646  */
+#line 2080 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 342 "parser.y" /* yacc.c:1646  */
+#line 361 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2067 "y.tab.c" /* yacc.c:1646  */
+#line 2086 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 343 "parser.y" /* yacc.c:1646  */
+#line 362 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2073 "y.tab.c" /* yacc.c:1646  */
+#line 2092 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 344 "parser.y" /* yacc.c:1646  */
+#line 363 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2079 "y.tab.c" /* yacc.c:1646  */
+#line 2098 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 345 "parser.y" /* yacc.c:1646  */
+#line 364 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2085 "y.tab.c" /* yacc.c:1646  */
+#line 2104 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 346 "parser.y" /* yacc.c:1646  */
+#line 365 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2091 "y.tab.c" /* yacc.c:1646  */
+#line 2110 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 347 "parser.y" /* yacc.c:1646  */
+#line 366 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2097 "y.tab.c" /* yacc.c:1646  */
+#line 2116 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 348 "parser.y" /* yacc.c:1646  */
+#line 367 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2103 "y.tab.c" /* yacc.c:1646  */
+#line 2122 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 349 "parser.y" /* yacc.c:1646  */
+#line 368 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2109 "y.tab.c" /* yacc.c:1646  */
+#line 2128 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 350 "parser.y" /* yacc.c:1646  */
+#line 369 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2115 "y.tab.c" /* yacc.c:1646  */
+#line 2134 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 351 "parser.y" /* yacc.c:1646  */
+#line 370 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2121 "y.tab.c" /* yacc.c:1646  */
+#line 2140 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 352 "parser.y" /* yacc.c:1646  */
+#line 371 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),2,(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 2127 "y.tab.c" /* yacc.c:1646  */
+#line 2146 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 353 "parser.y" /* yacc.c:1646  */
+#line 372 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-1].string),1,(yyvsp[0].node));}
-#line 2133 "y.tab.c" /* yacc.c:1646  */
+#line 2152 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 354 "parser.y" /* yacc.c:1646  */
+#line 373 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 2139 "y.tab.c" /* yacc.c:1646  */
+#line 2158 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 355 "parser.y" /* yacc.c:1646  */
+#line 374 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[0].string),0); }
-#line 2145 "y.tab.c" /* yacc.c:1646  */
+#line 2164 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 356 "parser.y" /* yacc.c:1646  */
+#line 375 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 2151 "y.tab.c" /* yacc.c:1646  */
+#line 2170 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 357 "parser.y" /* yacc.c:1646  */
+#line 376 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("STR-LEN",1,mknode((yyvsp[-1].string),0)); }
-#line 2157 "y.tab.c" /* yacc.c:1646  */
+#line 2176 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 358 "parser.y" /* yacc.c:1646  */
+#line 377 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2163 "y.tab.c" /* yacc.c:1646  */
+#line 2182 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 359 "parser.y" /* yacc.c:1646  */
+#line 378 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ADDRESS-OF",1,mknode((yyvsp[0].string),0)); }
-#line 2169 "y.tab.c" /* yacc.c:1646  */
+#line 2188 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 360 "parser.y" /* yacc.c:1646  */
+#line 379 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode("ADDRESS-OF",1,mknode((yyvsp[-3].string),1,(yyvsp[-1].node)));}
-#line 2175 "y.tab.c" /* yacc.c:1646  */
+#line 2194 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 361 "parser.y" /* yacc.c:1646  */
+#line 380 "parser.y" /* yacc.c:1646  */
     { (yyval.node) = mknode((yyvsp[-3].string),1,(yyvsp[-1].node)); }
-#line 2181 "y.tab.c" /* yacc.c:1646  */
+#line 2200 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 365 "parser.y" /* yacc.c:1646  */
+#line 384 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = (yyvsp[0].string); }
-#line 2187 "y.tab.c" /* yacc.c:1646  */
+#line 2206 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 366 "parser.y" /* yacc.c:1646  */
+#line 385 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = (yyvsp[0].string); }
-#line 2193 "y.tab.c" /* yacc.c:1646  */
+#line 2212 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 367 "parser.y" /* yacc.c:1646  */
+#line 386 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = (yyvsp[0].string); }
-#line 2199 "y.tab.c" /* yacc.c:1646  */
+#line 2218 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 368 "parser.y" /* yacc.c:1646  */
+#line 387 "parser.y" /* yacc.c:1646  */
     { (yyval.string) = "POINTER";}
-#line 2205 "y.tab.c" /* yacc.c:1646  */
+#line 2224 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2209 "y.tab.c" /* yacc.c:1646  */
+#line 2228 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2433,7 +2452,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 373 "parser.y" /* yacc.c:1906  */
+#line 392 "parser.y" /* yacc.c:1906  */
 
 
 
@@ -2977,6 +2996,30 @@ void checkTree(node *subTree , table *env, node *tree) {
 		need to check 
 	*/
 	else if (!strcmp(subTree->token, "=")) {
+		/* if left side is pointer */
+		if (!strcmp(subTree->subNodes[0]->token, "POINTER")) {
+			if (!checkVarExist(env, subTree->subNodes[0]->subNodes[0]->token)) {
+				printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			/* if left side is pointer and right is null */
+			if(evalExp(subTree->subNodes[1], env, tree) == 8 && (getVarType(env, subTree->subNodes[0]->token)==4 || getVarType(env, subTree->subNodes[0]->token)==5 || getVarType(env, subTree->subNodes[0]->token)==6))
+				return;
+			if(getVarType(env, subTree->subNodes[0]->subNodes[0]->token) == 4 && evalExp(subTree->subNodes[1], env, tree) != 1){
+				printf("Error: Incompatible assignment - *%s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			if(getVarType(env, subTree->subNodes[0]->subNodes[0]->token) == 5 && evalExp(subTree->subNodes[1], env, tree) != 3){
+				printf("Error: Incompatible assignment - *%s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			if(getVarType(env, subTree->subNodes[0]->subNodes[0]->token) == 6 && evalExp(subTree->subNodes[1], env, tree) != 2){
+				printf("Error: Incompatible assignment - *%s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			return;
+		}
+
 		/* if left side of = doesnt exsist */
 		if (!checkVarExist(env, subTree->subNodes[0]->token)) {
 			printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->token);
@@ -3484,3 +3527,954 @@ void freeAllTables(table *env){
 		env = temp;
 	}
 }
+
+
+/*---------------------------------------------------3AC----------------------------------------------------------*/
+TAC* to3AC(node *tree) {
+	/* function to check turn tree to 3AC
+		tree: full parsing tree
+	*/
+
+	/* if tree is nothing than no semantic errors */
+	if (tree == NULL) {
+		return NULL;
+	}
+
+	/* node with the value CODE means glogal environment
+	*/
+	else if (!strcmp(tree->token, "CODE")) {
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			to3AC(tree->subNodes[i]);
+		}
+		return NULL;
+	}
+
+	/* node with the value FUNCTION
+	*/
+	else if (!strcmp(tree->token, "FUNCTION")) {
+		printf("%s:\n",tree->subNodes[0]->token);
+		printf("\t\tBeginFunc\n");
+		TAC* temp = to3AC(tree->subNodes[3]);
+		printf("%s",temp->code);
+		printf("\t\tEndFunc\n");
+	}
+	
+	/* node with the value BLOCK
+	*/
+	else if (!strcmp(tree->token, "BLOCK")) {
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* add each code in block to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+
+	/* node with the value BODY
+	*/
+	else if (!strcmp(tree->token, "BODY")) {
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+
+		/* add each code in body to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+
+	/* node with the value VAR
+	*/
+	else if (!strcmp(tree->token, "VAR")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 1;
+
+		/* add each variable to node */
+		for (int i = 1; i < tree->numOfSubNodes; i++) {
+			/* variable with assign */
+			if (tree->subNodes[i]->subNodes != NULL) {
+				TAC *e1 = Exp3AC(tree->subNodes[i]->subNodes[1]);
+
+				/* create tx = e1.var*/
+				char *code = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[i]->subNodes[0]->token) + strlen(e1->var) + strlen("\t\tt = \n") + 1));
+				sprintf(code,"\t\t%s = %s\n", tree->subNodes[i]->subNodes[0]->token, e1->var);
+
+				/* add code and e1.code to node */
+
+				if(i == 1 || flag==1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+					strcpy(node->code, e1->code);
+					strcat(node->code, code);
+				}
+				else{
+					node->code = (char*)realloc(node->code,sizeof(char) * (strlen(node->code) + strlen(code)  + strlen(e1->code) + 1));
+					strcat(node->code, e1->code);
+					strcat(node->code, code);
+				}
+				flag = 0;
+			}
+		}
+		if( flag ){
+			node->code = strdup("");
+		}
+		return node;
+	}
+
+	/* node with the value STRING
+	*/
+	else if (!strcmp(tree->token, "STRING")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 1;
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			/* variable with assign */
+			if (!strcmp(tree->subNodes[i]->token, "=")){
+				char *label = getNewVarLabel();
+				char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+				sprintf(var, "t%s", label);
+
+				char* code1 = (char*)malloc(sizeof(char) * (strlen(var) + strlen(tree->subNodes[i]->subNodes[1]->token) + strlen("\t\t = \n") + 1));
+				sprintf(code1,"\t\t%s = %s\n",var,tree->subNodes[i]->subNodes[1]->token);
+
+				char* code2 = (char*)malloc(sizeof(char) * (strlen(var) + strlen(tree->subNodes[i]->subNodes[0]->token) + strlen("\t\t = \n") + 1));
+				sprintf(code2,"\t\t%s = %s\n",tree->subNodes[i]->subNodes[0]->token,var);
+
+				if(i==0 || flag==1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(code1) + strlen(code2) + 1));
+					strcpy(node->code, code1);
+					strcat(node->code, code2);
+				}
+				else{
+					node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code1) + strlen(code2) + 1));
+					strcat(node->code, code1);
+					strcat(node->code, code2);
+				}
+				flag = 0;
+			}
+		}
+		if( flag ){
+			node->code = strdup("");
+		}
+		return node;
+	}
+
+	/* node with the value IF
+	*/
+	else if (!strcmp(tree->token, "IF")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+
+		/* get false label*/
+		char* currentLabel2 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel1)  + strlen(e1->code) +  strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s:%s%s:", cond->code,currentLabel1,e1->code,currentLabel2);
+
+		return node;
+	}
+
+	/* node with the value IF-ELSE
+	*/
+	else if (!strcmp(tree->token, "IF-ELSE")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+		TAC *e2 = to3AC(tree->subNodes[2]);
+
+		/* get false label*/
+		char* currentLabel2 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel1)  + strlen(e1->code) + strlen(e2->code) + strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s:%s%s:%s", cond->code,currentLabel1,e1->code,currentLabel2,e2->code);
+
+		return node;
+	}
+	
+	/* node with the value WHILE
+	*/
+	else if (!strcmp(tree->token, "WHILE")) {
+
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+		char* currentLabel2 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+
+		/* get false label*/
+		char* currentLabel3 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel3)  + strlen(e1->code) + strlen(currentLabel1) *2 + strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s%s:%s\t\tgoto%s\n%s:",currentLabel1,cond->code,currentLabel2,e1->code,currentLabel1,currentLabel3);
+
+		return node;
+	}
+
+	/* node with the value DO-WHILE
+	*/
+	else if (!strcmp(tree->token, "DO-WHILE")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+		char* currentLabel2 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+
+		/* get false label*/
+		char* currentLabel3 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel3)  + strlen(e1->code)*2 + strlen(currentLabel1) *2 + strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s%s%s:%s\t\tgoto%s\n%s:",e1->code,currentLabel1,cond->code,currentLabel2,e1->code,currentLabel1,currentLabel3);
+
+		return node;
+	}
+
+	/* node with the value FOR
+
+	*/
+	else if (!strcmp(tree->token, "FOR")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+		char* currentLabel2 = getNewLabel();
+
+		/* eval init */
+		TAC *e1 = to3AC(tree->subNodes[0]);
+
+		/* eval block of for */
+		TAC *e2 = to3AC(tree->subNodes[3]);
+
+		/* eval update */
+		TAC *e3 = to3AC(tree->subNodes[2]);
+
+		/* get false label*/
+		char* currentLabel3 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[1]->subNodes[0], currentLabel2, currentLabel3);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[1]->subNodes[0], currentLabel2, currentLabel3);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 3 + strlen("\t\t \n") + strlen(currentLabel3)  + strlen(e1->code)*2 + strlen(currentLabel1) *2 + strlen(currentLabel2) + 1 + strlen(e2->code) + strlen(e3->code)));
+		sprintf(node->code, "%s%s:%s%s:%s%s\t\tgoto %s\n%s:",e1->code,currentLabel1,cond->code,currentLabel2,e2->code,e3->code,currentLabel1,currentLabel3);
+
+		return node;
+	}
+	
+	/* node with the value INIT
+	*/
+	else if (!strcmp(tree->token, "INIT")) {
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+
+		/* add each code in body to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+	
+	/* node with the value UPDATE
+	*/
+	else if (!strcmp(tree->token, "UPDATE")) {
+		
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+
+		/* add each code in body to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+
+	/* node with the value FUNC-CALL
+	*/
+	else if (!strcmp(tree->token, "FUNC-CALL")) {
+		TAC* e1 = NULL;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 0;
+
+		/* deal with all params of function call */
+		for(int i=1; i<tree->numOfSubNodes; i++){
+			/* eval param */
+			e1 = Exp3AC(tree->subNodes[i]);
+
+			/* if paramter is complex has e.code */
+			if(tree->subNodes[i]->numOfSubNodes!=0){
+				/* if first paramter malloc */
+				if(i == 1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+					strcpy(node->code ,e1->code);
+					flag = 1;
+				}
+				/* else realloc */
+				else{
+					node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+					strcat(node->code ,e1->code);
+				}
+			}
+			/* if paramter is simple and first paramte malloc */
+			if(i == 1 && flag == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->var) + strlen("\t\tPushParam \n") + 1 ));
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->var) + strlen("\t\tPushParam \n") + 1));
+			}
+			strcat(node->code, "\t\tPushParam ");
+			strcat(node->code, e1->var);
+			strcat(node->code,"\n");			
+		}
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\t = LCall \n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = LCall name */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = ");
+		strcat(code, "LCall ");
+		strcat(code, tree->subNodes[0]->token);
+		strcat(code, "\n");
+		
+		node -> var = strdup(var);
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		free(var);
+		free(code);
+
+		/* create popparams */
+		code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tPopParams 0\n") + 1));
+
+		strcpy(code,"\t\tPopParams ");
+		strcat(code, "0"); // need to calc
+		strcat(code, "\n");
+		
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		return node;
+	}
+
+	/* node with the value RET
+	*/
+	else if (!strcmp(tree->token, "RET")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		TAC *e1 = Exp3AC(tree->subNodes[0]);
+
+		if(tree->subNodes[0]->numOfSubNodes !=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+
+			char* code =(char*)malloc(sizeof(char) * (strlen("\t\tReturn \n") + strlen(e1->var) + 1));
+			sprintf(code,"\t\tReturn %s\n",e1->var);
+
+			node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+			strcat(node->code, code);
+			return node;
+		}
+
+		node->code = (char*)malloc(sizeof(char) * (strlen("\t\tReturn \n") + strlen(e1->var) + 1));
+		sprintf(node->code, "\t\tReturn %s\n",  e1->var);
+		return node;
+	}
+
+	/* node with the value =
+	*/
+	else if (!strcmp(tree->token, "=")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* left side is pointer */
+		if(!strcmp(tree->subNodes[0]->token, "POINTER")){
+			TAC *e1 = Exp3AC(tree->subNodes[1]);
+
+			node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+
+			char* code = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->subNodes[0]->token) + strlen(e1->var) + strlen("\t\t* = \n") + 1));
+			sprintf(code, "\t\t*%s = %s\n",tree->subNodes[0]->subNodes[0]->token,e1->var);
+
+			node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+			strcat(node->code, code);
+			return node;
+		}
+		/* left side is string */
+		else if(tree->subNodes[0]->numOfSubNodes !=0){
+			TAC *e1 = Exp3AC(tree->subNodes[1]);
+
+			char *label = getNewVarLabel();
+			char *var = (char*)malloc(sizeof(char) * (strlen(label) + 1));
+			char *var2 = (char*)malloc(sizeof(char) * (strlen(label) + 1));
+			strcpy(var, "t");
+			strcat(var, label);
+			label = getNewVarLabel();
+			strcpy(var2, "t");
+			strcat(var2, label);
+
+			char* code1 = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->token) + strlen(var) + strlen("\t\t = &\n") + 1));
+			sprintf(code1, "\t\t%s = &%s\n",var, tree->subNodes[0]->token);
+
+			char* code2 = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->token) + strlen(var2) + strlen("\t\t =  + \n") + 1));
+			sprintf(code2, "\t\t%s = %s + %s\n",var2, var,tree->subNodes[0]->subNodes[0]->subNodes[0]->token);
+
+			char* code3 = (char*)malloc(sizeof(char) * (strlen(var2) + strlen(e1->var) + strlen("\t\t* = \n") + 1));
+			sprintf(code3, "\t\t*%s = %s\n",var2, e1->var);
+
+			node->code = (char*)malloc(sizeof(char) * (strlen(code1) + strlen(code2) + strlen(code3) + strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+			strcat(node->code, code1);
+			strcat(node->code, code2);
+			strcat(node->code, code3);
+			return node;
+		}
+		/* left side is a simple var */
+		else{
+			TAC *e1 = Exp3AC(tree->subNodes[1]);
+			char* code = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->token) + strlen(e1->var) + strlen("\t\t = \n") + 1));
+			sprintf(code, "\t\t%s = %s\n",tree->subNodes[0]->token,e1->var);
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			if(tree->subNodes[1]->subNodes!=0)
+				strcpy(node->code, e1->code);
+			strcat(node->code, code);
+			return node;
+		}
+	}
+}
+
+TAC* get3acSimpleCond(node* tree, char* l1, char* l2){
+	if(isValue(tree->token) || isBoolOp(tree->token)){
+		TAC* temp = Exp3AC(tree);
+		char* code = (char*)malloc(sizeof(char) * (strlen(temp->code) + strlen(temp->var) + strlen(l2) + strlen("\t\tifz  goto \n") + 1));
+		sprintf(code, "%s\t\tifz %s goto %s\n" ,temp->code, temp->var, l2);
+		temp->code = strdup(code);
+		return temp;
+	}
+	else{
+		TAC* temp = (TAC*)malloc(sizeof(TAC) * 1);
+		char *label = getNewVarLabel();
+		char* var = (char*)malloc(sizeof(char)* (strlen(label) + 2));
+		sprintf(var,"t%s",label);
+		temp->code = (char*)malloc(sizeof(char) * (strlen(var) * 2 + strlen(tree->token) + strlen(l2) + strlen("\t\t = \t\t\nifz  goto \n") + 1));
+		sprintf(temp->code, "\t\t%s = %s\n\t\tifz %s goto %s\n",var,tree->token ,var, l2);
+		return temp;
+	}
+}
+
+
+TAC* get3acCond(node* tree, char* l1, char* l2){
+	TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+	/* if condition is or */
+	if(!strcmp(tree->token, "||")){
+		TAC* left = get3acCond(tree->subNodes[0], l1, l2);
+		char* code = strdup("");
+		if(left != NULL && tree->subNodes[0]->numOfSubNodes!=0 && strcmp(tree->subNodes[0]->token,"&&") && strcmp(tree->subNodes[0]->token,"||")){
+			code = (char*)malloc(sizeof(char) * (strlen(left->code) + strlen(left->var) + strlen(l1) + strlen("\t\tifnz  goto \n") + 1));
+			sprintf(code,"%s\t\tifnz %s goto %s\n",left->code,left->var,l1);
+		}
+		else{
+			code = strdup(left->code);
+		}
+		TAC* right = get3acCond(tree->subNodes[1], l1, l2);
+		char* code2 = strdup("");
+		if(right != NULL && tree->subNodes[1]->numOfSubNodes!=0 && strcmp(tree->subNodes[1]->token,"&&") && strcmp(tree->subNodes[1]->token,"||")){
+			code2 = (char*)malloc(sizeof(char) * (strlen(right->code) + strlen(right->var) + strlen(l2) + strlen("\t\tifz  goto \n") + 1));
+			sprintf(code2,"%s\t\tifz %s goto %s\n",right->code,right->var,l2);
+		}
+		else{
+			code2 = strdup(right->code);
+		}
+		node-> code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(code2) + 1));
+		strcpy(node->code, code);
+		strcat(node->code, code2);
+		return node;
+	}
+
+	/* if condition is and */
+	if(!strcmp(tree->token, "&&")){
+		TAC* left = get3acCond(tree->subNodes[0], l1, l2);
+		char* code = strdup("");
+		if(left != NULL && tree->subNodes[0]->numOfSubNodes!=0 && strcmp(tree->subNodes[0]->token,"&&") && strcmp(tree->subNodes[0]->token,"||")){
+			code = (char*)malloc(sizeof(char) * (strlen(left->code) + strlen(left->var) + strlen(l2) + strlen("%s\t\tifz  goto \n") + 1));
+			sprintf(code,"%s\t\tifz %s goto %s\n",left->code,left->var,l2);
+		}
+		else{
+			code = strdup(left->code);
+		}
+		TAC* right = get3acCond(tree->subNodes[1], l1, l2);
+		char* code2 = strdup("");
+		if(right != NULL && tree->subNodes[1]->numOfSubNodes!=0 && strcmp(tree->subNodes[1]->token,"&&") && strcmp(tree->subNodes[1]->token,"||")){
+			code2 = (char*)malloc(sizeof(char) * (strlen(right->code) + strlen(right->var) + strlen(l2) + strlen("%s\t\tifz  goto \n") + 1));
+			sprintf(code2,"%s\t\tifz %s goto %s\n",right->code,right->var,l2);
+		}
+		else{
+			code2 = strdup(right->code);
+		}
+		node-> code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(code2) + 1));
+		strcpy(node->code, code);
+		strcat(node->code, code2);
+		return node;
+	}
+	return Exp3AC(tree);
+}
+
+TAC* Exp3AC(node *tree){
+	/* if node token is + , - , * , / , &&, ||, ==, !=, > , <, >= , <= */
+	if (!strcmp("+", tree->token) || !strcmp("-", tree->token) || !strcmp("*", tree->token) || !strcmp("/", tree->token)
+	||!strcmp("&&", tree->token) || !strcmp("||", tree->token) || !strcmp("==", tree->token) || !strcmp("!=", tree->token)||
+	!strcmp(">", tree->token) || !strcmp(">=", tree->token) || !strcmp("<", tree->token) || !strcmp("<=", tree->token)) {
+		
+		/* send right side to evaluate*/
+		TAC* e2 = Exp3AC(tree->subNodes[1]);
+		/* send left side to evaluate*/
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen(tree->token) + strlen(e2->var) + strlen("\t\tt = \n") + 1));
+		/* create tx */
+		strcpy(code,"\t\t");
+		strcpy(var, "t");
+		/* create tx = e1.var+e2.var */
+		strcat(var, label);
+		strcat(code, var);
+		strcat(code, " = ");
+		strcat(code, e1->var);
+		strcat(code, tree->token);
+		strcat(code, e2->var);
+		strcat(code, "\n");
+
+		/*  create node */
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* both sons are complex and have e.code */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && tree->subNodes[1]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + strlen(e2->code) + 1));
+			strcpy(node->code ,e2->code);
+			strcat(node->code, e1->code);
+			strcat(node->code, code);
+		}
+		/* one son is complex has e.code and one is simple */
+		else if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+			strcat(node->code, code);
+		}
+		/* one son is complex has e.code and one is simple */
+		else if(tree->subNodes[1]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e2->code) + 1));
+			strcpy(node->code, e2->code);
+			strcat(node->code, code);
+		}
+		/* both sons are simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is ! */
+	if (!strcmp("!", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = !\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = !e1.var*/
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = !");
+		strcat(code, e1->var);
+		strcat(code, "\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* if son is complex has e.code */
+		if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code ,e1->code);
+			strcat(node->code, code);
+		}
+		/* if son is is simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is POINTER */
+	if (!strcmp("POINTER", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = *\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = *e.var */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = *");
+		strcat(code, e1->var);
+		strcat(code, "\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* if node is not simple has e.code*/
+		if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code ,e1->code);
+			strcat(node->code, code);
+		}
+		/* if node is simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is STR-LEN */
+	if (!strcmp("STR-LEN", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = ||\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = |e.var| */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = |");
+		strcat(code, e1->var);
+		strcat(code, "|\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = strdup(code);
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+	
+	/* if node token is ADDRESS-OF*/
+	if (!strcmp("ADDRESS-OF", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = &\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = &e.var */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = &");
+		strcat(code, e1->var);
+		strcat(code, "\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* if node is not simple has e.code*/
+		if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code ,e1->code);
+			strcat(node->code, code);
+		}
+		/* if node is simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is FUNC-CALL*/
+	if (!strcmp("FUNC-CALL", tree->token)) {
+		TAC* e1 = NULL;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 0;
+
+		/* deal with all params of function call */
+		for(int i=1; i<tree->numOfSubNodes; i++){
+			/* eval param */
+			e1 = Exp3AC(tree->subNodes[i]);
+
+			/* if paramter is complex has e.code */
+			if(tree->subNodes[i]->numOfSubNodes!=0){
+				/* if first paramter malloc */
+				if(i == 1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+					strcpy(node->code ,e1->code);
+					flag = 1;
+				}
+				/* else realloc */
+				else{
+					node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+					strcat(node->code ,e1->code);
+				}
+			}
+			/* if paramter is simple and first paramte malloc */
+			if(i == 1 && flag == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->var) + strlen("\t\tPushParam \n") + 1 ));
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->var) + strlen("\t\tPushParam \n") + 1));
+			}
+			strcat(node->code, "\t\tPushParam ");
+			strcat(node->code, e1->var);
+			strcat(node->code,"\n");			
+		}
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tt = LCall \n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = LCall name */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = ");
+		strcat(code, "LCall ");
+		strcat(code, tree->subNodes[0]->token);
+		strcat(code, "\n");
+		
+		node -> var = strdup(var);
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		free(var);
+		free(code);
+
+		/* create popparams */
+		code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tPopParams 0\n") + 1));
+
+		strcpy(code,"\t\tPopParams ");
+		strcat(code, "0"); // need to calc
+		strcat(code, "\n");
+		
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		return node;
+	}
+
+	/* node can be variable or const */
+	else {
+		/* node is simple value */
+		if(isValue(tree->token)){
+			char *label = getNewVarLabel();
+			char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+			char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tt = \n") + 1));
+			/* create tx */
+			strcpy(var, "t");
+			strcat(var, label);
+			/* create tx = value */
+			strcpy(code,"\t\t");
+			strcat(code, var);
+			strcat(code, " = ");
+			strcat(code, tree->subNodes[0]->token);
+			strcat(code, "\n");
+
+			TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+			node->code = strdup(code);
+			node->var = strdup(var);
+			node->truel = NULL;
+			node->falsel = NULL;
+			return node;
+		}
+		/* node is str */
+		if(tree->numOfSubNodes!=0){
+			char *label = getNewVarLabel();
+			char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+			char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->token) + strlen("\t\tt = &\n") + 1));
+			/* create tx */ 
+			strcpy(var, "t");
+			strcat(var, label);
+			/* create tx = &str */
+			strcpy(code,"\t\t");
+			strcat(code, var);
+			strcat(code, " = &");
+			strcat(code, tree->token);
+			strcat(code, "\n");
+
+			char *label2 = getNewVarLabel();
+			char *var2 = (char*)malloc(sizeof(char) * (strlen(label2) + 2));
+			char *code2 = (char*)malloc(sizeof(char) * (strlen(label2) + strlen(tree->subNodes[0]->subNodes[0]->token) + strlen(var) + strlen("\t\tt = +\n") + 1));
+			/* create tx */
+			strcpy(var2, "t");
+			strcat(var2, label2);
+			/* create tx = ty + int */
+			strcpy(code2,"\t\t");
+			strcat(code2, var2);
+			strcat(code2, " = ");
+			strcat(code2, var);
+			strcat(code2, "+");
+			strcat(code2, tree->subNodes[0]->subNodes[0]->token);
+			strcat(code2, "\n");
+			
+			TAC* node = (TAC*)malloc(sizeof(TAC) * 2);
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(code2) + 1));
+			strcpy(node->code, code);
+			strcat(node->code, code2);
+			node->var = strdup(var);
+			node->truel = NULL;
+			node->falsel = NULL;
+			return node;
+		}
+		/* node is var */
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = strdup(tree->token);
+		node->var = strdup(tree->token);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+}
+
+char* getNewVarLabel(){
+	char *str = (char*)malloc(sizeof(char) * 12 );
+	sprintf(str, "%d", varIndex);
+	varIndex += 1;
+	return str;
+}
+
+char* getNewLabel(){
+	char *str = (char*)malloc(sizeof(char) * 13 );
+	sprintf(str, "L%d", labelIndex);
+	labelIndex += 1;
+	return str;
+}
+
+int calcFuncCallBytes(node *tree){
+	return 0;
+}
+
+int isBoolOp(char *token){
+	if (!strcmp("&&", token) || !strcmp("||", token) || !strcmp("==", token) || !strcmp("!=", token)|| !strcmp(">", token) || !strcmp(">=", token) || !strcmp("<", token) || !strcmp("<=", token)) {
+		return 1;
+	}
+	return 0;
+
+}
+
+
+
+

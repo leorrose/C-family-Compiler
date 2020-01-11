@@ -38,9 +38,18 @@ typedef struct table {
 	int returnType;
 }table;
 
+typedef struct TAC {
+	char* var;
+	char* code;
+	char* truel;
+	char* falsel;
+}TAC;
+
 /* global variables */
 typedef enum bool{ false,true } bool;
 int numOfmains = 0;
+int varIndex = 0;
+int labelIndex = 0;
 
 /* parsing tree */
 node *mknode(char *token, int count, ...);
@@ -86,6 +95,16 @@ bool isValue(char *id);
 void freeTable(table *env);
 void freeAllTables(table *env);
 int getTypeVal(char *string);
+
+/* 3AC */
+TAC* to3AC(node *tree);
+TAC* Exp3AC(node *tree);
+char* getNewVarLabel();
+int calcFuncCallBytes(node *tree);
+char* getNewLabel();
+TAC* get3acCond(node* tree, char* l1, char* l2);
+TAC* get3acSimpleCond(node* tree, char* l1, char* l2);
+int isBoolOp(char *token);
 
 %}
 
@@ -133,7 +152,7 @@ int getTypeVal(char *string);
 /*---------------------------------------start program--------------------------------------------------------------*/
 
 initial:
-	program							{  startSemantics($1); printTree($1,0); freeTree($1);}
+	program							{  startSemantics($1); printTree($1,0); to3AC($1); freeTree($1);}
 	;
 
 program:
@@ -275,7 +294,7 @@ string_assign:
 	ID ASS STRINGVAL										{ $$ = mknode($2,2,mknode($1,0),mknode($3,0)); }
 	;
 pointer_assign:
-	MUL ID ASS expression									{ $$ = mknode($3, 1 , mknode("POINTER", 2, mknode($2,0), $4,0)); }
+	MUL ID ASS expression									{ $$ = mknode($3, 2 , mknode("POINTER", 1, mknode($2,0)), $4); }
 	;
 /*----------------------------------------Code Block--------------------------------------------------------------------*/
 
@@ -913,6 +932,30 @@ void checkTree(node *subTree , table *env, node *tree) {
 		need to check 
 	*/
 	else if (!strcmp(subTree->token, "=")) {
+		/* if left side is pointer */
+		if (!strcmp(subTree->subNodes[0]->token, "POINTER")) {
+			if (!checkVarExist(env, subTree->subNodes[0]->subNodes[0]->token)) {
+				printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			/* if left side is pointer and right is null */
+			if(evalExp(subTree->subNodes[1], env, tree) == 8 && (getVarType(env, subTree->subNodes[0]->token)==4 || getVarType(env, subTree->subNodes[0]->token)==5 || getVarType(env, subTree->subNodes[0]->token)==6))
+				return;
+			if(getVarType(env, subTree->subNodes[0]->subNodes[0]->token) == 4 && evalExp(subTree->subNodes[1], env, tree) != 1){
+				printf("Error: Incompatible assignment - *%s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			if(getVarType(env, subTree->subNodes[0]->subNodes[0]->token) == 5 && evalExp(subTree->subNodes[1], env, tree) != 3){
+				printf("Error: Incompatible assignment - *%s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			if(getVarType(env, subTree->subNodes[0]->subNodes[0]->token) == 6 && evalExp(subTree->subNodes[1], env, tree) != 2){
+				printf("Error: Incompatible assignment - *%s\n", subTree->subNodes[0]->subNodes[0]->token);
+				quitProgram(tree, env);
+			}
+			return;
+		}
+
 		/* if left side of = doesnt exsist */
 		if (!checkVarExist(env, subTree->subNodes[0]->token)) {
 			printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->token);
@@ -1420,3 +1463,954 @@ void freeAllTables(table *env){
 		env = temp;
 	}
 }
+
+
+/*---------------------------------------------------3AC----------------------------------------------------------*/
+TAC* to3AC(node *tree) {
+	/* function to check turn tree to 3AC
+		tree: full parsing tree
+	*/
+
+	/* if tree is nothing than no semantic errors */
+	if (tree == NULL) {
+		return NULL;
+	}
+
+	/* node with the value CODE means glogal environment
+	*/
+	else if (!strcmp(tree->token, "CODE")) {
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			to3AC(tree->subNodes[i]);
+		}
+		return NULL;
+	}
+
+	/* node with the value FUNCTION
+	*/
+	else if (!strcmp(tree->token, "FUNCTION")) {
+		printf("%s:\n",tree->subNodes[0]->token);
+		printf("\t\tBeginFunc\n");
+		TAC* temp = to3AC(tree->subNodes[3]);
+		printf("%s",temp->code);
+		printf("\t\tEndFunc\n");
+	}
+	
+	/* node with the value BLOCK
+	*/
+	else if (!strcmp(tree->token, "BLOCK")) {
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* add each code in block to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+
+	/* node with the value BODY
+	*/
+	else if (!strcmp(tree->token, "BODY")) {
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+
+		/* add each code in body to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+
+	/* node with the value VAR
+	*/
+	else if (!strcmp(tree->token, "VAR")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 1;
+
+		/* add each variable to node */
+		for (int i = 1; i < tree->numOfSubNodes; i++) {
+			/* variable with assign */
+			if (tree->subNodes[i]->subNodes != NULL) {
+				TAC *e1 = Exp3AC(tree->subNodes[i]->subNodes[1]);
+
+				/* create tx = e1.var*/
+				char *code = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[i]->subNodes[0]->token) + strlen(e1->var) + strlen("\t\tt = \n") + 1));
+				sprintf(code,"\t\t%s = %s\n", tree->subNodes[i]->subNodes[0]->token, e1->var);
+
+				/* add code and e1.code to node */
+
+				if(i == 1 || flag==1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+					strcpy(node->code, e1->code);
+					strcat(node->code, code);
+				}
+				else{
+					node->code = (char*)realloc(node->code,sizeof(char) * (strlen(node->code) + strlen(code)  + strlen(e1->code) + 1));
+					strcat(node->code, e1->code);
+					strcat(node->code, code);
+				}
+				flag = 0;
+			}
+		}
+		if( flag ){
+			node->code = strdup("");
+		}
+		return node;
+	}
+
+	/* node with the value STRING
+	*/
+	else if (!strcmp(tree->token, "STRING")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 1;
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			/* variable with assign */
+			if (!strcmp(tree->subNodes[i]->token, "=")){
+				char *label = getNewVarLabel();
+				char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+				sprintf(var, "t%s", label);
+
+				char* code1 = (char*)malloc(sizeof(char) * (strlen(var) + strlen(tree->subNodes[i]->subNodes[1]->token) + strlen("\t\t = \n") + 1));
+				sprintf(code1,"\t\t%s = %s\n",var,tree->subNodes[i]->subNodes[1]->token);
+
+				char* code2 = (char*)malloc(sizeof(char) * (strlen(var) + strlen(tree->subNodes[i]->subNodes[0]->token) + strlen("\t\t = \n") + 1));
+				sprintf(code2,"\t\t%s = %s\n",tree->subNodes[i]->subNodes[0]->token,var);
+
+				if(i==0 || flag==1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(code1) + strlen(code2) + 1));
+					strcpy(node->code, code1);
+					strcat(node->code, code2);
+				}
+				else{
+					node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code1) + strlen(code2) + 1));
+					strcat(node->code, code1);
+					strcat(node->code, code2);
+				}
+				flag = 0;
+			}
+		}
+		if( flag ){
+			node->code = strdup("");
+		}
+		return node;
+	}
+
+	/* node with the value IF
+	*/
+	else if (!strcmp(tree->token, "IF")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+
+		/* get false label*/
+		char* currentLabel2 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel1)  + strlen(e1->code) +  strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s:%s%s:", cond->code,currentLabel1,e1->code,currentLabel2);
+
+		return node;
+	}
+
+	/* node with the value IF-ELSE
+	*/
+	else if (!strcmp(tree->token, "IF-ELSE")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+		TAC *e2 = to3AC(tree->subNodes[2]);
+
+		/* get false label*/
+		char* currentLabel2 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel1, currentLabel2);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel1)  + strlen(e1->code) + strlen(e2->code) + strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s:%s%s:%s", cond->code,currentLabel1,e1->code,currentLabel2,e2->code);
+
+		return node;
+	}
+	
+	/* node with the value WHILE
+	*/
+	else if (!strcmp(tree->token, "WHILE")) {
+
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+		char* currentLabel2 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+
+		/* get false label*/
+		char* currentLabel3 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel3)  + strlen(e1->code) + strlen(currentLabel1) *2 + strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s%s:%s\t\tgoto%s\n%s:",currentLabel1,cond->code,currentLabel2,e1->code,currentLabel1,currentLabel3);
+
+		return node;
+	}
+
+	/* node with the value DO-WHILE
+	*/
+	else if (!strcmp(tree->token, "DO-WHILE")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+		char* currentLabel2 = getNewLabel();
+
+		/* eavl block of if */
+		TAC *e1 = to3AC(tree->subNodes[1]);
+
+		/* get false label*/
+		char* currentLabel3 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[0], currentLabel2, currentLabel3);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 2 + strlen(currentLabel3)  + strlen(e1->code)*2 + strlen(currentLabel1) *2 + strlen(currentLabel2) + 1));
+		sprintf(node->code, "%s%s%s%s:%s\t\tgoto%s\n%s:",e1->code,currentLabel1,cond->code,currentLabel2,e1->code,currentLabel1,currentLabel3);
+
+		return node;
+	}
+
+	/* node with the value FOR
+
+	*/
+	else if (!strcmp(tree->token, "FOR")) {
+		/* get true label */
+		char* currentLabel1 = getNewLabel();
+		char* currentLabel2 = getNewLabel();
+
+		/* eval init */
+		TAC *e1 = to3AC(tree->subNodes[0]);
+
+		/* eval block of for */
+		TAC *e2 = to3AC(tree->subNodes[3]);
+
+		/* eval update */
+		TAC *e3 = to3AC(tree->subNodes[2]);
+
+		/* get false label*/
+		char* currentLabel3 = getNewLabel();
+
+		TAC* cond;
+		/*eavl condition */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && isBoolOp(tree->subNodes[0]->subNodes[0]->token)){
+			cond = get3acCond(tree->subNodes[1]->subNodes[0], currentLabel2, currentLabel3);
+		}
+		else{
+			cond = get3acSimpleCond(tree->subNodes[1]->subNodes[0], currentLabel2, currentLabel3);
+		}
+
+		
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = (char*)malloc(sizeof(char) * (strlen(cond->code) + strlen(":") * 3 + strlen("\t\t \n") + strlen(currentLabel3)  + strlen(e1->code)*2 + strlen(currentLabel1) *2 + strlen(currentLabel2) + 1 + strlen(e2->code) + strlen(e3->code)));
+		sprintf(node->code, "%s%s:%s%s:%s%s\t\tgoto %s\n%s:",e1->code,currentLabel1,cond->code,currentLabel2,e2->code,e3->code,currentLabel1,currentLabel3);
+
+		return node;
+	}
+	
+	/* node with the value INIT
+	*/
+	else if (!strcmp(tree->token, "INIT")) {
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+
+		/* add each code in body to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+	
+	/* node with the value UPDATE
+	*/
+	else if (!strcmp(tree->token, "UPDATE")) {
+		
+		TAC* e1;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+
+		/* add each code in body to node */
+		for (int i = 0; i < tree->numOfSubNodes; i++) {
+			e1 = to3AC(tree->subNodes[i]);
+			
+			/* if frist node */
+			if(i == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+				strcpy(node->code ,e1->code);
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+				strcat(node->code ,e1->code);
+			}
+		}
+		return node;
+	}
+
+	/* node with the value FUNC-CALL
+	*/
+	else if (!strcmp(tree->token, "FUNC-CALL")) {
+		TAC* e1 = NULL;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 0;
+
+		/* deal with all params of function call */
+		for(int i=1; i<tree->numOfSubNodes; i++){
+			/* eval param */
+			e1 = Exp3AC(tree->subNodes[i]);
+
+			/* if paramter is complex has e.code */
+			if(tree->subNodes[i]->numOfSubNodes!=0){
+				/* if first paramter malloc */
+				if(i == 1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+					strcpy(node->code ,e1->code);
+					flag = 1;
+				}
+				/* else realloc */
+				else{
+					node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+					strcat(node->code ,e1->code);
+				}
+			}
+			/* if paramter is simple and first paramte malloc */
+			if(i == 1 && flag == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->var) + strlen("\t\tPushParam \n") + 1 ));
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->var) + strlen("\t\tPushParam \n") + 1));
+			}
+			strcat(node->code, "\t\tPushParam ");
+			strcat(node->code, e1->var);
+			strcat(node->code,"\n");			
+		}
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\t = LCall \n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = LCall name */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = ");
+		strcat(code, "LCall ");
+		strcat(code, tree->subNodes[0]->token);
+		strcat(code, "\n");
+		
+		node -> var = strdup(var);
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		free(var);
+		free(code);
+
+		/* create popparams */
+		code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tPopParams 0\n") + 1));
+
+		strcpy(code,"\t\tPopParams ");
+		strcat(code, "0"); // need to calc
+		strcat(code, "\n");
+		
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		return node;
+	}
+
+	/* node with the value RET
+	*/
+	else if (!strcmp(tree->token, "RET")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		TAC *e1 = Exp3AC(tree->subNodes[0]);
+
+		if(tree->subNodes[0]->numOfSubNodes !=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+
+			char* code =(char*)malloc(sizeof(char) * (strlen("\t\tReturn \n") + strlen(e1->var) + 1));
+			sprintf(code,"\t\tReturn %s\n",e1->var);
+
+			node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+			strcat(node->code, code);
+			return node;
+		}
+
+		node->code = (char*)malloc(sizeof(char) * (strlen("\t\tReturn \n") + strlen(e1->var) + 1));
+		sprintf(node->code, "\t\tReturn %s\n",  e1->var);
+		return node;
+	}
+
+	/* node with the value =
+	*/
+	else if (!strcmp(tree->token, "=")) {
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* left side is pointer */
+		if(!strcmp(tree->subNodes[0]->token, "POINTER")){
+			TAC *e1 = Exp3AC(tree->subNodes[1]);
+
+			node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+
+			char* code = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->subNodes[0]->token) + strlen(e1->var) + strlen("\t\t* = \n") + 1));
+			sprintf(code, "\t\t*%s = %s\n",tree->subNodes[0]->subNodes[0]->token,e1->var);
+
+			node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+			strcat(node->code, code);
+			return node;
+		}
+		/* left side is string */
+		else if(tree->subNodes[0]->numOfSubNodes !=0){
+			TAC *e1 = Exp3AC(tree->subNodes[1]);
+
+			char *label = getNewVarLabel();
+			char *var = (char*)malloc(sizeof(char) * (strlen(label) + 1));
+			char *var2 = (char*)malloc(sizeof(char) * (strlen(label) + 1));
+			strcpy(var, "t");
+			strcat(var, label);
+			label = getNewVarLabel();
+			strcpy(var2, "t");
+			strcat(var2, label);
+
+			char* code1 = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->token) + strlen(var) + strlen("\t\t = &\n") + 1));
+			sprintf(code1, "\t\t%s = &%s\n",var, tree->subNodes[0]->token);
+
+			char* code2 = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->token) + strlen(var2) + strlen("\t\t =  + \n") + 1));
+			sprintf(code2, "\t\t%s = %s + %s\n",var2, var,tree->subNodes[0]->subNodes[0]->subNodes[0]->token);
+
+			char* code3 = (char*)malloc(sizeof(char) * (strlen(var2) + strlen(e1->var) + strlen("\t\t* = \n") + 1));
+			sprintf(code3, "\t\t*%s = %s\n",var2, e1->var);
+
+			node->code = (char*)malloc(sizeof(char) * (strlen(code1) + strlen(code2) + strlen(code3) + strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+			strcat(node->code, code1);
+			strcat(node->code, code2);
+			strcat(node->code, code3);
+			return node;
+		}
+		/* left side is a simple var */
+		else{
+			TAC *e1 = Exp3AC(tree->subNodes[1]);
+			char* code = (char*)malloc(sizeof(char) * (strlen(tree->subNodes[0]->token) + strlen(e1->var) + strlen("\t\t = \n") + 1));
+			sprintf(code, "\t\t%s = %s\n",tree->subNodes[0]->token,e1->var);
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			if(tree->subNodes[1]->subNodes!=0)
+				strcpy(node->code, e1->code);
+			strcat(node->code, code);
+			return node;
+		}
+	}
+}
+
+TAC* get3acSimpleCond(node* tree, char* l1, char* l2){
+	if(isValue(tree->token) || isBoolOp(tree->token)){
+		TAC* temp = Exp3AC(tree);
+		char* code = (char*)malloc(sizeof(char) * (strlen(temp->code) + strlen(temp->var) + strlen(l2) + strlen("\t\tifz  goto \n") + 1));
+		sprintf(code, "%s\t\tifz %s goto %s\n" ,temp->code, temp->var, l2);
+		temp->code = strdup(code);
+		return temp;
+	}
+	else{
+		TAC* temp = (TAC*)malloc(sizeof(TAC) * 1);
+		char *label = getNewVarLabel();
+		char* var = (char*)malloc(sizeof(char)* (strlen(label) + 2));
+		sprintf(var,"t%s",label);
+		temp->code = (char*)malloc(sizeof(char) * (strlen(var) * 2 + strlen(tree->token) + strlen(l2) + strlen("\t\t = \t\t\nifz  goto \n") + 1));
+		sprintf(temp->code, "\t\t%s = %s\n\t\tifz %s goto %s\n",var,tree->token ,var, l2);
+		return temp;
+	}
+}
+
+
+TAC* get3acCond(node* tree, char* l1, char* l2){
+	TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+	/* if condition is or */
+	if(!strcmp(tree->token, "||")){
+		TAC* left = get3acCond(tree->subNodes[0], l1, l2);
+		char* code = strdup("");
+		if(left != NULL && tree->subNodes[0]->numOfSubNodes!=0 && strcmp(tree->subNodes[0]->token,"&&") && strcmp(tree->subNodes[0]->token,"||")){
+			code = (char*)malloc(sizeof(char) * (strlen(left->code) + strlen(left->var) + strlen(l1) + strlen("\t\tifnz  goto \n") + 1));
+			sprintf(code,"%s\t\tifnz %s goto %s\n",left->code,left->var,l1);
+		}
+		else{
+			code = strdup(left->code);
+		}
+		TAC* right = get3acCond(tree->subNodes[1], l1, l2);
+		char* code2 = strdup("");
+		if(right != NULL && tree->subNodes[1]->numOfSubNodes!=0 && strcmp(tree->subNodes[1]->token,"&&") && strcmp(tree->subNodes[1]->token,"||")){
+			code2 = (char*)malloc(sizeof(char) * (strlen(right->code) + strlen(right->var) + strlen(l2) + strlen("\t\tifz  goto \n") + 1));
+			sprintf(code2,"%s\t\tifz %s goto %s\n",right->code,right->var,l2);
+		}
+		else{
+			code2 = strdup(right->code);
+		}
+		node-> code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(code2) + 1));
+		strcpy(node->code, code);
+		strcat(node->code, code2);
+		return node;
+	}
+
+	/* if condition is and */
+	if(!strcmp(tree->token, "&&")){
+		TAC* left = get3acCond(tree->subNodes[0], l1, l2);
+		char* code = strdup("");
+		if(left != NULL && tree->subNodes[0]->numOfSubNodes!=0 && strcmp(tree->subNodes[0]->token,"&&") && strcmp(tree->subNodes[0]->token,"||")){
+			code = (char*)malloc(sizeof(char) * (strlen(left->code) + strlen(left->var) + strlen(l2) + strlen("%s\t\tifz  goto \n") + 1));
+			sprintf(code,"%s\t\tifz %s goto %s\n",left->code,left->var,l2);
+		}
+		else{
+			code = strdup(left->code);
+		}
+		TAC* right = get3acCond(tree->subNodes[1], l1, l2);
+		char* code2 = strdup("");
+		if(right != NULL && tree->subNodes[1]->numOfSubNodes!=0 && strcmp(tree->subNodes[1]->token,"&&") && strcmp(tree->subNodes[1]->token,"||")){
+			code2 = (char*)malloc(sizeof(char) * (strlen(right->code) + strlen(right->var) + strlen(l2) + strlen("%s\t\tifz  goto \n") + 1));
+			sprintf(code2,"%s\t\tifz %s goto %s\n",right->code,right->var,l2);
+		}
+		else{
+			code2 = strdup(right->code);
+		}
+		node-> code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(code2) + 1));
+		strcpy(node->code, code);
+		strcat(node->code, code2);
+		return node;
+	}
+	return Exp3AC(tree);
+}
+
+TAC* Exp3AC(node *tree){
+	/* if node token is + , - , * , / , &&, ||, ==, !=, > , <, >= , <= */
+	if (!strcmp("+", tree->token) || !strcmp("-", tree->token) || !strcmp("*", tree->token) || !strcmp("/", tree->token)
+	||!strcmp("&&", tree->token) || !strcmp("||", tree->token) || !strcmp("==", tree->token) || !strcmp("!=", tree->token)||
+	!strcmp(">", tree->token) || !strcmp(">=", tree->token) || !strcmp("<", tree->token) || !strcmp("<=", tree->token)) {
+		
+		/* send right side to evaluate*/
+		TAC* e2 = Exp3AC(tree->subNodes[1]);
+		/* send left side to evaluate*/
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen(tree->token) + strlen(e2->var) + strlen("\t\tt = \n") + 1));
+		/* create tx */
+		strcpy(code,"\t\t");
+		strcpy(var, "t");
+		/* create tx = e1.var+e2.var */
+		strcat(var, label);
+		strcat(code, var);
+		strcat(code, " = ");
+		strcat(code, e1->var);
+		strcat(code, tree->token);
+		strcat(code, e2->var);
+		strcat(code, "\n");
+
+		/*  create node */
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* both sons are complex and have e.code */
+		if(tree->subNodes[0]->numOfSubNodes!=0 && tree->subNodes[1]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + strlen(e2->code) + 1));
+			strcpy(node->code ,e2->code);
+			strcat(node->code, e1->code);
+			strcat(node->code, code);
+		}
+		/* one son is complex has e.code and one is simple */
+		else if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code, e1->code);
+			strcat(node->code, code);
+		}
+		/* one son is complex has e.code and one is simple */
+		else if(tree->subNodes[1]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e2->code) + 1));
+			strcpy(node->code, e2->code);
+			strcat(node->code, code);
+		}
+		/* both sons are simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is ! */
+	if (!strcmp("!", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = !\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = !e1.var*/
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = !");
+		strcat(code, e1->var);
+		strcat(code, "\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* if son is complex has e.code */
+		if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code ,e1->code);
+			strcat(node->code, code);
+		}
+		/* if son is is simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is POINTER */
+	if (!strcmp("POINTER", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = *\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = *e.var */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = *");
+		strcat(code, e1->var);
+		strcat(code, "\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* if node is not simple has e.code*/
+		if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code ,e1->code);
+			strcat(node->code, code);
+		}
+		/* if node is simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is STR-LEN */
+	if (!strcmp("STR-LEN", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = ||\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = |e.var| */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = |");
+		strcat(code, e1->var);
+		strcat(code, "|\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = strdup(code);
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+	
+	/* if node token is ADDRESS-OF*/
+	if (!strcmp("ADDRESS-OF", tree->token)) {
+		TAC* e1 = Exp3AC(tree->subNodes[0]);
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(e1->var) + strlen("\t\tt = &\n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = &e.var */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = &");
+		strcat(code, e1->var);
+		strcat(code, "\n");
+
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		/* if node is not simple has e.code*/
+		if(tree->subNodes[0]->numOfSubNodes!=0){
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(e1->code) + 1));
+			strcpy(node->code ,e1->code);
+			strcat(node->code, code);
+		}
+		/* if node is simple */
+		else{
+			node->code = strdup(code);
+		}
+		node->var = strdup(var);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+
+	/* if node token is FUNC-CALL*/
+	if (!strcmp("FUNC-CALL", tree->token)) {
+		TAC* e1 = NULL;
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		int flag = 0;
+
+		/* deal with all params of function call */
+		for(int i=1; i<tree->numOfSubNodes; i++){
+			/* eval param */
+			e1 = Exp3AC(tree->subNodes[i]);
+
+			/* if paramter is complex has e.code */
+			if(tree->subNodes[i]->numOfSubNodes!=0){
+				/* if first paramter malloc */
+				if(i == 1){
+					node->code = (char*)malloc(sizeof(char) * (strlen(e1->code) + 1));
+					strcpy(node->code ,e1->code);
+					flag = 1;
+				}
+				/* else realloc */
+				else{
+					node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->code) + 1));
+					strcat(node->code ,e1->code);
+				}
+			}
+			/* if paramter is simple and first paramte malloc */
+			if(i == 1 && flag == 0){
+				node->code = (char*)malloc(sizeof(char) * (strlen(e1->var) + strlen("\t\tPushParam \n") + 1 ));
+			}
+			/* else realloc */
+			else{
+				node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(e1->var) + strlen("\t\tPushParam \n") + 1));
+			}
+			strcat(node->code, "\t\tPushParam ");
+			strcat(node->code, e1->var);
+			strcat(node->code,"\n");			
+		}
+
+		char *label = getNewVarLabel();
+		char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+		char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tt = LCall \n") + 1));
+		/* create tx */
+		strcpy(var, "t");
+		strcat(var, label);
+		/* create tx = LCall name */
+		strcpy(code,"\t\t");
+		strcat(code, var);
+		strcat(code, " = ");
+		strcat(code, "LCall ");
+		strcat(code, tree->subNodes[0]->token);
+		strcat(code, "\n");
+		
+		node -> var = strdup(var);
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		free(var);
+		free(code);
+
+		/* create popparams */
+		code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tPopParams 0\n") + 1));
+
+		strcpy(code,"\t\tPopParams ");
+		strcat(code, "0"); // need to calc
+		strcat(code, "\n");
+		
+		node->code = (char*)realloc(node->code, sizeof(char) * (strlen(node->code) + strlen(code) + 1));
+		strcat(node->code ,code);
+
+		return node;
+	}
+
+	/* node can be variable or const */
+	else {
+		/* node is simple value */
+		if(isValue(tree->token)){
+			char *label = getNewVarLabel();
+			char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+			char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->subNodes[0]->token) + strlen("\t\tt = \n") + 1));
+			/* create tx */
+			strcpy(var, "t");
+			strcat(var, label);
+			/* create tx = value */
+			strcpy(code,"\t\t");
+			strcat(code, var);
+			strcat(code, " = ");
+			strcat(code, tree->subNodes[0]->token);
+			strcat(code, "\n");
+
+			TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+			node->code = strdup(code);
+			node->var = strdup(var);
+			node->truel = NULL;
+			node->falsel = NULL;
+			return node;
+		}
+		/* node is str */
+		if(tree->numOfSubNodes!=0){
+			char *label = getNewVarLabel();
+			char *var = (char*)malloc(sizeof(char) * (strlen(label) + 2));
+			char *code = (char*)malloc(sizeof(char) * (strlen(label) + strlen(tree->token) + strlen("\t\tt = &\n") + 1));
+			/* create tx */ 
+			strcpy(var, "t");
+			strcat(var, label);
+			/* create tx = &str */
+			strcpy(code,"\t\t");
+			strcat(code, var);
+			strcat(code, " = &");
+			strcat(code, tree->token);
+			strcat(code, "\n");
+
+			char *label2 = getNewVarLabel();
+			char *var2 = (char*)malloc(sizeof(char) * (strlen(label2) + 2));
+			char *code2 = (char*)malloc(sizeof(char) * (strlen(label2) + strlen(tree->subNodes[0]->subNodes[0]->token) + strlen(var) + strlen("\t\tt = +\n") + 1));
+			/* create tx */
+			strcpy(var2, "t");
+			strcat(var2, label2);
+			/* create tx = ty + int */
+			strcpy(code2,"\t\t");
+			strcat(code2, var2);
+			strcat(code2, " = ");
+			strcat(code2, var);
+			strcat(code2, "+");
+			strcat(code2, tree->subNodes[0]->subNodes[0]->token);
+			strcat(code2, "\n");
+			
+			TAC* node = (TAC*)malloc(sizeof(TAC) * 2);
+			node->code = (char*)malloc(sizeof(char) * (strlen(code) + strlen(code2) + 1));
+			strcpy(node->code, code);
+			strcat(node->code, code2);
+			node->var = strdup(var);
+			node->truel = NULL;
+			node->falsel = NULL;
+			return node;
+		}
+		/* node is var */
+		TAC* node = (TAC*)malloc(sizeof(TAC) * 1);
+		node->code = strdup(tree->token);
+		node->var = strdup(tree->token);
+		node->truel = NULL;
+		node->falsel = NULL;
+		return node;
+	}
+}
+
+char* getNewVarLabel(){
+	char *str = (char*)malloc(sizeof(char) * 12 );
+	sprintf(str, "%d", varIndex);
+	varIndex += 1;
+	return str;
+}
+
+char* getNewLabel(){
+	char *str = (char*)malloc(sizeof(char) * 13 );
+	sprintf(str, "L%d", labelIndex);
+	labelIndex += 1;
+	return str;
+}
+
+int calcFuncCallBytes(node *tree){
+	return 0;
+}
+
+int isBoolOp(char *token){
+	if (!strcmp("&&", token) || !strcmp("||", token) || !strcmp("==", token) || !strcmp("!=", token)|| !strcmp(">", token) || !strcmp(">=", token) || !strcmp("<", token) || !strcmp("<=", token)) {
+		return 1;
+	}
+	return 0;
+
+}
+
+
+
+

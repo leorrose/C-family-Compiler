@@ -1,0 +1,223 @@
+function int test(int a,b){
+	return b;
+}
+
+/* check pointer operators */
+function void test1(){
+	
+	var int* a1;
+	var char* b1;
+	var real* c1;
+
+
+	a1 = a1 - 5 + 6;
+	b1 = b1 - 6 +7 ;
+	c1 = c1 -5 + 10;
+}
+
+/* check expression eval * correct */
+function void test2(){
+	var int a;
+	var char b;
+	var real c;
+	var int* a1;
+	var char* b1;
+	var real* c1;
+
+
+	a = *a1;
+	b = *b1;
+	c = *c1;
+}
+
+/* check expression eval & correct */
+function void test3(){
+	var int x;
+	var real w;
+	var char c;
+	var int* a1;
+	var char* b1;
+	var real* c1;
+	string str[100];
+
+
+	a1 = &x;
+	b1 = &c;
+	c1 = &w;
+	b1 = &str[1];
+}
+
+/* check expression eval ! correct */
+function void test4(){
+	var bool y;
+	var bool x;
+
+	x = !y;
+	x = !y && true;
+	x = !y || false;
+}
+
+/* check expression eval || correct */
+function void test5(){
+	string str[100], str1[100]="fgc";
+	var int x;
+
+	x = |str| + |str1|;
+	x = |str|;
+	x = 3 * |str|;
+}
+
+/* check assignment correct */
+function void test6(){
+	var int x;
+	var char y;
+	var real z;
+	var bool w;
+	var int* a;
+	var real* b;
+	var char* c;
+	string str[100];
+
+	x = x;
+	y = y;
+	z = z;
+	a = a;
+	b = b;
+	c = c;
+	str = str;
+	a =null;
+	b =null;
+	c= null;	
+}
+
+/* check expression eval + - * /  correct */
+function void test7(){
+	var int x;
+	var real y;
+
+	x = x + x - x;
+	y = y + y * x;
+	y = y + x / x;
+	x = x - x * x;
+	y = y - y - x;
+	y = y - x / y;
+	x = x * x * 2;
+	y = y * y / 4;
+	y = y * x * 4;
+	x = x / x + 6;
+	y = y / y * 5;
+	y = y / x -9;
+	
+}
+
+/* check expression eval && || correct */
+function void test8(){
+	var bool x,y;
+
+	x = y && x;
+	x = y && y || x;
+	y = y && x || y;
+	y = y && true || false;
+	x = x && false;
+	x = y || true && !y;
+	x = y || !y;
+	y = y || x && y ;
+	y = y || y && y || true || false;
+	x = x || !x;
+	
+}
+
+/* check expression eval > < <= >= correct */
+function void test9(){
+	var int x,y;
+	var real w,z;
+	var bool b;
+
+	b = y >= x;
+	b = y <= x;
+	b = y > x;
+	b = y < x;
+	b = z >= w;
+	b = z <= w;
+	b = z > w;
+	b = z < w;
+	
+}
+
+/* check expression eval != == correct */
+function void test10(){
+	var int x,y;
+	var real w,z;
+	var bool a,b;
+	var char c,d;
+	var int* a1,a2;
+	var char* b1,b2;
+	var real* c1,c2;
+
+	b = y == x;
+	b = y != x;
+	b = w == z;
+	b = w != z;
+	b = a == b;
+	b = a != b;
+	b = c == d;
+	b = c != d;
+	b = a1 == a2;
+	b = a1 != a2;
+	b = b1 == b2;
+	b = b1 != b2;
+	b = c1 == c2;
+	b = c1 != c2;
+}
+
+/* for condition is bool */
+function void test11(){
+	var int x,y,a,b;
+	for(x = 0; x < 10 && y!= 10 ; x++){
+		x = x + 10;
+	}
+	a = test(b,b);	
+}
+
+/* do while condition is bool */
+function void test12(){
+	var int x,y,a,b;
+	do {
+		x = x + 10;
+	}
+	while ( x != 200 && y>10 );
+}
+
+
+
+/* while condition is bool */
+function void test13(){
+	var int y,x,a,b;
+	while ( x > 10 || y <= 10){
+		x = x + 10;
+	}
+	a = test(b,b);
+}
+
+/* ifcondition is bool */
+function void test14(){
+	var int y,x,a,b;
+	if( x < 10 && y > 10){
+		x = y +10;
+	}
+	else{
+		y = x +10;
+	}
+	a = test(b,b);
+}
+
+
+/* assignment of function return type is correct*/
+function void test15(){
+	var int a,b; 
+	a = test(b,b) + b;	
+}
+
+function void main(){
+	var int x;
+}
