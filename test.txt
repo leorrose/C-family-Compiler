@@ -1,223 +1,133 @@
-function int test(int a,b){
-	return b;
-}
+/* long
+comment long
+comment */
 
-/* check pointer operators */
-function void test1(){
-	
-	var int* a1;
-	var char* b1;
-	var real* c1;
+function bool function1(int a, b, y ; char c) 
+{
+	var bool res;
+	{
+		var char  x , b;
+		var int y ;
 
+		b = '&';
+		/* a = x; */ 
+		/* b = 8; */
+		a = (y * 7)/a-y;
+		/* a = (y * 7)/b-y; */
+		/* a = (y * 7)/a-c; */
 
-	a1 = a1 - 5 + 6;
-	b1 = b1 - 6 +7 ;
-	c1 = c1 -5 + 10;
-}
-
-/* check expression eval * correct */
-function void test2(){
-	var int a;
-	var char b;
-	var real c;
-	var int* a1;
-	var char* b1;
-	var real* c1;
-
-
-	a = *a1;
-	b = *b1;
-	c = *c1;
-}
-
-/* check expression eval & correct */
-function void test3(){
-	var int x;
-	var real w;
-	var char c;
-	var int* a1;
-	var char* b1;
-	var real* c1;
-	string str[100];
-
-
-	a1 = &x;
-	b1 = &c;
-	c1 = &w;
-	b1 = &str[1];
-}
-
-/* check expression eval ! correct */
-function void test4(){
-	var bool y;
-	var bool x;
-
-	x = !y;
-	x = !y && true;
-	x = !y || false;
-}
-
-/* check expression eval || correct */
-function void test5(){
-	string str[100], str1[100]="fgc";
-	var int x;
-
-	x = |str| + |str1|;
-	x = |str|;
-	x = 3 * |str|;
-}
-
-/* check assignment correct */
-function void test6(){
-	var int x;
-	var char y;
-	var real z;
-	var bool w;
-	var int* a;
-	var real* b;
-	var char* c;
-	string str[100];
-
-	x = x;
-	y = y;
-	z = z;
-	a = a;
-	b = b;
-	c = c;
-	str = str;
-	a =null;
-	b =null;
-	c= null;	
-}
-
-/* check expression eval + - * /  correct */
-function void test7(){
-	var int x;
-	var real y;
-
-	x = x + x - x;
-	y = y + y * x;
-	y = y + x / x;
-	x = x - x * x;
-	y = y - y - x;
-	y = y - x / y;
-	x = x * x * 2;
-	y = y * y / 4;
-	y = y * x * 4;
-	x = x / x + 6;
-	y = y / y * 5;
-	y = y / x -9;
-	
-}
-
-/* check expression eval && || correct */
-function void test8(){
-	var bool x,y;
-
-	x = y && x;
-	x = y && y || x;
-	y = y && x || y;
-	y = y && true || false;
-	x = x && false;
-	x = y || true && !y;
-	x = y || !y;
-	y = y || x && y ;
-	y = y || y && y || true || false;
-	x = x || !x;
-	
-}
-
-/* check expression eval > < <= >= correct */
-function void test9(){
-	var int x,y;
-	var real w,z;
-	var bool b;
-
-	b = y >= x;
-	b = y <= x;
-	b = y > x;
-	b = y < x;
-	b = z >= w;
-	b = z <= w;
-	b = z > w;
-	b = z < w;
-	
-}
-
-/* check expression eval != == correct */
-function void test10(){
-	var int x,y;
-	var real w,z;
-	var bool a,b;
-	var char c,d;
-	var int* a1,a2;
-	var char* b1,b2;
-	var real* c1,c2;
-
-	b = y == x;
-	b = y != x;
-	b = w == z;
-	b = w != z;
-	b = a == b;
-	b = a != b;
-	b = c == d;
-	b = c != d;
-	b = a1 == a2;
-	b = a1 != a2;
-	b = b1 == b2;
-	b = b1 != b2;
-	b = c1 == c2;
-	b = c1 != c2;
-}
-
-/* for condition is bool */
-function void test11(){
-	var int x,y,a,b;
-	for(x = 0; x < 10 && y!= 10 ; x++){
-		x = x + 10;
+		res = (b == c) && (y > a);
+		/* res = (b == c) && (y + a); */
+		/* 3 + 6 = 9; */
+		/* ^x = 6; */
 	}
-	a = test(b,b);	
+    	return res;
 }
 
-/* do while condition is bool */
-function void test12(){
-	var int x,y,a,b;
-	do {
-		x = x + 10;
+
+function void proc1(int i, j, k, x )
+{
+    function bool function2(int l, m, n) 
+    {
+	var bool x, j;
+	/* var bool n; */
+	var char k;
+	k = '@';
+	i = l + l;
+	/* i = j + 1; */
+	/* i = k + 1; */
+	if ((k == '*') || (x != false) && (l + m < i)){
+		x = l < m;
 	}
-	while ( x != 200 && y>10 );
+        return x;
+    }
+    {
+	var char x ;
+	var bool k;
+	k = function2(5,i,j);
+	/* x = function2(5,i,j); */
+	/* k = function2(5,i); */
+	/* k = function2(5,x,j); */
+     }
+    /* n = false; */
+    /* x = '#'; */
+    x = k;
 }
 
 
+function int function3(int i, j, k ) 
+{
+    function int square(int t) /* function declarations */ 
+    {
+        var int temp;
+        temp = t * t;
+        return temp;
+    }
 
-/* while condition is bool */
-function void test13(){
-	var int y,x,a,b;
-	while ( x > 10 || y <= 10){
-		x = x + 10;
+    var int total;                       /* variable declarations */
+    var bool bo;
+    bo = function1(i,j,k,'^');
+    /* j = function2(); */
+    total = square(i+j+k);                     /* statements */
+    return total;
+}
+
+
+function int foo2() 
+{
+    string s1[30], s2[100];
+    var int i, j, cnt;
+    i=0;
+    j=0;
+    cnt = 1;
+    while(i<30){
+	while(j<60/2){
+	    if (s1[i] == s2[j]){
+		cnt = cnt*2;
+	    }
+	    j=j+1;
 	}
-	a = test(b,b);
-}
-
-/* ifcondition is bool */
-function void test14(){
-	var int y,x,a,b;
-	if( x < 10 && y > 10){
-		x = y +10;
-	}
-	else{
-		y = x +10;
-	}
-	a = test(b,b);
+	i=i+1;
+    }
+    return cnt;
 }
 
 
-/* assignment of function return type is correct*/
-function void test15(){
-	var int a,b; 
-	a = test(b,b) + b;	
-}
-
-function void main(){
+function int function4() 
+    {   
 	var int x;
+	var int* y ;
+	x = 5;
+	y = &x;
+	x = 6;
+	if (&x == y){
+		x = 9;
+	}
+     	{
+		var char* x;
+		string y[10];
+		var char z;
+		y = "foobar";
+		x = &y[5];    
+		y = "barfoo"; 
+   		{
+			var char x;
+			var int* y;
+			var  char* z;
+			var char g;
+			/* y = &(1+3); 
+			y = &x;             
+			z = &(&g); */
+    		}
+	}
+    return 0;
+}
+
+
+
+function void main() 
+{
+    var int a;
+    a = foo2();
+   /* return int */
 }

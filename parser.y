@@ -95,6 +95,7 @@ bool isValue(char *id);
 void freeTable(table *env);
 void freeAllTables(table *env);
 int getTypeVal(char *string);
+int isOp(char *token);
 
 /* 3AC */
 TAC* to3AC(node *tree);
@@ -152,7 +153,7 @@ int isBoolOp(char *token);
 /*---------------------------------------start program--------------------------------------------------------------*/
 
 initial:
-	program							{  startSemantics($1); printTree($1,0); to3AC($1); freeTree($1);}
+	program							{  startSemantics($1); /* printTree($1,0); */  to3AC($1); freeTree($1);}
 	;
 
 program:
@@ -956,18 +957,23 @@ void checkTree(node *subTree , table *env, node *tree) {
 			return;
 		}
 
-		/* if left side of = doesnt exsist */
+		/* if left side of = doesnt exist */
 		if (!checkVarExist(env, subTree->subNodes[0]->token)) {
 			printf("Error: Variable used before declaration - %s\n", subTree->subNodes[0]->token);
 			quitProgram(tree, env);
 		}
-
+		
 		/* if left side is pointer and right is null */
-		if(evalExp(subTree->subNodes[1], env, tree) == 8 && (getVarType(env, subTree->subNodes[0]->token)==4 || getVarType(env, subTree->subNodes[0]->token)==5 || getVarType(env, subTree->subNodes[0]->token)==6))
+		if(getVarType(env, subTree->subNodes[0]->token) != 7 && evalExp(subTree->subNodes[1], env, tree) == 8 && (getVarType(env, subTree->subNodes[0]->token)==4 || getVarType(env, subTree->subNodes[0]->token)==5 || getVarType(env, subTree->subNodes[0]->token)==6))
 			return;
+		
 		
 		/* if left side is string */
 		if(getVarType(env, subTree->subNodes[0]->token) == 7){
+			if(subTree->subNodes[1]->numOfSubNodes == 0){
+				return;
+			}
+			
 			/* if index is not int */
 			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) != 2 ){
 				printf("Error: %s Index must be int\n", subTree->subNodes[0]->token);
@@ -977,7 +983,7 @@ void checkTree(node *subTree , table *env, node *tree) {
 			if(subTree->subNodes[0]->numOfSubNodes !=0 && evalExp(subTree->subNodes[0]->subNodes[0], env, tree) == 2 && evalExp(subTree->subNodes[1], env, tree) == 1)
 				return;
 		}
-
+		
 		/* if left side is not string and trying to index*/
 		if(getVarType(env, subTree->subNodes[0]->token) != 7 && subTree->subNodes[0]->numOfSubNodes!=0){
 			printf("Error: %s has no Index operator\n", subTree->subNodes[0]->token);
@@ -1269,7 +1275,7 @@ bool funcCallCheck(node* tree, table *env) {
 		printf("Error: calling function %s that does not exist\n", tree->subNodes[0]->token);
 		return false;
 	}
-	/* check number of arfument in call is correct */
+	/* check number of argument in call is correct */
 	int numOfarguments = tree->numOfSubNodes;
 	for(int i=0; i<tree->numOfSubNodes; i++){
 		if(!strcmp("NONE", tree->subNodes[i]->token))
@@ -1283,7 +1289,10 @@ bool funcCallCheck(node* tree, table *env) {
 	/* check if all function call argument exist or are values */
 	for(int i=1; i<tree->numOfSubNodes;i++){
 		if(strcmp("NONE",tree->subNodes[i]->token) !=0 ){
-			if (!checkVarExist(env, tree->subNodes[i]->token)) {
+			if(isOp(tree->subNodes[i]->token)){
+				evalExp(tree->subNodes[i],env,tree);
+			}
+			else if(!checkVarExist(env, tree->subNodes[i]->token)) {
 				printf("Error: variable %s does not exist\n", tree->subNodes[i]->token);
 				return false;
 			}	
@@ -1293,7 +1302,13 @@ bool funcCallCheck(node* tree, table *env) {
 	int *args = getFuncArgsTypes(tree->subNodes[0]->token, env);
 	for (int i = 1; i < tree->numOfSubNodes; i++) {
 		if(strcmp("NONE",tree->subNodes[i]->token) != 0){
-			if (getVarType(env, tree->subNodes[i]->token) != args[i-1]) {
+			if(isOp(tree->subNodes[i]->token)){
+				if(evalExp(tree->subNodes[i],env,tree) != args[i-1]){
+					printf("Error: variable %d does not match expected type\n", i);
+					return false;
+				}
+			}
+			else if (getVarType(env, tree->subNodes[i]->token) != args[i-1]) {
 				printf("Error: variable %s does not match expected type\n", tree->subNodes[i]->token);
 				return false;
 			}
@@ -1428,6 +1443,7 @@ bool checkReturnVal(node *subTree, table *env, node* tree) {
 	if (env->returnType == -1) {
 		return false;
 	}
+	return true;
 }
 
 /*function to free table */
@@ -2409,6 +2425,15 @@ int isBoolOp(char *token){
 	}
 	return 0;
 
+}
+
+int isOp(char *token){
+	if (!strcmp("+", token) || !strcmp("-", token) || !strcmp("*", token) || !strcmp("/", token)
+	||!strcmp("&&", token) || !strcmp("||", token) || !strcmp("==", token) || !strcmp("!=", token)||
+	!strcmp(">",token) || !strcmp(">=", token) || !strcmp("<", token) || !strcmp("<=", token)) {
+		return true;
+	}
+	return false;
 }
 
 
