@@ -24,12 +24,10 @@ function bool function1(int a, b, y ; char c)
     	return res;
 }
 
-
-function void proc1(int i, j, k, x )
-{
-    function bool function2(int l, m, n) 
+function bool function2(int l, m, n) 
     {
 	var bool x, j;
+	var int i;
 	/* var bool n; */
 	var char k;
 	k = '@';
@@ -41,6 +39,10 @@ function void proc1(int i, j, k, x )
 	}
         return x;
     }
+
+function void proc1(int i, j, k, x )
+{
+    
     {
 	var char x ;
 	var bool k;
@@ -54,15 +56,16 @@ function void proc1(int i, j, k, x )
     x = k;
 }
 
-
-function int function3(int i, j, k ) 
-{
     function int square(int t) /* function declarations */ 
     {
         var int temp;
         temp = t * t;
         return temp;
     }
+
+function int function3(int i, j, k ) 
+{
+
 
     var int total;                       /* variable declarations */
     var bool bo;
@@ -81,12 +84,15 @@ function int foo2()
     j=0;
     cnt = 1;
     while(i<30){
+	
 	while(j<60/2){
-	    if (s1[i] == s2[j]){
+		
+	    if ('c' == 'c'){
 		cnt = cnt*2;
 	    }
 	    j=j+1;
-	}
+	
+	}	
 	i=i+1;
     }
     return cnt;
@@ -122,9 +128,6 @@ function int function4()
 	}
     return 0;
 }
-
-
-
 function void main() 
 {
     var int a;
