@@ -8,7 +8,7 @@ Written in Lex, Yacc, C.
 3. Three address code (3AC) generation.
 <hr/>
 
-Demo:
+<b>Demo:</b>
 <br/><br/>
 ![ALT "demo video"](https://github.com/leorrose/compi-project/blob/master/Videos/Demo.gif)
 <hr/>
@@ -26,4 +26,4 @@ Demo:
 
 Please let me know if you find bugs or something that needs to be fixed.
 
-Hope you enjoy.
+<b>Hope you enjoy.</b>
