@@ -10,9 +10,9 @@ Written in Lex, Yacc, C.
 
 Demo:
 <br/><br/>
-![ALT "demo video"]()
+![ALT "demo video"](https://github.com/leorrose/compi-project/blob/master/Videos/Demo.gif)
 <hr/>
-<b>in order to run the application:</b>
+<b>In order to run the application:</b>
 
 1. clone this repository.
 2. open Linux command.
