@@ -30,4 +30,4 @@ Written in Lex, Yacc, C.
 
 Please let me know if you find bugs or something that needs to be fixed.
 
-<b>Hope you enjoy.</b>
+<b>Hope you enjoy.</b
