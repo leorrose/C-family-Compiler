@@ -1,7 +1,3 @@
-<p align="center">
-   <img src="https://img.shields.io/badge/-Collage%20Project-informational" />
-</p>
-
 # C-family-Compiler
 A compiler for a simple language similar to c language.
 Written in Lex, Yacc, C.
